@@ -86,8 +86,8 @@ export function AnimatedLogo({
   };
 
   const containerClasses = variant === 'header'
-    ? 'flex items-center gap-0 group'
-    : 'flex items-center gap-0';
+    ? 'flex items-center gap-1 group'
+    : 'flex items-center gap-2';
 
   return (
     <div className={`${containerClasses} ${className}`}>
@@ -117,7 +117,7 @@ export function AnimatedLogo({
 
       {/* Animated Text */}
       {showText && (
-        <span className={`font-heading font-bold ${textSizeClasses[size]} ${variant === 'footer' ? '' : 'hidden sm:inline'}`}>
+        <span className={`font-heading font-bold ${textSizeClasses[size]}`}>
           <motion.span
             className="transition-colors group-hover:text-accent-primary"
             initial="hidden"
