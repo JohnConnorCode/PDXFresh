@@ -27,8 +27,8 @@ export function AnimatedLogo({
 
   const textSizeClasses = {
     sm: 'text-lg',
-    md: 'text-xl',
-    lg: 'text-2xl',
+    md: 'text-2xl',
+    lg: 'text-3xl',
   };
 
   // Animation variants for the logo image
@@ -109,6 +109,7 @@ export function AnimatedLogo({
             alt="Long Life Logo"
             fill
             className="object-contain"
+            style={{ top: '-3px' }}
             priority
           />
         </div>

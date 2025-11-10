@@ -89,7 +89,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                     index === currentSlide && (hasAnimated || index !== 0)
                       ? 'translate-y-0 opacity-100 delay-100'
                       : index === currentSlide
-                      ? 'translate-y-10 opacity-100'
+                      ? 'translate-y-10 opacity-0'
                       : 'translate-y-10 opacity-0'
                   }`}
                 >
@@ -101,7 +101,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                     index === currentSlide && (hasAnimated || index !== 0)
                       ? 'translate-y-0 opacity-100 delay-300'
                       : index === currentSlide
-                      ? 'translate-y-10 opacity-100'
+                      ? 'translate-y-10 opacity-0'
                       : 'translate-y-10 opacity-0'
                   }`}
                 >
