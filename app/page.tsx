@@ -47,8 +47,6 @@ export default async function Home() {
     statsHeading,
     testimonialsHeading,
     testimonialsSubheading,
-    pricingHeading,
-    sizesPricing,
     processHeading,
     processIntro,
     processSteps,
