@@ -81,7 +81,7 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
                   target={link.newTab ? '_blank' : undefined}
                   rel={link.newTab ? 'noopener noreferrer' : undefined}
                   className={clsx(
-                    'group text-sm font-medium transition-colors relative',
+                    'group text-sm font-heading font-medium transition-colors relative',
                     isActive ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
                   )}
                 >

@@ -16,7 +16,7 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
   const social = siteSettings?.social || {};
 
   return (
-    <footer className="bg-gray-50 border-t border-gray-200">
+    <footer className="bg-accent-green/20 border-t border-gray-200">
       <Section className="py-16 sm:py-24">
         <StaggerContainer staggerDelay={0.15} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {/* Brand */}
