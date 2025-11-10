@@ -16,7 +16,7 @@ interface HeaderProps {
 export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const headerLinks = navigation?.headerLinks || [];
+  const headerLinks = navigation?.primaryLinks || [];
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -59,19 +59,22 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {headerLinks.map((link: any) => {
-              const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+            {headerLinks.map((link: any, index: number) => {
+              const href = link.externalUrl || (link.reference?.slug?.current ? `/${link.reference.slug.current}` : '#');
+              const isActive = pathname === href || pathname.startsWith(href + '/');
 
               return (
                 <Link
-                  key={link.text}
-                  href={link.href || '#'}
+                  key={link.title || index}
+                  href={href}
+                  target={link.newTab ? '_blank' : undefined}
+                  rel={link.newTab ? 'noopener noreferrer' : undefined}
                   className={clsx(
                     'text-sm font-medium transition-colors',
                     isActive ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
                   )}
                 >
-                  {link.text}
+                  {link.title}
                 </Link>
               );
             })}
@@ -129,13 +132,16 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
           {/* Mobile Menu Panel */}
           <nav className="md:hidden fixed top-16 left-0 right-0 bottom-0 bg-white z-40 overflow-y-auto">
             <div className="px-4 py-6 space-y-1">
-              {headerLinks.map((link: any) => {
-                const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+              {headerLinks.map((link: any, index: number) => {
+                const href = link.externalUrl || (link.reference?.slug?.current ? `/${link.reference.slug.current}` : '#');
+                const isActive = pathname === href || pathname.startsWith(href + '/');
 
                 return (
                   <Link
-                    key={link.text}
-                    href={link.href || '#'}
+                    key={link.title || index}
+                    href={href}
+                    target={link.newTab ? '_blank' : undefined}
+                    rel={link.newTab ? 'noopener noreferrer' : undefined}
                     className={clsx(
                       'block px-4 py-3 text-lg font-medium rounded-lg transition-colors',
                       isActive
@@ -143,7 +149,7 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
                         : 'text-gray-700 hover:bg-gray-50'
                     )}
                   >
-                    {link.text}
+                    {link.title}
                   </Link>
                 );
               })}

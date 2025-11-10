@@ -87,26 +87,43 @@ export function HeroSlider({ slides }: HeroSliderProps) {
           {/* Content */}
           <div className="relative z-20 h-full flex items-center">
             <div className="max-w-7xl mx-auto px-6 sm:px-8 w-full">
-              <div
-                className={`max-w-3xl transition-all duration-1000 delay-300 ${
-                  index === currentSlide
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-10 opacity-0'
-                }`}
-              >
-                <h1 className="font-heading text-6xl sm:text-7xl md:text-8xl font-bold text-white mb-6 leading-tight">
+              <div className="max-w-3xl">
+                {/* Heading - fades in first */}
+                <h1
+                  className={`font-heading text-6xl sm:text-7xl md:text-8xl font-bold text-white mb-6 leading-tight transition-all duration-1000 delay-300 ${
+                    index === currentSlide
+                      ? 'translate-y-0 opacity-100'
+                      : 'translate-y-10 opacity-0'
+                  }`}
+                >
                   {slide.heading}
                 </h1>
-                <p className="text-xl sm:text-2xl text-white/90 mb-8 leading-relaxed">
+                {/* Subheading - fades in second */}
+                <p
+                  className={`text-xl sm:text-2xl text-white/90 mb-8 leading-relaxed transition-all duration-1000 delay-500 ${
+                    index === currentSlide
+                      ? 'translate-y-0 opacity-100'
+                      : 'translate-y-10 opacity-0'
+                  }`}
+                >
                   {slide.subheading}
                 </p>
+                {/* CTA - fades in third */}
                 {slide.ctaText && slide.ctaLink && (
-                  <Link
-                    href={slide.ctaLink}
-                    className="inline-block px-8 py-4 bg-accent-primary text-white font-semibold rounded-full hover:bg-accent-primary/90 transition-all duration-300 transform hover:scale-105"
+                  <div
+                    className={`transition-all duration-1000 delay-700 ${
+                      index === currentSlide
+                        ? 'translate-y-0 opacity-100'
+                        : 'translate-y-10 opacity-0'
+                    }`}
                   >
-                    {slide.ctaText}
-                  </Link>
+                    <Link
+                      href={slide.ctaLink}
+                      className="inline-block px-8 py-4 bg-accent-primary text-white font-semibold rounded-full hover:bg-accent-primary/90 transition-all duration-300 transform hover:scale-105"
+                    >
+                      {slide.ctaText}
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>

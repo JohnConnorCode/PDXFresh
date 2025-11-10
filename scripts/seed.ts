@@ -135,39 +135,26 @@ async function seedData() {
     await upsertDoc({
       _id: 'navigation',
       _type: 'navigation',
-      headerLinks: [
-        { text: 'Blends', href: '/blends' },
-        { text: 'How We Make It', href: '/how-we-make-it' },
-        { text: 'Ingredients', href: '/ingredients' },
-        { text: 'Journal', href: '/journal' },
-        { text: 'FAQ', href: '/faq' },
+      primaryLinks: [
+        { title: 'Blends', externalUrl: '/blends' },
+        { title: 'How We Make It', externalUrl: '/how-we-make-it' },
+        { title: 'Ingredients', externalUrl: '/ingredients' },
+        { title: 'Journal', externalUrl: '/journal' },
+        { title: 'FAQ', externalUrl: '/faq' },
       ],
       footerLinks: [
-        {
-          title: 'Shop',
-          links: [
-            { text: 'All Blends', href: '/blends' },
-            { text: 'Subscriptions', href: '/subscriptions' },
-            { text: 'Wholesale', href: '/wholesale' },
-          ],
-        },
-        {
-          title: 'Learn',
-          links: [
-            { text: 'How We Make It', href: '/how-we-make-it' },
-            { text: 'Sourcing Standards', href: '/ingredients' },
-            { text: 'Journal', href: '/journal' },
-          ],
-        },
-        {
-          title: 'Support',
-          links: [
-            { text: 'FAQ', href: '/faq' },
-            { text: 'Contact', href: '/contact' },
-            { text: 'Terms', href: '/terms' },
-            { text: 'Privacy', href: '/privacy' },
-          ],
-        },
+        { title: 'All Blends', externalUrl: '/blends' },
+        { title: 'Subscriptions', externalUrl: '/subscriptions' },
+        { title: 'Wholesale', externalUrl: '/wholesale' },
+        { title: 'How We Make It', externalUrl: '/how-we-make-it' },
+        { title: 'Sourcing Standards', externalUrl: '/ingredients' },
+        { title: 'Journal', externalUrl: '/journal' },
+        { title: 'FAQ', externalUrl: '/faq' },
+        { title: 'Contact', externalUrl: '/contact' },
+      ],
+      legalLinks: [
+        { title: 'Terms', externalUrl: '/terms' },
+        { title: 'Privacy', externalUrl: '/privacy' },
       ],
     });
 
@@ -210,7 +197,12 @@ async function seedData() {
       _id: 'process-1',
       _type: 'processStep',
       title: 'Source',
-      description: 'Partner with regenerative organic farms. Every ingredient traced to origin.',
+      body: [
+        {
+          _type: 'block',
+          children: [{ _type: 'span', text: 'Partner with regenerative organic farms. Every ingredient traced to origin.' }],
+        },
+      ],
       order: 1,
     });
 
@@ -218,7 +210,12 @@ async function seedData() {
       _id: 'process-2',
       _type: 'processStep',
       title: 'Cold-Press',
-      description: 'Hydraulic press extracts maximum nutrients without heat or oxidation.',
+      body: [
+        {
+          _type: 'block',
+          children: [{ _type: 'span', text: 'Hydraulic press extracts maximum nutrients without heat or oxidation.' }],
+        },
+      ],
       order: 2,
     });
 
@@ -226,7 +223,12 @@ async function seedData() {
       _id: 'process-3',
       _type: 'processStep',
       title: 'Freeze Within Hours',
-      description: 'Flash-frozen to lock in peak freshness and enzyme activity.',
+      body: [
+        {
+          _type: 'block',
+          children: [{ _type: 'span', text: 'Flash-frozen to lock in peak freshness and enzyme activity.' }],
+        },
+      ],
       order: 3,
     });
 
@@ -234,7 +236,12 @@ async function seedData() {
       _id: 'process-4',
       _type: 'processStep',
       title: 'Ship Direct',
-      description: 'Delivered frozen to your door. No preservatives, ever.',
+      body: [
+        {
+          _type: 'block',
+          children: [{ _type: 'span', text: 'Delivered frozen to your door. No preservatives, ever.' }],
+        },
+      ],
       order: 4,
     });
 
@@ -243,21 +250,36 @@ async function seedData() {
       _id: 'standard-1',
       _type: 'standard',
       title: 'Regenerative Organic',
-      description: 'Soil health, biodiversity, and carbon sequestration over yield.',
+      body: [
+        {
+          _type: 'block',
+          children: [{ _type: 'span', text: 'Soil health, biodiversity, and carbon sequestration over yield.' }],
+        },
+      ],
     });
 
     await upsertDoc({
       _id: 'standard-2',
       _type: 'standard',
       title: 'Farm-Traced',
-      description: 'Every ingredient identified by farm and harvest date.',
+      body: [
+        {
+          _type: 'block',
+          children: [{ _type: 'span', text: 'Every ingredient identified by farm and harvest date.' }],
+        },
+      ],
     });
 
     await upsertDoc({
       _id: 'standard-3',
       _type: 'standard',
       title: 'No HPP, No Heat',
-      description: 'Cold-pressed only. Living enzymes preserved.',
+      body: [
+        {
+          _type: 'block',
+          children: [{ _type: 'span', text: 'Cold-pressed only. Living enzymes preserved.' }],
+        },
+      ],
     });
 
     // 6. Farms
