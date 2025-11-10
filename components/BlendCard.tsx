@@ -33,7 +33,7 @@ export function BlendCard({ blend }: BlendCardProps) {
           className="relative overflow-hidden rounded-lg bg-gray-100 mb-4 shadow-md"
           whileHover={{ boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }}
         >
-          {blend.image && (
+          {blend.image ? (
             <motion.div
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
@@ -46,6 +46,10 @@ export function BlendCard({ blend }: BlendCardProps) {
                 className="w-full h-64 object-cover"
               />
             </motion.div>
+          ) : (
+            <div className="w-full h-64 flex items-center justify-center bg-gradient-to-br from-accent-yellow/20 via-accent-primary/20 to-accent-green/20">
+              <span className="font-heading text-4xl font-bold text-gray-400">{blend.name}</span>
+            </div>
           )}
           {blend.labelColor && (
             <motion.div

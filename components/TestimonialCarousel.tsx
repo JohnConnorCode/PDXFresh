@@ -51,21 +51,27 @@ export function TestimonialCarousel({
           transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
           className="text-center"
         >
-          {currentTestimonial.image && (
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
-              className="relative w-20 h-20 mx-auto mb-6 rounded-full overflow-hidden"
-            >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+            className="relative w-20 h-20 mx-auto mb-6 rounded-full overflow-hidden"
+          >
+            {currentTestimonial.image ? (
               <Image
                 src={urlFor(currentTestimonial.image).url()}
                 alt={currentTestimonial.name}
                 fill
                 className="object-cover"
               />
-            </motion.div>
-          )}
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent-yellow to-accent-primary">
+                <span className="font-heading text-2xl font-bold text-white">
+                  {currentTestimonial.name.split(' ').map(n => n[0]).join('')}
+                </span>
+              </div>
+            )}
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0 }}
