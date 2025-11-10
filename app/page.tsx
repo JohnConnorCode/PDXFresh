@@ -6,6 +6,7 @@ import { Section } from '@/components/Section';
 import { RichText } from '@/components/RichText';
 import { BlendCard } from '@/components/BlendCard';
 import { urlFor } from '@/lib/image';
+import { FadeIn, StaggerContainer, FloatingElement } from '@/components/animations';
 
 export const revalidate = 60;
 
@@ -37,31 +38,38 @@ export default async function Home() {
       <Section className="bg-gradient-to-br from-gray-50 to-white py-20 sm:py-32">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h1 className="font-heading text-5xl sm:text-6xl font-bold mb-4" style={{lineHeight: '0.9'}}>
-              Long Life
-            </h1>
-            {hero?.heading ? (
-              <p className="text-2xl font-semibold mb-4" style={{lineHeight: '0.95'}}>
-                {hero.heading}
+            <FadeIn direction="up" delay={0.2}>
+              <h1 className="font-heading text-5xl sm:text-6xl font-bold mb-4" style={{lineHeight: '0.9'}}>
+                Long Life
+              </h1>
+            </FadeIn>
+            <FadeIn direction="up" delay={0.4}>
+              {hero?.heading ? (
+                <p className="text-2xl font-semibold mb-4" style={{lineHeight: '0.95'}}>
+                  {hero.heading}
+                </p>
+              ) : (
+                <p className="text-2xl font-semibold mb-4" style={{lineHeight: '0.95'}}>
+                  Small-batch juice for real humans.
+                </p>
+              )}
+            </FadeIn>
+            <FadeIn direction="up" delay={0.6}>
+              {hero?.subheading ? (
+                <p className="text-lg text-muted mb-2 leading-relaxed">
+                  {hero.subheading}
+                </p>
+              ) : (
+                <p className="text-lg text-muted mb-2 leading-relaxed">
+                  Cold-pressed, ingredient-dense, made weekly in Indiana.
+                </p>
+              )}
+              <p className="text-lg font-semibold mb-8">
+                Drink what your body recognizes.
               </p>
-            ) : (
-              <p className="text-2xl font-semibold mb-4" style={{lineHeight: '0.95'}}>
-                Small-batch juice for real humans.
-              </p>
-            )}
-            {hero?.subheading ? (
-              <p className="text-lg text-muted mb-2 leading-relaxed">
-                {hero.subheading}
-              </p>
-            ) : (
-              <p className="text-lg text-muted mb-2 leading-relaxed">
-                Cold-pressed, ingredient-dense, made weekly in Indiana.
-              </p>
-            )}
-            <p className="text-lg font-semibold mb-8">
-              Drink what your body recognizes.
-            </p>
-            <div className="flex gap-4">
+            </FadeIn>
+            <FadeIn direction="up" delay={0.8}>
+              <div className="flex gap-4">
               {hero?.ctaPrimary ? (
                 <Link
                   href={hero.ctaPrimary.target?.pageRef?.slug?.current
@@ -96,18 +104,23 @@ export default async function Home() {
                   Join the List
                 </Link>
               )}
-            </div>
+              </div>
+            </FadeIn>
           </div>
           {hero?.image && (
-            <div className="relative h-96 md:h-full">
-              <Image
-                src={urlFor(hero.image).url()}
-                alt="Long Life Juice"
-                fill
-                className="object-cover rounded-lg"
-                priority
-              />
-            </div>
+            <FloatingElement yOffset={15} duration={4}>
+              <FadeIn direction="left" delay={0.4}>
+                <div className="relative h-96 md:h-full">
+                  <Image
+                    src={urlFor(hero.image).url()}
+                    alt="Long Life Juice"
+                    fill
+                    className="object-cover rounded-lg shadow-2xl"
+                    priority
+                  />
+                </div>
+              </FadeIn>
+            </FloatingElement>
           )}
         </div>
       </Section>
@@ -115,7 +128,7 @@ export default async function Home() {
       {/* Value Props */}
       {valueProps && valueProps.length > 0 && (
         <Section>
-          <div className="grid md:grid-cols-3 gap-8">
+          <StaggerContainer staggerDelay={0.15} className="grid md:grid-cols-3 gap-8">
             {valueProps.map((prop: any, idx: number) => (
               <div key={idx} className="text-center">
                 {prop.icon && (
@@ -134,21 +147,21 @@ export default async function Home() {
                 <p className="text-muted">{prop.body}</p>
               </div>
             ))}
-          </div>
+          </StaggerContainer>
         </Section>
       )}
 
       {/* Featured Blends */}
       {featuredBlends && featuredBlends.length > 0 && (
         <Section className="bg-gray-50">
-          <div className="text-center mb-12">
+          <FadeIn direction="up" className="text-center mb-12">
             <h2 className="font-heading text-4xl font-bold mb-4" style={{lineHeight: "0.9"}}>
               Featured Blends
             </h2>
             <p className="text-lg text-muted italic">
               Sold in weekly drops. Reserve early.
             </p>
-          </div>
+          </FadeIn>
           <div className="grid md:grid-cols-3 gap-8">
             {featuredBlends.map((blend: any) => (
               <BlendCard key={blend._id} blend={blend} />

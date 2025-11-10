@@ -56,6 +56,31 @@ export default defineType({
       description: 'Full description of the blend shown on the detail page. Use rich text formatting.',
     }),
     defineField({
+      name: 'story',
+      title: 'Blend Story',
+      type: 'blockContent',
+      description: 'Detailed narrative about this blend - why it exists, what makes it special, the inspiration behind it',
+    }),
+    defineField({
+      name: 'detailedFunction',
+      title: 'Detailed Function',
+      type: 'blockContent',
+      description: 'In-depth explanation of the functional benefits and how the ingredients work together',
+    }),
+    defineField({
+      name: 'bestFor',
+      title: 'Best For',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Specific use cases and situations. E.g., "Morning boost", "Post-workout recovery", "Afternoon clarity"',
+    }),
+    defineField({
+      name: 'howToUse',
+      title: 'How to Use',
+      type: 'blockContent',
+      description: 'Recommendations for when and how to consume this blend for best results',
+    }),
+    defineField({
       name: 'labelColor',
       title: 'Label Color',
       type: 'string',

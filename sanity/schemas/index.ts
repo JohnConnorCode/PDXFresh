@@ -12,12 +12,18 @@ import standard from './standard';
 import post from './post';
 import faq from './faq';
 import cta from './cta';
+import testimonial from './testimonial';
+import teamMember from './teamMember';
+import aboutPage from './aboutPage';
+import socialProof from './socialProof';
 
 export const schemaTypes = [
   blockContent,
   siteSettings,
   navigation,
   homePage,
+  aboutPage,
+  socialProof,
   page,
   blend,
   ingredient,
@@ -28,4 +34,6 @@ export const schemaTypes = [
   post,
   faq,
   cta,
+  testimonial,
+  teamMember,
 ];
