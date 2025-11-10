@@ -22,7 +22,7 @@ export function StaggerContainer({
   const isInView = useInView(ref, { once, amount: 0.2 });
 
   const container = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 1 },
     show: {
       opacity: 1,
       transition: {
@@ -33,7 +33,7 @@ export function StaggerContainer({
   };
 
   const item = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 1, y: 20 },
     show: {
       opacity: 1,
       y: 0,

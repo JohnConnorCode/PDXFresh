@@ -36,8 +36,8 @@ export function FadeIn({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, ...directionOffset[direction] }}
-      animate={isInView ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, ...directionOffset[direction] }}
+      initial={{ opacity: 1, ...directionOffset[direction] }}
+      animate={isInView ? { opacity: 1, x: 0, y: 0 } : undefined}
       transition={{
         duration,
         delay,

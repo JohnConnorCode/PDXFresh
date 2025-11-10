@@ -21,7 +21,7 @@ export function CountUp({
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
 
-  const spring = useSpring(0, {
+  const spring = useSpring(value, {
     duration: duration * 1000,
     bounce: 0,
   });
@@ -32,6 +32,8 @@ export function CountUp({
 
   useEffect(() => {
     if (isInView) {
+      spring.set(value);
+    } else {
       spring.set(value);
     }
   }, [isInView, spring, value]);
