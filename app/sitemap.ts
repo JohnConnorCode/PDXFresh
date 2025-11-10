@@ -1,16 +1,32 @@
 import { MetadataRoute } from 'next';
-import { client } from '@/lib/sanity.client';
 import { blendsQuery, postsQuery, pagesQuery } from '@/lib/sanity.queries';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://drinklonglife.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Fetch dynamic content
-  const [blends, posts, pages] = await Promise.all([
-    client.fetch(blendsQuery).catch(() => []),
-    client.fetch(postsQuery).catch(() => []),
-    client.fetch(pagesQuery).catch(() => []),
-  ]);
+  // Dynamically create client with environment variables
+  let blends = [];
+  let posts = [];
+  let pages = [];
+
+  try {
+    const { createClient } = await import('@sanity/client');
+    const client = createClient({
+      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',
+      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01',
+      useCdn: true,
+    });
+
+    // Fetch dynamic content
+    [blends, posts, pages] = await Promise.all([
+      client.fetch(blendsQuery).catch(() => []),
+      client.fetch(postsQuery).catch(() => []),
+      client.fetch(pagesQuery).catch(() => []),
+    ]);
+  } catch {
+    // If Sanity client fails, just use static routes
+  }
 
   // Static routes
   const staticRoutes: MetadataRoute.Sitemap = [
