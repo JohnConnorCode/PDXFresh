@@ -1,15 +1,10 @@
 import { Metadata } from 'next';
 import { client } from '@/lib/sanity.client';
-import { blendsQuery } from '@/lib/sanity.queries';
+import { blendsQuery, blendsPageQuery } from '@/lib/sanity.queries';
 import { Section } from '@/components/Section';
 import { BlendCard } from '@/components/BlendCard';
 
 export const revalidate = 60;
-
-export const metadata: Metadata = {
-  title: 'Our Blends | Long Life',
-  description: 'Explore our cold-pressed juice blends, each crafted for specific wellness functions.',
-};
 
 async function getBlends() {
   try {
@@ -20,14 +15,35 @@ async function getBlends() {
   }
 }
 
+async function getBlendsPage() {
+  try {
+    return await client.fetch(blendsPageQuery);
+  } catch (error) {
+    console.error('Error fetching blends page:', error);
+    return null;
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const blendsPage = await getBlendsPage();
+
+  return {
+    title: blendsPage?.seo?.metaTitle || 'Our Blends | Long Life',
+    description: blendsPage?.seo?.metaDescription || 'Explore our cold-pressed juice blends, each crafted for specific wellness functions.',
+  };
+}
+
 export default async function BlendsPage() {
   const blends = await getBlends();
+  const blendsPage = await getBlendsPage();
 
   return (
     <Section>
-      <h1 className="font-heading text-5xl font-bold mb-4">Our Blends</h1>
+      <h1 className="font-heading text-5xl font-bold mb-4">
+        {blendsPage?.heading || 'Our Blends'}
+      </h1>
       <p className="text-lg text-muted mb-12 max-w-2xl">
-        Each blend is carefully crafted with cold-pressed organic ingredients to support your wellness journey.
+        {blendsPage?.subheading || 'Each blend is carefully crafted with cold-pressed organic ingredients to support your wellness journey.'}
       </p>
 
       {blends.length > 0 ? (

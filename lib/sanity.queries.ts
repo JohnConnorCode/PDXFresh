@@ -80,6 +80,13 @@ export const navigationQuery = groq`*[_type == "navigation"][0]{
 }`;
 
 export const homePageQuery = groq`*[_type == "homePage"][0]{
+  heroSlides[] {
+    heading,
+    subheading,
+    ctaText,
+    ctaLink,
+    "image": image ${imageFragment}
+  },
   "hero": hero {
     heading,
     subheading,
@@ -259,4 +266,166 @@ export const ingredientQuery = groq`*[_type == "ingredient"] | order(name asc) {
     location,
     website
   }
+}`;
+
+export const aboutPageQuery = groq`*[_type == "aboutPage"][0]{
+  heroHeading,
+  heroSubheading,
+  introText,
+  whyHeading,
+  whyContent,
+  howHeading,
+  howContent,
+  promiseHeading,
+  promises[] {
+    title,
+    description
+  },
+  visionHeading,
+  visionContent,
+  teamHeading,
+  "teamMembers": teamMembers[]->{
+    _id,
+    name,
+    role,
+    bio,
+    "image": image ${imageFragment}
+  },
+  valuesHeading,
+  values[] {
+    emoji,
+    title,
+    description
+  },
+  ctaHeading,
+  ctaText,
+  disclaimer,
+  seo
+}`;
+
+export const blendsPageQuery = groq`*[_type == "blendsPage"][0]{
+  heading,
+  subheading,
+  seo
+}`;
+
+export const faqPageQuery = groq`*[_type == "faqPage"][0]{
+  heading,
+  subheading,
+  seo
+}`;
+
+export const processPageQuery = groq`*[_type == "processPage"][0]{
+  heroHeading,
+  heroSubheading,
+  "processSteps": processSteps[]->{
+    _id,
+    title,
+    body,
+    "image": image ${imageFragment},
+    order
+  } | order(order asc),
+  whyHeading,
+  whyCards[] {
+    title,
+    description
+  },
+  commitmentHeading,
+  commitmentText,
+  commitmentBadge,
+  disclaimer,
+  seo
+}`;
+
+export const ingredientsSourcingPageQuery = groq`*[_type == "ingredientsSourcingPage"][0]{
+  heroHeading,
+  heroSubheading,
+  philosophyHeading,
+  philosophyIntro,
+  philosophyContent,
+  standardsHeading,
+  "standards": standards[]->{
+    _id,
+    title,
+    body,
+    "icon": icon ${imageFragment}
+  },
+  spotlightHeading,
+  ingredientCategories[] {
+    categoryName,
+    color,
+    hoverColor,
+    ingredients
+  },
+  spotlightNote,
+  farmHeading,
+  farmText,
+  farmFormNote,
+  transparencyHeading,
+  transparencyText,
+  seo
+}`;
+
+export const subscriptionsPageQuery = groq`*[_type == "subscriptionsPage"][0]{
+  heroHeading,
+  heroTagline,
+  heroText,
+  howHeading,
+  howSteps[] {
+    stepNumber,
+    title,
+    description
+  },
+  perksHeading,
+  perks[] {
+    title,
+    description
+  },
+  pricingHeading,
+  plans[] {
+    name,
+    description,
+    isPopular,
+    priceItems[] {
+      size,
+      price
+    },
+    buttonText
+  },
+  pricingNote,
+  ctaHeading,
+  ctaText,
+  seo
+}`;
+
+export const wholesalePageQuery = groq`*[_type == "wholesalePage"][0]{
+  heroHeading,
+  heroTagline,
+  heroText,
+  partnersHeading,
+  partnerTypes[] {
+    emoji,
+    title,
+    description
+  },
+  programsHeading,
+  programs[] {
+    title,
+    description,
+    options[] {
+      name,
+      description
+    },
+    note,
+    noteColor
+  },
+  whyHeading,
+  benefits[] {
+    title,
+    description
+  },
+  ctaHeading,
+  ctaText,
+  ctaNote,
+  seo
 }`;

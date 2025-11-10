@@ -5,51 +5,105 @@ export default defineType({
   title: 'About Page',
   type: 'document',
   fields: [
+    // Hero Section
     defineField({
-      name: 'heading',
-      title: 'Page Heading',
+      name: 'heroHeading',
+      title: 'Hero Heading',
       type: 'string',
-      description: 'Main headline for the about page',
+      initialValue: 'Return to nature in a world of machines.',
     }),
     defineField({
-      name: 'mission',
-      title: 'Mission Statement',
+      name: 'heroSubheading',
+      title: 'Hero Subheading',
+      type: 'text',
+      rows: 3,
+      initialValue: 'Modern life is efficient but empty. Long Life exists to bring people back to real nourishment and clear minds.',
+    }),
+
+    // Intro
+    defineField({
+      name: 'introText',
+      title: 'Introduction Text',
+      type: 'text',
+      rows: 3,
+    }),
+
+    // Why We Started Section
+    defineField({
+      name: 'whyHeading',
+      title: 'Why We Started Heading',
+      type: 'string',
+      initialValue: 'Why we started Long Life',
+    }),
+    defineField({
+      name: 'whyContent',
+      title: 'Why We Started Content',
       type: 'blockContent',
-      description: 'The core mission and purpose of Long Life',
+    }),
+
+    // How We Work Section
+    defineField({
+      name: 'howHeading',
+      title: 'How We Work Heading',
+      type: 'string',
+      initialValue: 'How we work',
     }),
     defineField({
-      name: 'story',
-      title: 'Our Story',
+      name: 'howContent',
+      title: 'How We Work Content',
       type: 'blockContent',
-      description: 'The founding story, why Long Life exists, the journey so far',
+    }),
+
+    // Our Promise Section
+    defineField({
+      name: 'promiseHeading',
+      title: 'Our Promise Heading',
+      type: 'string',
+      initialValue: 'Our promise',
     }),
     defineField({
-      name: 'promise',
-      title: 'Our Promise',
-      type: 'blockContent',
-      description: 'What customers can expect from Long Life - values and commitments',
-    }),
-    defineField({
-      name: 'founderImage',
-      title: 'Founder/Team Image',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
-      fields: [
+      name: 'promises',
+      title: 'Promise Items',
+      type: 'array',
+      of: [
         {
-          name: 'alt',
-          type: 'string',
-          title: 'Alt Text',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Promise Title',
+              type: 'string',
+            }),
+            defineField({
+              name: 'description',
+              title: 'Promise Description',
+              type: 'text',
+              rows: 3,
+            }),
+          ],
         },
       ],
     }),
+
+    // Vision Section
     defineField({
-      name: 'processImages',
-      title: 'Process Images',
-      type: 'array',
-      of: [{ type: 'image', options: { hotspot: true } }],
-      description: 'Photos showing juice-making process, sourcing, team at work',
+      name: 'visionHeading',
+      title: 'Vision Heading',
+      type: 'string',
+      initialValue: 'Where we\'re going',
+    }),
+    defineField({
+      name: 'visionContent',
+      title: 'Vision Content',
+      type: 'blockContent',
+    }),
+
+    // Team Section
+    defineField({
+      name: 'teamHeading',
+      title: 'Team Section Heading',
+      type: 'string',
+      initialValue: 'The team',
     }),
     defineField({
       name: 'teamMembers',
@@ -62,6 +116,65 @@ export default defineType({
         },
       ],
     }),
+
+    // Values Section
+    defineField({
+      name: 'valuesHeading',
+      title: 'Values Heading',
+      type: 'string',
+      initialValue: 'What we stand for',
+    }),
+    defineField({
+      name: 'values',
+      title: 'Values',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'emoji',
+              title: 'Emoji',
+              type: 'string',
+            }),
+            defineField({
+              name: 'title',
+              title: 'Value Title',
+              type: 'string',
+            }),
+            defineField({
+              name: 'description',
+              title: 'Description',
+              type: 'text',
+              rows: 2,
+            }),
+          ],
+        },
+      ],
+    }),
+
+    // CTA Section
+    defineField({
+      name: 'ctaHeading',
+      title: 'CTA Heading',
+      type: 'string',
+      initialValue: 'Join the movement',
+    }),
+    defineField({
+      name: 'ctaText',
+      title: 'CTA Text',
+      type: 'text',
+      rows: 2,
+    }),
+
+    // Disclaimer
+    defineField({
+      name: 'disclaimer',
+      title: 'Responsible Language Disclaimer',
+      type: 'text',
+      rows: 3,
+    }),
+
     defineField({
       name: 'seo',
       title: 'SEO',
@@ -83,7 +196,7 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: 'heading',
+      title: 'heroHeading',
     },
     prepare({ title }) {
       return {

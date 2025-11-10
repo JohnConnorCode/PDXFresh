@@ -1,15 +1,10 @@
 import type { Metadata } from 'next';
-import { Playfair_Display, Inter } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import '@/styles/globals.css';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { client } from '@/lib/sanity.client';
 import { siteSettingsQuery, navigationQuery } from '@/lib/sanity.queries';
-
-const playfair = Playfair_Display({
-  variable: '--font-playfair',
-  subsets: ['latin'],
-});
 
 const inter = Inter({
   variable: '--font-inter',
@@ -42,7 +37,7 @@ export default async function RootLayout({
   const { siteSettings, navigation } = await getGlobalData();
 
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={inter.variable} style={{ '--font-futura': 'Futura, "Futura PT", "Century Gothic", "Trebuchet MS", Arial, sans-serif' } as any}>
       <body className="bg-white text-black">
         <Header
           siteSettings={siteSettings}

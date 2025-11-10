@@ -9,6 +9,7 @@ import { urlFor } from '@/lib/image';
 import { FadeIn, StaggerContainer, FloatingElement } from '@/components/animations';
 import { TestimonialCarousel } from '@/components/TestimonialCarousel';
 import { StatsSection } from '@/components/StatsSection';
+import { HeroSlider } from '@/components/HeroSlider';
 
 export const revalidate = 60;
 
@@ -33,6 +34,7 @@ export default async function Home() {
   }
 
   const {
+    heroSlides,
     hero,
     valueProps,
     featuredBlendsHeading,
@@ -61,43 +63,71 @@ export default async function Home() {
     socialProof
   } = homePage;
 
+  // Default slides if none are set in Sanity
+  const defaultSlides = [
+    {
+      heading: 'Peak Performance Starts Here',
+      subheading: 'Cold-pressed, small-batch juices crafted for serious athletes and health-conscious humans.',
+      ctaText: 'Shop Blends',
+      ctaLink: '/blends',
+    },
+    {
+      heading: 'Real Ingredients. Real Results.',
+      subheading: 'No concentrates. No shortcuts. Just whole fruits, roots, and greens pressed fresh weekly.',
+      ctaText: 'Our Process',
+      ctaLink: '/how-we-make-it',
+    },
+    {
+      heading: 'Small-Batch Integrity',
+      subheading: 'Limited runs. First come, first served. Made in Indiana with ingredients you can trace.',
+      ctaText: 'Learn More',
+      ctaLink: '/about',
+    },
+  ];
+
+  const slides = heroSlides && heroSlides.length > 0 ? heroSlides : defaultSlides;
+
   return (
     <>
-      {/* Hero Section */}
-      <Section className="bg-gradient-to-br from-gray-50 to-white py-20 sm:py-32">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <FadeIn direction="up" delay={0.2}>
-              <h1 className="font-heading text-5xl sm:text-6xl font-bold mb-4" style={{lineHeight: '0.9'}}>
-                Long Life
-              </h1>
-            </FadeIn>
-            <FadeIn direction="up" delay={0.4}>
-              {hero?.heading ? (
-                <p className="text-2xl font-semibold mb-4" style={{lineHeight: '0.95'}}>
-                  {hero.heading}
+      {/* Hero Slider */}
+      <HeroSlider slides={slides} />
+
+      {/* Legacy Hero Fallback - Hidden */}
+      <div className="hidden">
+        <Section className="bg-gradient-to-br from-gray-50 to-white py-20 sm:py-32">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <FadeIn direction="up" delay={0.2}>
+                <h1 className="font-heading text-5xl sm:text-6xl font-bold mb-4" style={{lineHeight: '0.9'}}>
+                  Long Life
+                </h1>
+              </FadeIn>
+              <FadeIn direction="up" delay={0.4}>
+                {hero?.heading ? (
+                  <p className="text-2xl font-semibold mb-4" style={{lineHeight: '0.95'}}>
+                    {hero.heading}
+                  </p>
+                ) : (
+                  <p className="text-2xl font-semibold mb-4" style={{lineHeight: '0.95'}}>
+                    Small-batch juice for real humans.
+                  </p>
+                )}
+              </FadeIn>
+              <FadeIn direction="up" delay={0.6}>
+                {hero?.subheading ? (
+                  <p className="text-lg text-muted mb-2 leading-relaxed">
+                    {hero.subheading}
+                  </p>
+                ) : (
+                  <p className="text-lg text-muted mb-2 leading-relaxed">
+                    Cold-pressed, ingredient-dense, made weekly in Indiana.
+                  </p>
+                )}
+                <p className="text-lg font-semibold mb-8">
+                  Drink what your body recognizes.
                 </p>
-              ) : (
-                <p className="text-2xl font-semibold mb-4" style={{lineHeight: '0.95'}}>
-                  Small-batch juice for real humans.
-                </p>
-              )}
-            </FadeIn>
-            <FadeIn direction="up" delay={0.6}>
-              {hero?.subheading ? (
-                <p className="text-lg text-muted mb-2 leading-relaxed">
-                  {hero.subheading}
-                </p>
-              ) : (
-                <p className="text-lg text-muted mb-2 leading-relaxed">
-                  Cold-pressed, ingredient-dense, made weekly in Indiana.
-                </p>
-              )}
-              <p className="text-lg font-semibold mb-8">
-                Drink what your body recognizes.
-              </p>
-            </FadeIn>
-            <FadeIn direction="up" delay={0.8}>
+              </FadeIn>
+              <FadeIn direction="up" delay={0.8}>
               <div className="flex gap-4">
               {hero?.ctaPrimary ? (
                 <Link
@@ -153,6 +183,7 @@ export default async function Home() {
           )}
         </div>
       </Section>
+      </div>
 
       {/* Value Props */}
       {valueProps && valueProps.length > 0 && (

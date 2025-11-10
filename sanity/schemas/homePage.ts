@@ -7,9 +7,58 @@ export default defineType({
   __experimental_formPreviewTitle: false,
   fields: [
     defineField({
+      name: 'heroSlides',
+      title: 'Hero Slider',
+      type: 'array',
+      description: 'Add multiple slides for the hero slider (minimum 3 recommended)',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'heading',
+              title: 'Heading',
+              type: 'string',
+            }),
+            defineField({
+              name: 'subheading',
+              title: 'Subheading',
+              type: 'text',
+              rows: 2,
+            }),
+            defineField({
+              name: 'ctaText',
+              title: 'CTA Text',
+              type: 'string',
+            }),
+            defineField({
+              name: 'ctaLink',
+              title: 'CTA Link',
+              type: 'string',
+            }),
+            defineField({
+              name: 'image',
+              title: 'Background Image',
+              type: 'image',
+              options: {
+                hotspot: true,
+              },
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'heading',
+              media: 'image',
+            },
+          },
+        },
+      ],
+    }),
+    defineField({
       name: 'hero',
-      title: 'Hero Section',
+      title: 'Hero Section (Legacy)',
       type: 'object',
+      hidden: true,
       fields: [
         defineField({
           name: 'heading',

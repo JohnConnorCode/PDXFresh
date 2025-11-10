@@ -527,7 +527,446 @@ async function seedData() {
       communityHashtagText: 'Tag #DrinkLongLife to join a community that chooses nature over noise.',
     });
 
-    // 11. FAQs
+    // 11. About Page (Singleton)
+    await upsertDoc({
+      _id: 'aboutPage',
+      _type: 'aboutPage',
+      heroHeading: 'Return to nature in a world of machines.',
+      heroSubheading: 'Modern life is efficient but empty. Long Life exists to bring people back to real nourishment and clear minds.',
+      introText: 'We make fresh, functional blends in small batches, serve a committed community, then refine based on real feedback. We are starting local and building something worthy of global attention.',
+      whyHeading: 'Why we started Long Life',
+      whyContent: [
+        {
+          _type: 'block',
+          _key: 'why1',
+          style: 'normal',
+          children: [
+            {
+              _type: 'span',
+              text: 'The modern food system prioritizes scale over substance. Grocery store "juice" is often concentrate mixed with water and artificial flavor. Supplements come in pills engineered in labs. Wellness has been industrialized, and somewhere along the way, we forgot what real food tastes like.',
+            },
+          ],
+        },
+        {
+          _type: 'block',
+          _key: 'why2',
+          style: 'normal',
+          children: [
+            {
+              _type: 'span',
+              text: 'Long Life started in a small Indiana kitchen with a simple question: ',
+            },
+            {
+              _type: 'span',
+              text: 'What if we made juice the way it should be made?',
+              marks: ['em'],
+            },
+            {
+              _type: 'span',
+              text: ' Cold-pressed whole plants. No filler. No hype. Just clean inputs, honest process, and respect for the people drinking it.',
+            },
+          ],
+        },
+      ],
+      howHeading: 'How we work',
+      howContent: [
+        {
+          _type: 'block',
+          _key: 'how1',
+          style: 'normal',
+          children: [
+            {
+              _type: 'span',
+              text: 'We press in small batches. Limited runs mean we can control quality, source better ingredients, and respond to feedback faster than a factory ever could.',
+            },
+          ],
+        },
+        {
+          _type: 'block',
+          _key: 'how2',
+          style: 'normal',
+          children: [
+            {
+              _type: 'span',
+              text: 'We serve a community first—local pickup, real conversations, word-of-mouth growth. We\'re not chasing viral moments or scale-at-all-costs fundraising. We\'re building trust bottle by bottle.',
+            },
+          ],
+        },
+        {
+          _type: 'block',
+          _key: 'how3',
+          style: 'normal',
+          children: [
+            {
+              _type: 'span',
+              text: 'We refine constantly. Customer feedback shapes our recipes. Seasonal harvests dictate what we press. We adjust, improve, and stay honest about what works and what doesn\'t.',
+            },
+          ],
+        },
+      ],
+      promiseHeading: 'Our promise',
+      promises: [
+        {
+          title: 'Clarity over hype.',
+          description: "We won\'t make medical claims or promise magic. We make juice with real ingredients and tell you exactly what\'s in it.",
+        },
+        {
+          title: 'Craft over shortcuts.',
+          description: "Cold-pressed, same-day bottled, small-batch integrity. We could make more if we compromised. We won\'t.",
+        },
+        {
+          title: 'Ingredients you can point to.',
+          description: 'Every bottle is batch-dated. Every ingredient is tracked. If you want to know where something came from, just ask.',
+        },
+      ],
+      visionHeading: "Where we\'re going",
+      visionContent: [
+        {
+          _type: 'block',
+          _key: 'vision1',
+          style: 'normal',
+          children: [
+            {
+              _type: 'span',
+              text: "We\'re starting small. Indiana first. Local partnerships with farms, gyms, cafés, and people who value real food. As we grow, we\'ll expand—but only if we can maintain the same standards.",
+            },
+          ],
+        },
+        {
+          _type: 'block',
+          _key: 'vision2',
+          style: 'normal',
+          children: [
+            {
+              _type: 'span',
+              text: "Our goal isn\'t to be the biggest juice brand. It\'s to be the most honest one. A brand that people trust because we show up consistently and never cut corners. From a small Indiana kitchen to wherever this goes—Long Life is about building something that lasts.",
+            },
+          ],
+        },
+      ],
+      teamHeading: 'The team',
+      valuesHeading: 'What we stand for',
+      values: [
+        {
+          emoji: '🌱',
+          title: 'Real Ingredients',
+          description: 'Whole plants. No concentrates. No artificial anything.',
+        },
+        {
+          emoji: '🤝',
+          title: 'Community First',
+          description: "We grow by word of mouth, not paid ads. Trust is earned.",
+        },
+        {
+          emoji: '🔍',
+          title: 'Full Transparency',
+          description: 'Every ingredient tracked. Every batch dated. Zero secrets.',
+        },
+      ],
+      ctaHeading: 'Join the movement',
+      ctaText: "We\'re building a community that values real nourishment over shortcuts. Start with a bottle. Stay for the craft.",
+      disclaimer: 'Responsible Language: We make juice, not medical claims. Everyone is different. If you have a condition, talk to your practitioner. Our commitment is clean inputs and honest process.',
+      seo: {
+        metaTitle: 'About | Long Life',
+        metaDescription: 'Return to nature in a world of machines. Learn about our mission to bring people back to real nourishment and clear minds.',
+      },
+    });
+
+    // 12. Blends Page (Singleton)
+    await upsertDoc({
+      _id: 'blendsPage',
+      _type: 'blendsPage',
+      heading: 'Our Blends',
+      subheading: 'Each blend is carefully crafted with cold-pressed organic ingredients to support your wellness journey.',
+      seo: {
+        metaTitle: 'Our Blends | Long Life',
+        metaDescription: 'Explore our cold-pressed juice blends, each crafted for specific wellness functions.',
+      },
+    });
+
+    // 13. FAQ Page (Singleton)
+    await upsertDoc({
+      _id: 'faqPage',
+      _type: 'faqPage',
+      heading: 'Frequently Asked Questions',
+      subheading: 'Find answers to common questions about our products and service.',
+      seo: {
+        metaTitle: 'FAQ | Long Life',
+        metaDescription: 'Frequently asked questions about Long Life juices and ordering.',
+      },
+    });
+
+    // 14. Process Page (Singleton)
+    await upsertDoc({
+      _id: 'processPage',
+      _type: 'processPage',
+      heroHeading: 'How We Make It',
+      heroSubheading: 'Cold-pressed, same-day bottled, no shortcuts.',
+      processSteps: [
+        { _ref: 'process-1', _type: 'reference' },
+        { _ref: 'process-2', _type: 'reference' },
+        { _ref: 'process-3', _type: 'reference' },
+        { _ref: 'process-4', _type: 'reference' },
+      ],
+      whyHeading: 'Why Our Process Matters',
+      whyCards: [
+        {
+          title: 'Maximum Nutrient Retention',
+          description: 'Cold-pressing at low speeds preserves enzymes and vitamins that heat pasteurization destroys. You get living food, not dead liquid.',
+        },
+        {
+          title: 'No Concentrates or Additives',
+          description: 'Every bottle is 100% juice from whole plants. Nothing fake, nothing reconstituted. Just real ingredients.',
+        },
+        {
+          title: 'Traceability & Accountability',
+          description: 'Every batch is dated. Every ingredient is logged. If there\'s ever a question, we can trace it back to the farm.',
+        },
+      ],
+      commitmentHeading: 'Small-batch integrity',
+      commitmentText: 'We could make more. We could cut corners. We don\'t. Long Life grows by making the same thing, better, week after week. That\'s the craft.',
+      commitmentBadge: 'Made in limited runs. First come, first served.',
+      disclaimer: 'Responsible Language: We make juice, not medical claims. Everyone is different. If you have a condition, talk to your practitioner. Our commitment is clean inputs and honest process.',
+      seo: {
+        metaTitle: 'How We Make It | Long Life',
+        metaDescription: 'Cold-pressed, same-day bottled, no shortcuts. Learn about our process and commitment to quality.',
+      },
+    });
+
+    // 15. Ingredients & Sourcing Page (Singleton)
+    await upsertDoc({
+      _id: 'ingredientsSourcingPage',
+      _type: 'ingredientsSourcingPage',
+      heroHeading: 'Ingredients & Sourcing',
+      heroSubheading: 'We source from trusted growers who share our standards. Seasonal rotation is part of the craft.',
+      philosophyHeading: 'Our Sourcing Philosophy',
+      philosophyIntro: 'When an ingredient peaks, we buy it. When it\'s off-season, we pause or adjust the recipe. This is how food should work.',
+      philosophyContent: [
+        {
+          _type: 'block',
+          _key: 'phil1',
+          style: 'normal',
+          children: [
+            {
+              _type: 'span',
+              text: 'Industrial juice is designed for year-round consistency—same flavor, same color, same everything. That requires concentrates, flavor additives, and ingredients shipped from wherever they\'re cheapest.',
+            },
+          ],
+        },
+        {
+          _type: 'block',
+          _key: 'phil2',
+          style: 'normal',
+          children: [
+            {
+              _type: 'span',
+              text: 'Long Life is different. We work with seasonal harvest windows and regional farms. If a strawberry crop comes in strong, we lean into it. If a supplier\'s practices don\'t meet our bar, we find another or pause until we do.',
+            },
+          ],
+        },
+      ],
+      standardsHeading: 'Our Standards',
+      standards: [
+        { _ref: 'standard-1', _type: 'reference' },
+        { _ref: 'standard-2', _type: 'reference' },
+        { _ref: 'standard-3', _type: 'reference' },
+      ],
+      spotlightHeading: 'What Goes Into Our Blends',
+      ingredientCategories: [
+        {
+          categoryName: 'Fruits',
+          color: 'text-accent-yellow',
+          hoverColor: 'border-accent-yellow',
+          ingredients: ['Guava', 'Orange', 'Mango', 'Pineapple', 'Papaya', 'Strawberry', 'Raspberry', 'Red Apple', 'Green Apple', 'Pear'],
+        },
+        {
+          categoryName: 'Vegetables & Greens',
+          color: 'text-accent-green',
+          hoverColor: 'border-accent-green',
+          ingredients: ['Spinach', 'Cucumber', 'Beet', 'Carrot', 'Red Cabbage', 'Celery', 'Romaine'],
+        },
+        {
+          categoryName: 'Herbs & Roots',
+          color: 'text-accent-primary',
+          hoverColor: 'border-accent-primary',
+          ingredients: ['Ginger', 'Mint', 'Parsley'],
+        },
+      ],
+      spotlightNote: 'No concentrates. No "natural flavors." No fillers. Just whole plants, pressed fresh.',
+      farmHeading: 'Grow With Us',
+      farmText: 'We\'re building a network of farm partners who share our values. If you grow high-quality produce and want to work with a brand that respects your craft, let\'s talk.',
+      farmFormNote: 'We partner with farms in and around Indiana first, then expand as we grow.',
+      transparencyHeading: 'Transparency is our standard',
+      transparencyText: 'Have questions about where an ingredient came from, how it was grown, or why we chose it? Ask. We\'ll tell you. This level of traceability is rare in the juice industry—we think it should be the norm.',
+      seo: {
+        metaTitle: 'Ingredients & Sourcing | Long Life',
+        metaDescription: 'Transparent sourcing from trusted growers. Organic-first, seasonal rotation, batch-dated quality.',
+      },
+    });
+
+    // 16. Subscriptions Page (Singleton)
+    await upsertDoc({
+      _id: 'subscriptionsPage',
+      _type: 'subscriptionsPage',
+      heroHeading: 'Subscriptions',
+      heroTagline: 'Your body likes rhythm.',
+      heroText: 'Subscribe to a weekly or bi-weekly drop. You choose your blend mix and size. Skip or pause anytime.',
+      howHeading: 'How It Works',
+      howSteps: [
+        {
+          stepNumber: 1,
+          title: 'Choose Your Blends',
+          description: 'Select from Yellow, Red, or Green Bomb. Mix and match based on your goals.',
+        },
+        {
+          stepNumber: 2,
+          title: 'Set Your Frequency',
+          description: 'Weekly or bi-weekly delivery. Pause, skip, or adjust anytime.',
+        },
+        {
+          stepNumber: 3,
+          title: 'Get Priority Access',
+          description: 'Guaranteed inventory. First notice on seasonal drops and new blends.',
+        },
+      ],
+      perksHeading: 'Member Perks',
+      perks: [
+        {
+          title: 'Priority Access',
+          description: 'Guaranteed inventory on limited runs. Never miss a batch.',
+        },
+        {
+          title: 'Early Tasting Invites',
+          description: 'Be the first to try new formulas and seasonal blends before they launch.',
+        },
+        {
+          title: 'Flexible Plans',
+          description: 'Customize your mix. Change sizes. Skip weeks. Cancel anytime.',
+        },
+        {
+          title: 'Community Connection',
+          description: 'Join pickup days, share feedback, and help shape what we make next.',
+        },
+      ],
+      pricingHeading: 'Subscription Plans',
+      plans: [
+        {
+          name: 'Weekly',
+          description: 'Fresh juice every week. Build a consistent routine.',
+          isPopular: false,
+          priceItems: [
+            { size: '1-Gallon', price: '$50/week' },
+            { size: '½-Gallon', price: '$35/week' },
+            { size: 'Shots (4-pack)', price: '$18/week' },
+          ],
+          buttonText: 'Start Weekly Plan',
+        },
+        {
+          name: 'Bi-Weekly',
+          description: 'Every other week. Perfect for lighter routines or smaller households.',
+          isPopular: true,
+          priceItems: [
+            { size: '1-Gallon', price: '$50/delivery' },
+            { size: '½-Gallon', price: '$35/delivery' },
+            { size: 'Shots (4-pack)', price: '$18/delivery' },
+          ],
+          buttonText: 'Start Bi-Weekly Plan',
+        },
+      ],
+      pricingNote: 'All plans include free local pickup. Delivery options coming soon.',
+      ctaHeading: 'Ready to Start?',
+      ctaText: 'Join the community. Lock in your weekly or bi-weekly drops.',
+      seo: {
+        metaTitle: 'Subscriptions | Long Life',
+        metaDescription: 'Subscribe to weekly or bi-weekly juice drops. Priority access to limited runs and seasonal blends.',
+      },
+    });
+
+    // 17. Wholesale & Teams Page (Singleton)
+    await upsertDoc({
+      _id: 'wholesalePage',
+      _type: 'wholesalePage',
+      heroHeading: 'Wholesale & Teams',
+      heroTagline: 'Real juice for real businesses.',
+      heroText: 'We partner with select cafés, gyms, and offices that value real ingredients and want to offer something better to their communities.',
+      partnersHeading: 'Who We Work With',
+      partnerTypes: [
+        {
+          emoji: '☕',
+          title: 'Cafés & Markets',
+          description: 'Stock our bottles and shots in your cooler. Give customers a premium alternative to commodity juice.',
+        },
+        {
+          emoji: '💪',
+          title: 'Gyms & Studios',
+          description: 'Fuel members before and after workouts with clean, functional blends.',
+        },
+        {
+          emoji: '🏢',
+          title: 'Offices & Teams',
+          description: 'Upgrade your wellness program with weekly juice fridges or event bars.',
+        },
+      ],
+      programsHeading: 'Wholesale Programs',
+      programs: [
+        {
+          title: 'Retail Bottles & Shots',
+          description: 'Stock our signature blends in retail-ready bottles. Individual portions or shots for grab-and-go customers. Weekly or bi-weekly delivery.',
+          options: [
+            { name: '16oz Bottles', description: 'Wholesale pricing available' },
+            { name: '2oz Shots', description: 'Perfect for countertop displays' },
+          ],
+        },
+        {
+          title: 'Refillable Bulk Jugs',
+          description: 'Large-format jugs for high-volume locations. We deliver, you serve. Ideal for juice bars, smoothie shops, and event catering.',
+          options: [
+            { name: '1-Gallon Jugs', description: 'Serve 16 cups per jug' },
+            { name: '2.5-Gallon Jugs', description: 'For events and high-traffic days' },
+          ],
+        },
+        {
+          title: 'Team Wellness Fridges',
+          description: 'Keep your office or team stocked with fresh juice. We set up a weekly delivery schedule and handle invoicing. You choose the blend mix and quantities.',
+          note: 'Custom Programs\nPricing scales with team size. Minimum 12 bottles per delivery.',
+          noteColor: 'border-accent-green',
+        },
+        {
+          title: 'Event Bars & Pop-Ups',
+          description: 'Bring Long Life to your event, retreat, or conference. We can provide pre-packaged bottles or a full juice bar setup with on-site service.',
+          note: 'Booking Required\nMinimum 48-hour notice. Pricing varies by event size and service level.',
+          noteColor: 'border-accent-yellow',
+        },
+      ],
+      whyHeading: 'Why Partner With Long Life',
+      benefits: [
+        {
+          title: 'Real Ingredients',
+          description: 'No concentrates, no fillers, no artificial anything. Just cold-pressed whole fruits, roots, and greens.',
+        },
+        {
+          title: 'Small-Batch Quality',
+          description: 'We press, chill, and bottle the same day. Maximum freshness, zero compromise.',
+        },
+        {
+          title: 'Local & Transparent',
+          description: 'Made in Indiana. We know our farms, track our lots, and batch-date every bottle.',
+        },
+        {
+          title: 'Reliable Partner',
+          description: 'Consistent delivery schedules. Responsive communication. We show up for our partners.',
+        },
+      ],
+      ctaHeading: 'Ready to Partner?',
+      ctaText: 'We\'re selective about who we work with. Tell us about your business and how you\'d serve Long Life to your community.',
+      ctaNote: 'We typically respond within 2-3 business days.',
+      seo: {
+        metaTitle: 'Wholesale & Teams | Long Life',
+        metaDescription: 'Partner with Long Life for wholesale juice programs. Retail bottles, bulk jugs, team wellness fridges, and event bars.',
+      },
+    });
+
+    // 18. FAQs
     await upsertDoc({
       _id: 'faq-1',
       _type: 'faq',
@@ -687,7 +1126,7 @@ async function seedData() {
       title: 'Why Regenerative Farming Matters',
       slug: { current: 'why-regenerative-farming-matters' },
       publishedAt: '2024-01-15T10:00:00Z',
-      excerpt: "Regenerative agriculture isn't just a buzzword—it's the future of food. Here's how our farm partners are rebuilding soil health while growing nutrient-dense produce.",
+      excerpt: "Regenerative agriculture isn\'t just a buzzword—it\'s the future of food. Here\'s how our farm partners are rebuilding soil health while growing nutrient-dense produce.",
       author: 'Long Life Team',
       categories: ['Sourcing', 'Sustainability'],
     });
@@ -698,7 +1137,7 @@ async function seedData() {
       title: 'Cold-Press vs. HPP: What You Need to Know',
       slug: { current: 'cold-press-vs-hpp' },
       publishedAt: '2024-02-01T10:00:00Z',
-      excerpt: "Most \"cold-pressed\" juice isn't actually cold-pressed anymore. We break down the difference between hydraulic pressing and high-pressure processing.",
+      excerpt: "Most \"cold-pressed\" juice isn\'t actually cold-pressed anymore. We break down the difference between hydraulic pressing and high-pressure processing.",
       author: 'Long Life Team',
       categories: ['Production', 'Transparency'],
     });

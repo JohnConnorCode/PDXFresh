@@ -16,6 +16,12 @@ import testimonial from './testimonial';
 import teamMember from './teamMember';
 import aboutPage from './aboutPage';
 import socialProof from './socialProof';
+import blendsPage from './blendsPage';
+import faqPage from './faqPage';
+import processPage from './processPage';
+import ingredientsSourcingPage from './ingredientsSourcingPage';
+import subscriptionsPage from './subscriptionsPage';
+import wholesalePage from './wholesalePage';
 
 export const schemaTypes = [
   blockContent,
@@ -23,6 +29,12 @@ export const schemaTypes = [
   navigation,
   homePage,
   aboutPage,
+  blendsPage,
+  faqPage,
+  processPage,
+  ingredientsSourcingPage,
+  subscriptionsPage,
+  wholesalePage,
   socialProof,
   page,
   blend,
