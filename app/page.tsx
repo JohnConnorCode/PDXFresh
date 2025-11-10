@@ -7,6 +7,8 @@ import { RichText } from '@/components/RichText';
 import { BlendCard } from '@/components/BlendCard';
 import { urlFor } from '@/lib/image';
 import { FadeIn, StaggerContainer, FloatingElement } from '@/components/animations';
+import { TestimonialCarousel } from '@/components/TestimonialCarousel';
+import { StatsSection } from '@/components/StatsSection';
 
 export const revalidate = 60;
 
@@ -30,7 +32,7 @@ export default async function Home() {
     );
   }
 
-  const { hero, valueProps, featuredBlends, sizesPricing, processIntro, processSteps, sourcingIntro, standards, communityBlurb } = homePage;
+  const { hero, valueProps, featuredBlends, sizesPricing, processIntro, processSteps, sourcingIntro, standards, communityBlurb, socialProof } = homePage;
 
   return (
     <>
@@ -181,6 +183,33 @@ export default async function Home() {
               Reserve This Week
             </Link>
           </div>
+        </Section>
+      )}
+
+      {/* Stats Section */}
+      {socialProof?.stats && (
+        <Section>
+          <StatsSection stats={[
+            { label: 'Customers Served', value: socialProof.stats.customersServed || 0, suffix: '+' },
+            { label: 'Batches Made', value: socialProof.stats.batchesMade || 0, suffix: '+' },
+            { label: 'Years Crafting', value: socialProof.stats.yearsInBusiness || 0 },
+            { label: 'Bottles Produced', value: socialProof.stats.bottlesProduced || 0, suffix: '+' },
+          ]} />
+        </Section>
+      )}
+
+      {/* Testimonials */}
+      {socialProof?.featuredTestimonials && socialProof.featuredTestimonials.length > 0 && (
+        <Section className="bg-gray-50">
+          <FadeIn direction="up" className="text-center mb-12">
+            <h2 className="font-heading text-4xl font-bold mb-4" style={{lineHeight: "0.9"}}>
+              What People Say
+            </h2>
+            <p className="text-lg text-muted">
+              Real results from real humans.
+            </p>
+          </FadeIn>
+          <TestimonialCarousel testimonials={socialProof.featuredTestimonials} />
         </Section>
       )}
 

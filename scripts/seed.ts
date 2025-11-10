@@ -568,7 +568,103 @@ async function seedData() {
       answer: 'Three things: regenerative sourcing (we trace every farm), true cold-press (no HPP shortcuts), and frozen delivery (no preservatives needed).',
     });
 
-    // 12. Journal Posts
+    // 12. Testimonials
+    console.log('\n📝 Creating testimonials...\n');
+
+    const testimonialImage1 = await uploadImageFromUrl(
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80',
+      'customer-sarah.jpg'
+    );
+
+    const testimonialImage2 = await uploadImageFromUrl(
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80',
+      'customer-mike.jpg'
+    );
+
+    const testimonialImage3 = await uploadImageFromUrl(
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
+      'customer-james.jpg'
+    );
+
+    const testimonial1 = await upsertDoc({
+      _id: 'testimonial-1',
+      _type: 'testimonial',
+      name: 'Sarah M.',
+      role: 'Marathon Runner',
+      quote: 'The Red Bomb is my go-to after long runs. I actually feel the difference in recovery time.',
+      image: testimonialImage1,
+      blend: { _ref: 'blend-red-bomb', _type: 'reference' },
+      isFeatured: true,
+      order: 1,
+    });
+
+    const testimonial2 = await upsertDoc({
+      _id: 'testimonial-2',
+      _type: 'testimonial',
+      name: 'Mike Chen',
+      role: 'Entrepreneur',
+      quote: 'Yellow Bomb keeps me sharp during back-to-back meetings. No crash, just sustained energy.',
+      image: testimonialImage2,
+      blend: { _ref: 'blend-yellow-bomb', _type: 'reference' },
+      isFeatured: true,
+      order: 2,
+    });
+
+    const testimonial3 = await upsertDoc({
+      _id: 'testimonial-3',
+      _type: 'testimonial',
+      name: 'James R.',
+      role: 'Yoga Instructor',
+      quote: 'Green Bomb is part of my daily practice now. My students have noticed the difference in my energy.',
+      image: testimonialImage3,
+      blend: { _ref: 'blend-green-bomb', _type: 'reference' },
+      isFeatured: true,
+      order: 3,
+    });
+
+    const testimonial4 = await upsertDoc({
+      _id: 'testimonial-4',
+      _type: 'testimonial',
+      name: 'Lisa K.',
+      role: 'Nurse',
+      quote: 'Working 12-hour shifts, I need real fuel. Long Life keeps me going without the junk.',
+      isFeatured: true,
+      order: 4,
+    });
+
+    const testimonial5 = await upsertDoc({
+      _id: 'testimonial-5',
+      _type: 'testimonial',
+      name: 'David T.',
+      role: 'CrossFit Athlete',
+      quote: 'I\'ve tried every supplement out there. This is the only thing that\'s actually whole food.',
+      isFeatured: true,
+      order: 5,
+    });
+
+    // 13. Social Proof Singleton
+    console.log('\n📊 Creating social proof data...\n');
+
+    await upsertDoc({
+      _id: 'socialProof',
+      _type: 'socialProof',
+      stats: {
+        customersServed: 1200,
+        batchesMade: 450,
+        yearsInBusiness: 2,
+        bottlesProduced: 4800,
+      },
+      communityHashtag: '#DrinkLongLife',
+      featuredTestimonials: [
+        { _ref: testimonial1._id, _type: 'reference' },
+        { _ref: testimonial2._id, _type: 'reference' },
+        { _ref: testimonial3._id, _type: 'reference' },
+        { _ref: testimonial4._id, _type: 'reference' },
+        { _ref: testimonial5._id, _type: 'reference' },
+      ],
+    });
+
+    // 14. Journal Posts
     await upsertDoc({
       _id: 'post-regenerative-farming',
       _type: 'post',

@@ -123,7 +123,25 @@ export const homePageQuery = groq`*[_type == "homePage"][0]{
     "icon": icon ${imageFragment}
   },
   communityBlurb,
-  "newsletterCta": newsletterCta-> ${ctaFragment}
+  "newsletterCta": newsletterCta-> ${ctaFragment},
+  "socialProof": *[_type == "socialProof"][0]{
+    stats,
+    communityHashtag,
+    "featuredTestimonials": featuredTestimonials[]->{
+      _id,
+      name,
+      role,
+      quote,
+      "image": image ${imageFragment},
+      "blend": blend->{
+        _id,
+        name,
+        slug { current }
+      },
+      isFeatured,
+      order
+    } | order(order asc)
+  }
 }`;
 
 export const blendsQuery = groq`*[_type == "blend"] | order(order asc) {
