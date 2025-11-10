@@ -95,6 +95,22 @@ async function seedData() {
       'green-bomb-celery.jpg'
     );
 
+    // Hero slider images
+    const heroSlide1Image = await uploadImageFromUrl(
+      'https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=1920&q=90',
+      'hero-slide-1-green-juice.jpg'
+    );
+
+    const heroSlide2Image = await uploadImageFromUrl(
+      'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=1920&q=90',
+      'hero-slide-2-juice-bottles.jpg'
+    );
+
+    const heroSlide3Image = await uploadImageFromUrl(
+      'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=1920&q=90',
+      'hero-slide-3-turmeric.jpg'
+    );
+
     // 1. Site Settings (Singleton)
     await upsertDoc({
       _id: 'siteSettings',
@@ -465,6 +481,29 @@ async function seedData() {
     await upsertDoc({
       _id: 'homePage',
       _type: 'homePage',
+      heroSlides: [
+        {
+          heading: 'Peak Performance Starts Here',
+          subheading: 'Cold-pressed, small-batch juices crafted for serious athletes and health-conscious humans.',
+          ctaText: 'Shop Blends',
+          ctaLink: '/blends',
+          image: heroSlide1Image,
+        },
+        {
+          heading: 'Real Ingredients. Real Results.',
+          subheading: 'No concentrates. No shortcuts. Just whole fruits, roots, and greens pressed fresh weekly.',
+          ctaText: 'Our Process',
+          ctaLink: '/how-we-make-it',
+          image: heroSlide2Image,
+        },
+        {
+          heading: 'Small-Batch Integrity',
+          subheading: 'Limited runs. First come, first served. Made in Indiana with ingredients you can trace.',
+          ctaText: 'Learn More',
+          ctaLink: '/about',
+          image: heroSlide3Image,
+        },
+      ],
       hero: {
         heading: 'Small-batch juice for real humans.',
         subheading: 'Cold-pressed, ingredient-dense, made weekly in Indiana.\nDrink what your body recognizes.',
