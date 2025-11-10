@@ -1,15 +1,14 @@
 import { createClient } from '@sanity/client';
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'jrc9x3mn';
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
 const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01';
 
-let cachedClient: ReturnType<typeof createClient> | null | undefined;
-let cachedPreviewClient: ReturnType<typeof createClient> | null | undefined;
+let cachedClient: ReturnType<typeof createClient> | null = null;
+let cachedPreviewClient: ReturnType<typeof createClient> | null = null;
 
 function createSanityClient() {
   try {
-    if (!projectId) return null;
     return createClient({
       projectId,
       dataset,
@@ -24,7 +23,6 @@ function createSanityClient() {
 
 function createSanityPreviewClient() {
   try {
-    if (!projectId) return null;
     return createClient({
       projectId,
       dataset,
@@ -39,27 +37,21 @@ function createSanityPreviewClient() {
 
 export function getClient(usePreview = false) {
   if (usePreview) {
-    if (cachedPreviewClient === undefined) {
+    if (!cachedPreviewClient) {
       cachedPreviewClient = createSanityPreviewClient();
     }
-    return cachedPreviewClient;
+    return cachedPreviewClient!;
   } else {
-    if (cachedClient === undefined) {
+    if (!cachedClient) {
       cachedClient = createSanityClient();
     }
-    return cachedClient;
+    return cachedClient!;
   }
 }
 
-// Initialize clients safely
-try {
-  cachedClient = createSanityClient();
-  cachedPreviewClient = createSanityPreviewClient();
-} catch {
-  // Clients will be null if initialization fails
-  cachedClient = null;
-  cachedPreviewClient = null;
-}
+// Initialize clients
+cachedClient = createSanityClient();
+cachedPreviewClient = createSanityPreviewClient();
 
-export const client = cachedClient || createSanityClient();
-export const previewClient = cachedPreviewClient || createSanityPreviewClient();
+export const client = cachedClient!;
+export const previewClient = cachedPreviewClient!;
