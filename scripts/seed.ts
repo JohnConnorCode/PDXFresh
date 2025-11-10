@@ -5,8 +5,23 @@
  * Run with: npx tsx scripts/seed.ts
  */
 
+import fs from 'fs';
+import path from 'path';
 import { createClient } from '@sanity/client';
 import type { SanityDocument } from '@sanity/client';
+
+// Load .env.local
+const envPath = path.resolve(process.cwd(), '.env.local');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf-8');
+  envContent.split('\n').forEach((line) => {
+    const [key, ...valueParts] = line.split('=');
+    if (key && valueParts.length > 0) {
+      const value = valueParts.join('=');
+      process.env[key.trim()] = value.trim();
+    }
+  });
+}
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',
@@ -428,7 +443,7 @@ async function seedData() {
     await upsertDoc({
       _id: 'faq-2',
       _type: 'faq',
-      question: 'What's the recommended serving size?',
+      question: "What's the recommended serving size?",
       answer: '2 oz daily, preferably on an empty stomach in the morning. You can scale up to 4 oz for pre-workout or extra immune support.',
     });
 
@@ -481,7 +496,7 @@ async function seedData() {
       title: 'Why Regenerative Farming Matters',
       slug: { current: 'why-regenerative-farming-matters' },
       publishedAt: '2024-01-15T10:00:00Z',
-      excerpt: 'Regenerative agriculture isn't just a buzzword—it's the future of food. Here's how our farm partners are rebuilding soil health while growing nutrient-dense produce.',
+      excerpt: "Regenerative agriculture isn't just a buzzword—it's the future of food. Here's how our farm partners are rebuilding soil health while growing nutrient-dense produce.",
       author: 'Long Life Team',
       categories: ['Sourcing', 'Sustainability'],
     });
@@ -492,7 +507,7 @@ async function seedData() {
       title: 'Cold-Press vs. HPP: What You Need to Know',
       slug: { current: 'cold-press-vs-hpp' },
       publishedAt: '2024-02-01T10:00:00Z',
-      excerpt: 'Most "cold-pressed" juice isn't actually cold-pressed anymore. We break down the difference between hydraulic pressing and high-pressure processing.',
+      excerpt: "Most \"cold-pressed\" juice isn't actually cold-pressed anymore. We break down the difference between hydraulic pressing and high-pressure processing.",
       author: 'Long Life Team',
       categories: ['Production', 'Transparency'],
     });
