@@ -92,12 +92,12 @@ export function HeroSlider({ slides }: HeroSliderProps) {
           </div>
 
           {/* Content */}
-          <div className="relative z-20 h-full flex items-center">
+          <div className="relative z-20 h-full flex items-start pt-32 sm:pt-40 md:items-center md:pt-0">
             <div className="max-w-7xl mx-auto px-6 sm:px-8 w-full">
               <div className="max-w-3xl">
                 {/* Heading */}
                 <h1
-                  className={`font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-4 sm:mb-6 leading-tight transition-all duration-1000 ${
+                  className={`font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-4 sm:mb-6 leading-tight transition-all duration-1000 ${
                     index === currentSlide && (hasAnimated || index !== 0)
                       ? 'translate-y-0 opacity-100 delay-100'
                       : index === currentSlide
@@ -109,7 +109,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                 </h1>
                 {/* Subheading */}
                 <p
-                  className={`text-lg sm:text-xl md:text-2xl text-white/90 mb-6 sm:mb-8 leading-relaxed transition-all duration-1000 ${
+                  className={`text-xl sm:text-2xl md:text-3xl text-white/90 mb-6 sm:mb-8 leading-relaxed transition-all duration-1000 ${
                     index === currentSlide && (hasAnimated || index !== 0)
                       ? 'translate-y-0 opacity-100 delay-300'
                       : index === currentSlide
@@ -144,14 +144,14 @@ export function HeroSlider({ slides }: HeroSliderProps) {
         </div>
       ))}
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - Minimal on mobile, positioned lower to avoid text */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-14 h-14 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 flex items-center justify-center group touch-manipulation"
+        className="absolute left-3 sm:left-4 md:left-8 bottom-24 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 flex items-center justify-center group touch-manipulation"
         aria-label="Previous slide"
       >
         <svg
-          className="w-6 h-6 text-white group-hover:scale-110 transition-transform"
+          className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 group-hover:text-white group-hover:scale-110 transition-all"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -162,11 +162,11 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 
       <button
         onClick={nextSlide}
-        className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-14 h-14 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 flex items-center justify-center group touch-manipulation"
+        className="absolute right-3 sm:right-4 md:right-8 bottom-24 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 flex items-center justify-center group touch-manipulation"
         aria-label="Next slide"
       >
         <svg
-          className="w-6 h-6 text-white group-hover:scale-110 transition-transform"
+          className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 group-hover:text-white group-hover:scale-110 transition-all"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
