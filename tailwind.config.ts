@@ -11,7 +11,7 @@ const config: Config = {
         // Brand colors (can be overridden via CSS variables from Sanity)
         'accent-primary': 'var(--accent-primary, #0f5348)',
         'accent-yellow': 'var(--accent-yellow, #d7f25c)',
-        'accent-green': 'var(--accent-green, #8cbfa4)',
+        'accent-green': '#8cbfa4',
         'accent-cream': 'var(--accent-cream, #f0ecea)',
       },
       fontFamily: {
