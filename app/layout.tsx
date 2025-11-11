@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Jost } from 'next/font/google';
 import '@/styles/globals.css';
 
-const inter = Inter({
-  variable: '--font-inter',
+const jost = Jost({
+  variable: '--font-jost',
   subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
@@ -18,8 +19,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable} style={{ '--font-futura': 'Futura, "Futura PT", "Century Gothic", "Trebuchet MS", Arial, sans-serif' } as any}>
-      <body className="bg-white text-black">{children}</body>
+    <html lang="en" className={jost.variable}>
+      <body className="bg-white text-black font-sans">{children}</body>
     </html>
   );
 }
