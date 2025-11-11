@@ -129,8 +129,6 @@ export default async function HowWeMakeItPage() {
                           className="object-cover group-hover:scale-105 transition-transform duration-700"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
-                        {/* Gradient overlay */}
-                        <div className={`absolute inset-0 bg-gradient-to-b ${gradients[idx % 3]} opacity-40`} />
 
                         {/* Step number badge */}
                         <div className="absolute top-4 left-4 w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg">

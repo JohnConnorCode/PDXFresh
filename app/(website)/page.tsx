@@ -427,6 +427,8 @@ export default async function Home() {
                               fill
                               className="object-cover transition-transform duration-700 group-hover:scale-110"
                               sizes="(max-width: 768px) 100vw, 50vw"
+                              loading="eager"
+                              quality={85}
                             />
                             {/* Gradient overlay on hover */}
                             <div className={`absolute inset-0 bg-gradient-to-br ${gradients[idx % 3]} opacity-0 group-hover:opacity-30 transition-opacity duration-500`} />
