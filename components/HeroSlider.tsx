@@ -10,7 +10,8 @@ interface Slide {
   subheading: string;
   ctaText?: string;
   ctaLink?: string;
-  image?: any;
+  desktopImage?: any;
+  mobileImage?: any;
 }
 
 interface HeroSliderProps {
@@ -59,17 +60,35 @@ export function HeroSlider({ slides }: HeroSliderProps) {
         >
           {/* Background Image with Ken Burns zoom-out effect */}
           <div className="absolute inset-0 overflow-hidden">
-            {slide.image ? (
-              <Image
-                src={urlFor(slide.image).width(1920).height(1080).url()}
-                alt={slide.heading}
-                fill
-                className={`object-cover transition-transform duration-[20000ms] ease-out ${
-                  index === currentSlide ? 'scale-100' : 'scale-110'
-                }`}
-                priority={index === 0}
-                quality={90}
-              />
+            {slide.desktopImage || slide.mobileImage ? (
+              <>
+                {/* Desktop Image - hidden on mobile, shown on md+ */}
+                {slide.desktopImage && (
+                  <Image
+                    src={urlFor(slide.desktopImage).width(1920).height(1080).url()}
+                    alt={slide.heading}
+                    fill
+                    className={`object-cover hidden md:block transition-transform duration-[20000ms] ease-out ${
+                      index === currentSlide ? 'scale-100' : 'scale-110'
+                    }`}
+                    priority={index === 0}
+                    quality={90}
+                  />
+                )}
+                {/* Mobile Image - shown on mobile, hidden on md+ */}
+                {slide.mobileImage && (
+                  <Image
+                    src={urlFor(slide.mobileImage).width(768).height(1024).url()}
+                    alt={slide.heading}
+                    fill
+                    className={`object-cover md:hidden transition-transform duration-[20000ms] ease-out ${
+                      index === currentSlide ? 'scale-100' : 'scale-110'
+                    }`}
+                    priority={index === 0}
+                    quality={90}
+                  />
+                )}
+              </>
             ) : (
               <div className={`w-full h-full bg-gradient-to-br from-accent-yellow/20 via-accent-primary/20 to-accent-green/20 transition-transform duration-[20000ms] ease-out ${
                 index === currentSlide ? 'scale-100' : 'scale-110'

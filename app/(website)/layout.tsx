@@ -1,21 +1,8 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import '@/styles/globals.css';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { BackToTop } from '@/components/BackToTop';
 import { client } from '@/lib/sanity.client';
 import { siteSettingsQuery, navigationQuery } from '@/lib/sanity.queries';
-
-const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
-});
-
-export const metadata: Metadata = {
-  title: 'Long Life',
-  description: 'Cold-pressed organic juices crafted for vitality.',
-};
 
 async function getGlobalData() {
   try {
@@ -30,14 +17,23 @@ async function getGlobalData() {
   }
 }
 
-export default async function RootLayout({
+export default async function WebsiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { siteSettings, navigation } = await getGlobalData();
+
   return (
-    <html lang="en" className={inter.variable} style={{ '--font-futura': 'Futura, "Futura PT", "Century Gothic", "Trebuchet MS", Arial, sans-serif' } as any}>
-      <body className="bg-white text-black">{children}</body>
-    </html>
+    <>
+      <Header
+        siteSettings={siteSettings}
+        navigation={navigation}
+        ctaLabel="Reserve This Week"
+      />
+      <main className="min-h-screen">{children}</main>
+      <Footer siteSettings={siteSettings} navigation={navigation} />
+      <BackToTop />
+    </>
   );
 }
