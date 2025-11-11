@@ -62,11 +62,35 @@ export default async function AboutPage() {
   return (
     <>
       {/* Hero */}
-      <Section className="bg-gradient-to-br from-accent-cream via-accent-yellow/20 to-accent-green/20 py-32 relative overflow-hidden">
+      <Section className="py-32 relative overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          {/* Desktop Image */}
+          <Image
+            src="/slider-desktop-3.png"
+            alt="About Long Life"
+            fill
+            className="object-cover hidden md:block scale-110 animate-ken-burns"
+            priority
+            quality={90}
+            sizes="100vw"
+          />
+          {/* Mobile Image */}
+          <Image
+            src="/slider-mobile-3.png"
+            alt="About Long Life"
+            fill
+            className="object-cover md:hidden scale-110 animate-ken-burns"
+            priority
+            quality={90}
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-accent-cream/90 via-accent-yellow/70 to-accent-green/70" />
+        </div>
         {/* Organic background shapes */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent-yellow/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent-green/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-accent-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent-yellow/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 z-[1]" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent-green/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 z-[1]" />
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-accent-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 z-[1]" />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <FadeIn direction="up" delay={0.2}>

@@ -62,9 +62,25 @@ export default async function HowWeMakeItPage() {
       <Section className="py-24 relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <div
-            className="absolute inset-0 bg-cover bg-center scale-110 animate-ken-burns"
-            style={{ backgroundImage: 'url(/slider-desktop-2.png)' }}
+          {/* Desktop Image */}
+          <Image
+            src="/slider-desktop-2.png"
+            alt="How We Make It"
+            fill
+            className="object-cover hidden md:block scale-110 animate-ken-burns"
+            priority
+            quality={90}
+            sizes="100vw"
+          />
+          {/* Mobile Image */}
+          <Image
+            src="/slider-mobile-2.png"
+            alt="How We Make It"
+            fill
+            className="object-cover md:hidden scale-110 animate-ken-burns"
+            priority
+            quality={90}
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-accent-primary/50 to-accent-green/40" />
         </div>

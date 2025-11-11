@@ -57,6 +57,58 @@ body {
   animation: ken-burns 20s ease-out forwards;
 }
 
+/* Smooth image fade-in animation */
+@keyframes image-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Apply fade-in to all Next.js images */
+img[data-nimg] {
+  animation: image-fade-in 0.4s ease-in-out;
+}
+
+/* Faster fade for priority images (above the fold) */
+img[data-nimg][fetchpriority="high"],
+img[data-nimg].priority {
+  animation: image-fade-in 0.3s ease-in-out;
+}
+
+/* For images that are already loaded (cached), use instant display */
+img[data-nimg].complete {
+  animation: none;
+}
+
+/* Loading state for images */
+img[data-nimg]:not([src]) {
+  opacity: 0;
+}
+
+/* Smooth transition for background images as well */
+.image-container {
+  transition: opacity 0.4s ease-in-out;
+}
+
+/* Skeleton loader for images while loading */
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
 /* Typography utilities */
 @layer utilities {
   .leading-tight-90 {

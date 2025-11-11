@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Image from 'next/image';
 import { client } from '@/lib/sanity.client';
 import { blendsQuery, blendsPageQuery } from '@/lib/sanity.queries';
 import { Section } from '@/components/Section';
@@ -44,7 +45,26 @@ export default async function BlendsPage() {
       <Section className="py-24 relative overflow-hidden">
         {/* Background Image with Ken Burns zoom-out effect */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=1600&h=900&fit=crop')] bg-cover bg-center scale-110 animate-ken-burns" />
+          {/* Desktop Image */}
+          <Image
+            src="/slider-desktop-1.png"
+            alt="Our Blends"
+            fill
+            className="object-cover hidden md:block scale-110 animate-ken-burns"
+            priority
+            quality={90}
+            sizes="100vw"
+          />
+          {/* Mobile Image */}
+          <Image
+            src="/slider-mobile-1.png"
+            alt="Our Blends"
+            fill
+            className="object-cover md:hidden scale-110 animate-ken-burns"
+            priority
+            quality={90}
+            sizes="100vw"
+          />
           <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/80 via-accent-green/70 to-accent-yellow/60" />
         </div>
 
