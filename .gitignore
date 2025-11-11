@@ -35,6 +35,9 @@ yarn-error.log*
 *.swp
 *.swo
 
+# TypeScript
+*.tsbuildinfo
+
 # OS
 .DS_Store
 Thumbs.db
