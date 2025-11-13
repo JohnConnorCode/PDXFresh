@@ -185,6 +185,20 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
     canceledAt: canceled_at ? new Date(canceled_at * 1000) : undefined,
   });
 
+  // Sync subscription status and current plan to profile
+  const currentPlanLabel = metadata?.tierKey
+    ? `${metadata.tierKey}${metadata.sizeKey ? ` - ${metadata.sizeKey}` : ''}`
+    : undefined;
+
+  await supabase
+    .from('profiles')
+    .update({
+      subscription_status: status,
+      current_plan: currentPlanLabel || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', profile.id);
+
   console.log(`Subscription ${id} ${status} for user ${profile.id}`);
 }
 
@@ -192,9 +206,10 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
  * Handle subscription deletion
  */
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  const { id } = subscription;
+  const { id, customer } = subscription;
   const supabase = createServiceRoleClient();
 
+  // Update subscription record
   await supabase
     .from('subscriptions')
     .update({
@@ -202,6 +217,36 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       canceled_at: new Date().toISOString(),
     })
     .eq('stripe_subscription_id', id);
+
+  // Find user and update profile
+  if (typeof customer === 'string') {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('stripe_customer_id', customer)
+      .single();
+
+    if (profile) {
+      // Check if user has any other active subscriptions
+      const { data: activeSubscriptions } = await supabase
+        .from('subscriptions')
+        .select('id')
+        .eq('user_id', profile.id)
+        .in('status', ['active', 'trialing'])
+        .limit(1);
+
+      // Only update status to 'canceled' if no other active subscriptions
+      if (!activeSubscriptions || activeSubscriptions.length === 0) {
+        await supabase
+          .from('profiles')
+          .update({
+            subscription_status: 'canceled',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', profile.id);
+      }
+    }
+  }
 
   console.log(`Subscription ${id} deleted`);
 }

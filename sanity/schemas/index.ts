@@ -24,6 +24,8 @@ import subscriptionsPage from './subscriptionsPage';
 import wholesalePage from './wholesalePage';
 import stripeProduct from './stripeProduct';
 import subscriptionPageSettings from './subscriptionPageSettings';
+import partnershipPerk from './partnershipPerk';
+import userDiscount from './userDiscount';
 
 export const schemaTypes = [
   blockContent,
@@ -52,4 +54,6 @@ export const schemaTypes = [
   teamMember,
   stripeProduct,
   subscriptionPageSettings,
+  partnershipPerk,
+  userDiscount,
 ];

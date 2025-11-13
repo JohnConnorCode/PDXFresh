@@ -249,3 +249,107 @@ export async function getPriceMetadata(priceId: string): Promise<{
     return null;
   }
 }
+
+/**
+ * Get Stripe customer details
+ */
+export async function getStripeCustomer(
+  customerId: string
+): Promise<Stripe.Customer | null> {
+  try {
+    const customer = await stripe.customers.retrieve(customerId);
+    if (customer.deleted) {
+      return null;
+    }
+    return customer as Stripe.Customer;
+  } catch (error) {
+    console.error(`Error fetching Stripe customer ${customerId}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Get customer invoices with pagination
+ */
+export async function getCustomerInvoices(
+  customerId: string,
+  options: {
+    limit?: number;
+    starting_after?: string;
+  } = {}
+): Promise<Stripe.Invoice[]> {
+  try {
+    const invoices = await stripe.invoices.list({
+      customer: customerId,
+      limit: options.limit || 10,
+      starting_after: options.starting_after,
+    });
+    return invoices.data;
+  } catch (error) {
+    console.error(`Error fetching invoices for customer ${customerId}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Get upcoming invoice for a subscription
+ */
+export async function getUpcomingInvoice(
+  customerId: string,
+  subscriptionId?: string
+): Promise<Stripe.Invoice | null> {
+  try {
+    const params: Stripe.InvoiceRetrieveUpcomingParams = {
+      customer: customerId,
+    };
+
+    if (subscriptionId) {
+      params.subscription = subscriptionId;
+    }
+
+    const invoice = await stripe.invoices.retrieveUpcoming(params);
+    return invoice;
+  } catch (error) {
+    // Upcoming invoice may not exist (e.g., no active subscriptions)
+    if ((error as any)?.statusCode === 404) {
+      return null;
+    }
+    console.error(`Error fetching upcoming invoice for customer ${customerId}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Apply coupon to a customer
+ */
+export async function applyCustomerCoupon(
+  customerId: string,
+  couponId: string
+): Promise<Stripe.Customer | null> {
+  try {
+    const customer = await stripe.customers.update(customerId, {
+      coupon: couponId,
+    });
+    return customer;
+  } catch (error) {
+    console.error(`Error applying coupon to customer ${customerId}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Remove coupon from a customer
+ */
+export async function removeCustomerCoupon(
+  customerId: string
+): Promise<Stripe.Customer | null> {
+  try {
+    const customer = await stripe.customers.update(customerId, {
+      coupon: '',
+    });
+    return customer;
+  } catch (error) {
+    console.error(`Error removing coupon from customer ${customerId}:`, error);
+    return null;
+  }
+}
