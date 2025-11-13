@@ -159,6 +159,31 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   // Handle one-time payment checkout
   if (mode === 'payment' && payment_intent) {
     const paymentIntentId = typeof payment_intent === 'string' ? payment_intent : payment_intent.id;
+
+    // Create order record for E2E test verification
+    const { error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        stripe_session_id: session.id,
+        stripe_customer_id: customer,
+        stripe_payment_intent_id: paymentIntentId,
+        customer_email: session.customer_email || session.customer_details?.email,
+        amount_total: session.amount_total,
+        amount_subtotal: session.amount_subtotal,
+        currency: session.currency,
+        status: 'completed',
+        payment_status: session.payment_status,
+        payment_method_id: session.payment_method_types?.[0],
+        user_id: userId || null,
+        metadata: session.metadata || {},
+      });
+
+    if (orderError) {
+      console.error('Error creating order record:', orderError);
+    } else {
+      console.log(`Order record created for session ${session.id}`);
+    }
+
     const stripePaymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
     await handlePaymentIntentSucceeded(stripePaymentIntent);
 
