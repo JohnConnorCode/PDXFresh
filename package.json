@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 8080",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
@@ -12,19 +12,27 @@
     "sanity:deploy": "sanity deploy",
     "seed": "tsx scripts/seed.ts",
     "export:sanity": "sanity dataset export production backup.tar.gz",
-    "import:sanity": "sanity dataset import backup.tar.gz production"
+    "import:sanity": "sanity dataset import backup.tar.gz production",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.11.1",
     "@portabletext/react": "^5.0.0",
+    "@prisma/client": "^6.19.0",
     "@sanity/client": "^6.0.0",
     "@sanity/image-url": "^1.0.0",
     "@sanity/vision": "^3.0.0",
+    "@stripe/stripe-js": "^8.4.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "dotenv": "^17.2.3",
     "framer-motion": "^12.23.24",
     "groq": "^3.0.0",
     "next": "^14.0.0",
+    "next-auth": "^4.24.13",
     "next-sanity": "^6.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -32,6 +40,7 @@
     "reading-time": "^1.5.0",
     "sanity": "^4.14.2",
     "schema-dts": "^1.1.5",
+    "stripe": "^19.3.1",
     "styled-components": "^6.1.19",
     "tailwindcss": "^3.4.0",
     "zod": "^3.22.0"
@@ -47,6 +56,7 @@
     "eslint-config-next": "^15.0.0",
     "playwright": "^1.56.1",
     "postcss": "^8.4.0",
+    "prisma": "^6.19.0",
     "sharp": "^0.34.5",
     "tsx": "^4.7.0",
     "typescript": "^5.3.0"
