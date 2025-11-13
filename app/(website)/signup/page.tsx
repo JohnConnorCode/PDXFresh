@@ -1,10 +1,13 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { createServerClient } from '@/lib/supabase/server';
 import { SignupForm } from '@/components/auth/SignupForm';
 import { Section } from '@/components/Section';
 import { FadeIn } from '@/components/animations';
 import Link from 'next/link';
+import { getReferralByCode } from '@/lib/referral-utils';
+import { isFeatureEnabled, getFeatureValue } from '@/lib/feature-flags';
 
 export const metadata: Metadata = {
   title: 'Sign Up | Long Life',
@@ -14,7 +17,7 @@ export const metadata: Metadata = {
 export default async function SignupPage({
   searchParams,
 }: {
-  searchParams: { redirectTo?: string; message?: string };
+  searchParams: { redirectTo?: string; message?: string; ref?: string };
 }) {
   // Check if user is already logged in
   const supabase = createServerClient();
@@ -22,6 +25,23 @@ export default async function SignupPage({
 
   if (user) {
     redirect(searchParams.redirectTo || '/account');
+  }
+
+  // Check for referral code (from URL or cookie)
+  const cookieStore = cookies();
+  const referralCodeFromCookie = cookieStore.get('referral_code')?.value;
+  const referralCode = searchParams.ref || referralCodeFromCookie;
+
+  // Validate referral code if present
+  let referralInfo = null;
+  if (referralCode && isFeatureEnabled('referrals_enabled')) {
+    const referral = await getReferralByCode(referralCode);
+    if (referral) {
+      referralInfo = {
+        code: referralCode,
+        discount: getFeatureValue('referrals_reward_percentage'),
+      };
+    }
   }
 
   return (
@@ -44,6 +64,24 @@ export default async function SignupPage({
                 </p>
               </div>
 
+              {/* Referral Info */}
+              {referralInfo && (
+                <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-2xl">🎁</span>
+                    <p className="font-semibold text-purple-900">
+                      You're referred!
+                    </p>
+                  </div>
+                  <p className="text-sm text-purple-700">
+                    Get <strong>{referralInfo.discount}% off</strong> your first order with code{' '}
+                    <code className="bg-white px-2 py-0.5 rounded font-mono font-semibold">
+                      {referralInfo.code}
+                    </code>
+                  </p>
+                </div>
+              )}
+
               {/* Error/Success message */}
               {searchParams.message && (
                 <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -52,7 +90,10 @@ export default async function SignupPage({
               )}
 
               {/* Signup Form */}
-              <SignupForm redirectTo={searchParams.redirectTo} />
+              <SignupForm
+                redirectTo={searchParams.redirectTo}
+                referralCode={referralCode || undefined}
+              />
 
               {/* Divider */}
               <div className="relative my-6">

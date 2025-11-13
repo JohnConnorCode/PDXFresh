@@ -6,9 +6,10 @@ import { supabase } from '@/lib/supabase/client';
 
 interface SignupFormProps {
   redirectTo?: string;
+  referralCode?: string;
 }
 
-export function SignupForm({ redirectTo = '/account' }: SignupFormProps) {
+export function SignupForm({ redirectTo = '/account', referralCode }: SignupFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +61,23 @@ export function SignupForm({ redirectTo = '/account' }: SignupFormProps) {
 
       // If session exists, user is logged in (email confirmation disabled)
       if (data.session) {
+        // Track referral if present
+        if (referralCode && data.user) {
+          try {
+            await fetch('/api/referrals/track', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                referralCode,
+                userId: data.user.id,
+              }),
+            });
+          } catch (err) {
+            console.error('Failed to track referral:', err);
+            // Don't block signup if referral tracking fails
+          }
+        }
+
         router.push(redirectTo);
         router.refresh();
       }

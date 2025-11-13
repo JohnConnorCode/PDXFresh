@@ -8,6 +8,11 @@ import { FadeIn, StaggerContainer } from '@/components/animations';
 import { BillingPortalButton } from '@/components/pricing/BillingPortalButton';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { formatPrice } from '@/lib/stripe';
+import { getActiveUser, calculateProfileCompletion, shouldShowProfileCompletion } from '@/lib/user-utils';
+import { getReferralStats } from '@/lib/referral-utils';
+import { ProfileCompletionCard } from '@/components/account/ProfileCompletionCard';
+import { ReferralShareCard } from '@/components/account/ReferralShareCard';
+import { isFeatureEnabled } from '@/lib/feature-flags';
 
 export const metadata: Metadata = {
   title: 'My Account | Long Life',
@@ -15,19 +20,11 @@ export const metadata: Metadata = {
 };
 
 export default async function AccountPage() {
-  const supabase = createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getActiveUser();
 
   if (!user) {
     redirect('/login?redirectTo=/account');
   }
-
-  // Get user profile with enhanced fields
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('name, email, full_name, subscription_status, current_plan, partnership_tier, stripe_customer_id')
-    .eq('id', user.id)
-    .single();
 
   const subscriptions = await getUserSubscriptions(user.id);
   const purchases = await getUserPurchases(user.id);
@@ -41,8 +38,15 @@ export default async function AccountPage() {
 
   // Calculate stats
   const totalSpent = purchases.reduce((sum, p) => sum + p.amount, 0);
-  const partnershipTierLabel = profile?.partnership_tier === 'none' ? 'Standard Member' :
-    profile?.partnership_tier ? profile.partnership_tier.charAt(0).toUpperCase() + profile.partnership_tier.slice(1) : 'Standard Member';
+  const partnershipTierLabel = user.partnership_tier === 'none' ? 'Standard Member' :
+    user.partnership_tier ? user.partnership_tier.charAt(0).toUpperCase() + user.partnership_tier.slice(1) : 'Standard Member';
+
+  // Profile completion
+  const profileCompletion = calculateProfileCompletion(user);
+  const showProfileCompletion = shouldShowProfileCompletion(user);
+
+  // Referral stats
+  const referralStats = isFeatureEnabled('referrals_enabled') ? await getReferralStats(user.id) : null;
 
   return (
     <Section className="min-h-screen bg-gradient-to-br from-accent-cream via-white to-accent-yellow/10 py-16">
@@ -55,7 +59,7 @@ export default async function AccountPage() {
                 My Account
               </h1>
               <p className="text-xl text-gray-600">
-                Welcome back, {profile?.full_name || profile?.name || profile?.email || user.email}
+                Welcome back, {user.full_name || user.name || user.email}
               </p>
             </div>
             <SignOutButton className="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors" />
@@ -98,9 +102,9 @@ export default async function AccountPage() {
               <div>
                 <p className="text-sm text-gray-600">Status</p>
                 <p className="font-bold text-lg capitalize">
-                  {profile?.subscription_status === 'active' ? '✓ Active' :
-                   profile?.subscription_status === 'trialing' ? '✓ Trial' :
-                   profile?.subscription_status || 'No Subscription'}
+                  {user.subscription_status === 'active' ? '✓ Active' :
+                   user.subscription_status === 'trialing' ? '✓ Trial' :
+                   user.subscription_status || 'No Subscription'}
                 </p>
               </div>
             </div>
@@ -184,6 +188,54 @@ export default async function AccountPage() {
             </Link>
           </div>
         </FadeIn>
+
+        {/* Profile Completion */}
+        {showProfileCompletion && (
+          <FadeIn direction="up" delay={0.25}>
+            <ProfileCompletionCard completion={profileCompletion} />
+          </FadeIn>
+        )}
+
+        {/* Referral Stats */}
+        {referralStats && user.referral_code && (
+          <FadeIn direction="up" delay={0.27}>
+            <ReferralShareCard referralCode={user.referral_code} stats={referralStats} />
+          </FadeIn>
+        )}
+
+        {/* Tier Upgrade CTA */}
+        {isFeatureEnabled('tier_upgrades_enabled') && user.partnership_tier !== 'vip' && (
+          <FadeIn direction="up" delay={0.28}>
+            <Link
+              href="/upgrade"
+              className="block bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg p-6 mb-8 hover:from-yellow-600 hover:to-yellow-700 transition-all shadow-lg hover:shadow-xl"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">
+                    ⭐ Upgrade Your Partnership Tier
+                  </h3>
+                  <p className="text-white/90 text-sm">
+                    Unlock exclusive benefits, higher discounts, and VIP perks
+                  </p>
+                </div>
+                <svg
+                  className="w-6 h-6 text-white flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </div>
+            </Link>
+          </FadeIn>
+        )}
 
         {/* Active Subscriptions */}
         <FadeIn direction="up" delay={0.3}>
