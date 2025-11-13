@@ -8,7 +8,7 @@ import Stripe from 'stripe';
 import { createServerClient } from '@/lib/supabase/server';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-11-20.acacia',
+  apiVersion: '2025-10-29.clover',
 });
 
 export interface CheckoutSessionOptions {
@@ -279,8 +279,8 @@ export function calculateYearlySavings(
   monthlyCostIfYearly: number;
 } {
   const annualCostIfMonthly = monthlyPrice * 12;
-  const savingsAmount = annualCostIfYearly - yearlyPrice;
-  const savingsPercentage = Math.round((savingsAmount / annualCostIfYearly) * 100);
+  const savingsAmount = annualCostIfMonthly - yearlyPrice;
+  const savingsPercentage = Math.round((savingsAmount / annualCostIfMonthly) * 100);
   const monthlyCostIfYearly = yearlyPrice / 12;
 
   return {

@@ -4,7 +4,7 @@ import { isCurrentUserAdmin } from '@/lib/admin';
 import { getCustomerSubscriptions } from '@/lib/stripe';
 
 export async function POST(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -57,8 +57,8 @@ export async function POST(
 
       // Extract plan info from metadata if available
       const metadata = activeSubscription.metadata || {};
-      const tierKey = metadata.tierKey;
-      const sizeKey = metadata.sizeKey;
+      const tierKey = metadata.tier_key;
+      const sizeKey = metadata.size_key;
 
       if (tierKey) {
         currentPlan = sizeKey ? `${tierKey} - ${sizeKey}` : tierKey;

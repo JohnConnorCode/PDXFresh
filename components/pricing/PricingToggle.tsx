@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { isFeatureEnabled, getFeatureValue } from '@/lib/feature-flags';
+import { isFeatureEnabled } from '@/lib/feature-flags';
 
 export type BillingInterval = 'monthly' | 'yearly';
 

@@ -98,12 +98,12 @@
 
 /* Links */
 .link {
-  @apply text-accent-primary hover:text-accent-dark;
+  @apply text-accent-primary hover:text-opacity-80;
   @apply font-medium underline transition-colors;
 }
 
 .link-plain {
-  @apply text-accent-primary hover:text-accent-dark;
+  @apply text-accent-primary hover:text-opacity-80;
   @apply transition-colors;
 }
 
@@ -125,7 +125,7 @@
 }
 
 .badge-primary {
-  @apply bg-accent-primary/10 text-accent-primary;
+  @apply bg-blue-100 text-accent-primary;
 }
 
 .badge-success {
@@ -150,7 +150,7 @@
 
 /* Text Gradients */
 .text-gradient {
-  @apply bg-gradient-to-r from-accent-primary to-accent-green bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-accent-primary to-green-600 bg-clip-text text-transparent;
 }
 
 .text-gradient-purple {

@@ -1,25 +1,37 @@
 import Stripe from 'stripe';
+import { getStripeKeys } from './stripe/config';
 
-// Validate required environment variables
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set in environment variables');
+// Legacy singleton stripe instance - DO NOT USE for checkout operations
+// Use getStripeClient() from lib/stripe/config.ts instead for dynamic key support
+let _legacyStripe: Stripe | null = null;
+
+function getLegacyStripe(): Stripe {
+  if (_legacyStripe) return _legacyStripe;
+
+  // Fallback for backward compatibility - uses hardcoded keys from env
+  const secretKey = process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY_TEST;
+  if (!secretKey) {
+    throw new Error('STRIPE_SECRET_KEY is not set in environment variables');
+  }
+
+  _legacyStripe = new Stripe(secretKey, {
+    apiVersion: '2025-10-29.clover',
+    typescript: true,
+  });
+
+  return _legacyStripe;
 }
 
-if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-  throw new Error('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set in environment variables');
+// Export stripe for backward compatibility, but prefer getStripeClient()
+export const stripe = getLegacyStripe();
+
+// Export publishable key getter for dynamic support
+export async function getPublishableKey(): Promise<string> {
+  const keys = await getStripeKeys();
+  return keys.publishableKey || process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
 }
 
-if (!process.env.STRIPE_WEBHOOK_SECRET) {
-  console.warn('STRIPE_WEBHOOK_SECRET is not set. Webhook signature verification will fail.');
-}
-
-// Initialize Stripe client
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2024-11-20.acacia',
-  typescript: true,
-});
-
-// Export publishable key for client-side usage
+// Legacy export for client-side usage
 export const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
 /**
@@ -85,24 +97,31 @@ export function getBillingInterval(price: Stripe.Price): string {
 
 /**
  * Create a Stripe Checkout Session
+ * Optionally pass a Stripe client for dynamic key support.
+ * If not provided, uses legacy hardcoded keys.
  */
-export async function createCheckoutSession({
-  priceId,
-  mode,
-  successUrl,
-  cancelUrl,
-  customerId,
-  customerEmail,
-  metadata = {},
-}: {
-  priceId: string;
-  mode: 'payment' | 'subscription';
-  successUrl: string;
-  cancelUrl: string;
-  customerId?: string;
-  customerEmail?: string;
-  metadata?: Record<string, string>;
-}): Promise<Stripe.Checkout.Session> {
+export async function createCheckoutSession(
+  {
+    priceId,
+    mode,
+    successUrl,
+    cancelUrl,
+    customerId,
+    customerEmail,
+    metadata = {},
+  }: {
+    priceId: string;
+    mode: 'payment' | 'subscription';
+    successUrl: string;
+    cancelUrl: string;
+    customerId?: string;
+    customerEmail?: string;
+    metadata?: Record<string, string>;
+  },
+  stripeClient?: Stripe
+): Promise<Stripe.Checkout.Session> {
+  const client = stripeClient || stripe;
+
   const sessionParams: Stripe.Checkout.SessionCreateParams = {
     mode,
     line_items: [
@@ -134,20 +153,25 @@ export async function createCheckoutSession({
     };
   }
 
-  return await stripe.checkout.sessions.create(sessionParams);
+  return await client.checkout.sessions.create(sessionParams);
 }
 
 /**
  * Create a Billing Portal session for subscription management
+ * Optionally pass a Stripe client for dynamic key support.
  */
-export async function createBillingPortalSession({
-  customerId,
-  returnUrl,
-}: {
-  customerId: string;
-  returnUrl: string;
-}): Promise<Stripe.BillingPortal.Session> {
-  return await stripe.billingPortal.sessions.create({
+export async function createBillingPortalSession(
+  {
+    customerId,
+    returnUrl,
+  }: {
+    customerId: string;
+    returnUrl: string;
+  },
+  stripeClient?: Stripe
+): Promise<Stripe.BillingPortal.Session> {
+  const client = stripeClient || stripe;
+  return await client.billingPortal.sessions.create({
     customer: customerId,
     return_url: returnUrl,
   });
@@ -299,7 +323,7 @@ export async function getUpcomingInvoice(
   subscriptionId?: string
 ): Promise<Stripe.Invoice | null> {
   try {
-    const params: Stripe.InvoiceRetrieveUpcomingParams = {
+    const params: any = {
       customer: customerId,
     };
 
@@ -307,7 +331,7 @@ export async function getUpcomingInvoice(
       params.subscription = subscriptionId;
     }
 
-    const invoice = await stripe.invoices.retrieveUpcoming(params);
+    const invoice = await (stripe.invoices as any).retrieveUpcoming(params);
     return invoice;
   } catch (error) {
     // Upcoming invoice may not exist (e.g., no active subscriptions)
@@ -329,7 +353,7 @@ export async function applyCustomerCoupon(
   try {
     const customer = await stripe.customers.update(customerId, {
       coupon: couponId,
-    });
+    } as any);
     return customer;
   } catch (error) {
     console.error(`Error applying coupon to customer ${customerId}:`, error);
@@ -346,7 +370,7 @@ export async function removeCustomerCoupon(
   try {
     const customer = await stripe.customers.update(customerId, {
       coupon: '',
-    });
+    } as any);
     return customer;
   } catch (error) {
     console.error(`Error removing coupon from customer ${customerId}:`, error);

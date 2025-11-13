@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { createServerClient } from '@/lib/supabase/server';
 import { getActiveUser } from '@/lib/user-utils';
 import { isFeatureEnabled } from '@/lib/feature-flags';
 import { UpsellGrid } from '@/components/upsells/UpsellCard';
@@ -222,7 +221,7 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
  * @param purchasedPlan - Plan they just purchased
  * @returns Array of upsell offers
  */
-async function getUpsellOffers(tier: string, purchasedPlan?: string): Promise<any[]> {
+async function getUpsellOffers(tier: string, _purchasedPlan?: string): Promise<any[]> {
   // TODO: Fetch from Sanity
   // For now, return mock data
 

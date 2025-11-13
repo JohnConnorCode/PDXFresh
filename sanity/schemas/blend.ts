@@ -126,6 +126,13 @@ export default defineType({
       ],
     }),
     defineField({
+      name: 'stripeProduct',
+      title: 'Stripe Product for Checkout',
+      type: 'reference',
+      to: [{ type: 'stripeProduct' }],
+      description: 'Link this blend to a Stripe Product to enable checkout. When linked, the Stripe product\'s variant prices will be used instead of the sizes list.',
+    }),
+    defineField({
       name: 'isFeatured',
       title: 'Featured',
       type: 'boolean',

@@ -7,6 +7,7 @@ import { Section } from '@/components/Section';
 import { RichText } from '@/components/RichText';
 import { urlFor } from '@/lib/image';
 import { FadeIn, StaggerContainer, FloatingElement } from '@/components/animations';
+import { ReserveBlendButton } from '@/components/blends/ReserveBlendButton';
 
 export const revalidate = 60;
 
@@ -249,7 +250,7 @@ export default async function BlendPage({ params }: BlendPageProps) {
       )}
 
       {/* Pricing */}
-      {blend.sizes && blend.sizes.length > 0 && (
+      {(blend.stripeProduct?.variants?.length > 0 || (blend.sizes && blend.sizes.length > 0)) && (
         <Section id="pricing" className="bg-white relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-accent-yellow/10 to-accent-green/10 rounded-full blur-3xl" />
 
@@ -261,11 +262,17 @@ export default async function BlendPage({ params }: BlendPageProps) {
               <p className="text-xl text-gray-600">Fresh-pressed and ready for pickup or delivery</p>
             </FadeIn>
             <StaggerContainer staggerDelay={0.1} className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {blend.sizes.map((size: any, idx: number) => {
-                  const isPopular = idx === 1; // Middle option is popular
+              {(blend.stripeProduct?.variants?.length > 0 ? blend.stripeProduct.variants : blend.sizes).map((item: any, idx: number) => {
+                  const isPopular = blend.stripeProduct?.variants ? item.isDefault : idx === 1;
+                  const sizeData = blend.stripeProduct?.variants ? {
+                    _id: item.sizeKey,
+                    name: item.label,
+                    stripePriceId: item.stripePriceId,
+                  } : item;
+
                   return (
                     <div
-                      key={size._id}
+                      key={sizeData._id}
                       className={`relative group bg-white rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-2 ${
                         isPopular
                           ? 'border-4 border-accent-primary shadow-2xl scale-105'
@@ -279,30 +286,30 @@ export default async function BlendPage({ params }: BlendPageProps) {
                       )}
                       <div className="mb-4">
                         <h3 className="font-heading text-2xl font-bold mb-1 text-gray-900">
-                          {size.name}
+                          {sizeData.name}
                         </h3>
-                        <p className="text-sm text-gray-600">{size.volume}</p>
+                        {!blend.stripeProduct?.variants && <p className="text-sm text-gray-600">{sizeData.volume}</p>}
                       </div>
-                      <div className="my-6">
-                        <span className="text-5xl font-bold text-accent-primary">
-                          ${size.price}
-                        </span>
-                      </div>
-                      {size.description && (
-                        <p className="text-sm text-gray-600 mb-6">{size.description}</p>
+                      {!blend.stripeProduct?.variants && sizeData.price && (
+                        <div className="my-6">
+                          <span className="text-5xl font-bold text-accent-primary">
+                            ${sizeData.price}
+                          </span>
+                        </div>
                       )}
-                      {size.servingsPerBottle && (
+                      {!blend.stripeProduct?.variants && sizeData.description && (
+                        <p className="text-sm text-gray-600 mb-6">{sizeData.description}</p>
+                      )}
+                      {!blend.stripeProduct?.variants && sizeData.servingsPerBottle && (
                         <p className="text-xs text-gray-500 mb-6">
-                          {size.servingsPerBottle} servings per bottle
+                          {sizeData.servingsPerBottle} servings per bottle
                         </p>
                       )}
-                      <button className={`w-full px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 ${
-                        isPopular
-                          ? 'bg-accent-primary text-white hover:opacity-90 hover:scale-105 shadow-lg'
-                          : 'bg-gray-900 text-white hover:bg-accent-primary hover:scale-105 shadow-md'
-                      }`}>
-                        Reserve Now
-                      </button>
+                      <ReserveBlendButton
+                        size={sizeData}
+                        blendSlug={params.slug}
+                        isPopular={isPopular}
+                      />
                     </div>
                   );
                 })}

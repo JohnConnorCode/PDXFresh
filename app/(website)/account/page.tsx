@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { createServerClient } from '@/lib/supabase/server';
 import { getUserSubscriptions, getUserPurchases } from '@/lib/subscription';
 import { Section } from '@/components/Section';
 import { FadeIn, StaggerContainer } from '@/components/animations';
@@ -275,22 +274,22 @@ export default async function AccountPage() {
                   >
                     <div>
                       <h3 className="font-semibold text-lg mb-1">
-                        {subscription.tierKey ? subscription.tierKey.charAt(0).toUpperCase() + subscription.tierKey.slice(1) : 'Subscription'}
-                        {subscription.sizeKey && ` - ${subscription.sizeKey.replace('_', ' ')}`}
+                        {subscription.tier_key ? subscription.tier_key.charAt(0).toUpperCase() + subscription.tier_key.slice(1) : 'Subscription'}
+                        {subscription.size_key && ` - ${subscription.size_key.replace('_', ' ')}`}
                       </h3>
                       <p className="text-sm text-gray-600">
                         Status: <span className="font-semibold text-accent-primary capitalize">{subscription.status}</span>
                       </p>
-                      {subscription.currentPeriodEnd && (
+                      {subscription.current_period_end && (
                         <p className="text-sm text-gray-600">
-                          Renews on: {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-US', {
+                          Renews on: {new Date(subscription.current_period_end).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
                           })}
                         </p>
                       )}
-                      {subscription.cancelAtPeriodEnd && (
+                      {subscription.cancel_at_period_end && (
                         <p className="text-sm text-red-600 font-semibold">
                           Cancels at end of period
                         </p>
@@ -331,10 +330,10 @@ export default async function AccountPage() {
                   >
                     <div>
                       <p className="font-medium">
-                        {purchase.sizeKey ? purchase.sizeKey.replace('_', ' ') : 'Purchase'}
+                        {purchase.size_key ? purchase.size_key.replace('_', ' ') : 'Purchase'}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {new Date(purchase.createdAt).toLocaleDateString('en-US', {
+                        {new Date(purchase.created_at).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric'
@@ -371,16 +370,16 @@ export default async function AccountPage() {
                   >
                     <div>
                       <p className="font-medium text-gray-700">
-                        {subscription.tierKey ? subscription.tierKey.charAt(0).toUpperCase() + subscription.tierKey.slice(1) : 'Subscription'}
-                        {subscription.sizeKey && ` - ${subscription.sizeKey.replace('_', ' ')}`}
+                        {subscription.tier_key ? subscription.tier_key.charAt(0).toUpperCase() + subscription.tier_key.slice(1) : 'Subscription'}
+                        {subscription.size_key && ` - ${subscription.size_key.replace('_', ' ')}`}
                       </p>
                       <p className="text-sm text-gray-500 capitalize">
                         Status: {subscription.status}
                       </p>
                     </div>
-                    {subscription.canceledAt && (
+                    {subscription.canceled_at && (
                       <p className="text-sm text-gray-500">
-                        Cancelled: {new Date(subscription.canceledAt).toLocaleDateString()}
+                        Cancelled: {new Date(subscription.canceled_at).toLocaleDateString()}
                       </p>
                     )}
                   </div>

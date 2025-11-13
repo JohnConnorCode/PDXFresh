@@ -298,7 +298,7 @@ export function trackUpsellEvent(
  * @param newTier - New tier
  */
 export function trackTierChange(
-  event: Extract<AnalyticsEvent, 'tier_upgraded' | 'tier_downgraded'>,
+  event: Extract<AnalyticsEvent, 'tier_upgraded' | 'tier_downgraded' | 'tier_upgrade_viewed'>,
   userId: string,
   oldTier: string,
   newTier: string

@@ -6,7 +6,32 @@ import { upsertSubscription, createPurchase, updatePurchaseStatus } from '@/lib/
 import { completeReferral } from '@/lib/referral-utils';
 import { trackServerEvent } from '@/lib/analytics';
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+/**
+ * Verify webhook signature against both test and production secrets.
+ * This allows the webhook to work regardless of which Stripe mode is active.
+ */
+function verifyWebhookSignature(
+  body: string,
+  signature: string,
+  stripeInstance: Stripe
+): Stripe.Event | null {
+  const secrets = [
+    process.env.STRIPE_WEBHOOK_SECRET_TEST,
+    process.env.STRIPE_WEBHOOK_SECRET_PRODUCTION,
+    process.env.STRIPE_WEBHOOK_SECRET, // fallback for legacy config
+  ].filter(Boolean) as string[];
+
+  for (const secret of secrets) {
+    try {
+      return stripeInstance.webhooks.constructEvent(body, signature, secret);
+    } catch (err) {
+      // Try next secret
+      continue;
+    }
+  }
+
+  return null;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,20 +45,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!webhookSecret) {
-      console.error('STRIPE_WEBHOOK_SECRET is not configured');
-      return NextResponse.json(
-        { error: 'Webhook secret not configured' },
-        { status: 500 }
-      );
+    // Verify webhook signature against both test and production secrets
+    let event: Stripe.Event | null = null;
+    try {
+      event = verifyWebhookSignature(body, signature, stripe);
+    } catch (err) {
+      console.error('Webhook signature verification error:', err);
     }
 
-    // Verify webhook signature
-    let event: Stripe.Event;
-    try {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (err) {
-      console.error('Webhook signature verification failed:', err);
+    if (!event) {
+      console.error('Webhook signature verification failed for all configured secrets');
       return NextResponse.json(
         { error: 'Invalid signature' },
         { status: 400 }
@@ -152,7 +173,11 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
  * Handle subscription creation or update
  */
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
-  const { id, customer, items, status, current_period_start, current_period_end, cancel_at_period_end, canceled_at, metadata } = subscription;
+  const { id, customer, items, status, metadata } = subscription;
+  const current_period_start = (subscription as any).current_period_start;
+  const current_period_end = (subscription as any).current_period_end;
+  const cancel_at_period_end = (subscription as any).cancel_at_period_end;
+  const canceled_at = (subscription as any).canceled_at;
 
   if (typeof customer !== 'string') {
     console.error('Invalid customer in subscription');
@@ -193,8 +218,8 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
     stripeSubscriptionId: id,
     stripePriceId: price.id,
     stripeProductId: productId,
-    tierKey: metadata?.tierKey,
-    sizeKey: metadata?.sizeKey,
+    tierKey: metadata?.tier_key,
+    sizeKey: metadata?.size_key,
     status,
     currentPeriodStart: new Date(current_period_start * 1000),
     currentPeriodEnd: new Date(current_period_end * 1000),
@@ -203,8 +228,8 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   });
 
   // Sync subscription status and current plan to profile
-  const currentPlanLabel = metadata?.tierKey
-    ? `${metadata.tierKey}${metadata.sizeKey ? ` - ${metadata.sizeKey}` : ''}`
+  const currentPlanLabel = metadata?.tier_key
+    ? `${metadata.tier_key}${metadata.size_key ? ` - ${metadata.size_key}` : ''}`
     : undefined;
 
   await supabase
@@ -272,7 +297,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
  * Handle successful invoice payment
  */
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
-  const { subscription } = invoice;
+  const subscription = (invoice as any).subscription;
 
   if (!subscription) {
     return; // Not a subscription invoice
@@ -289,7 +314,7 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
  * Handle failed invoice payment
  */
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  const { subscription } = invoice;
+  const subscription = (invoice as any).subscription;
 
   if (!subscription) {
     return; // Not a subscription invoice
@@ -351,7 +376,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
     userId: profile.id,
     stripePriceId: metadata?.priceId || '',
     stripeProductId: metadata?.productId || '',
-    sizeKey: metadata?.sizeKey,
+    sizeKey: metadata?.size_key,
     amount,
     currency,
     status: 'succeeded',

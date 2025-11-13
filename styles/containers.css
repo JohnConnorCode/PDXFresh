@@ -28,18 +28,18 @@
 
 .card-hover {
   @apply bg-white rounded-lg shadow-md p-6 border border-gray-100;
-  @apply hover:shadow-lg hover:border-accent-primary/20 transition-all;
+  @apply hover:shadow-lg hover:border-accent-primary transition-all;
 }
 
 /* Feature Cards */
 .card-feature {
   @apply bg-gradient-to-br from-accent-cream to-white rounded-xl shadow-lg p-8;
-  @apply border-2 border-accent-yellow/20;
+  @apply border-2 border-yellow-200;
 }
 
 .card-feature-primary {
-  @apply bg-gradient-to-br from-accent-yellow/10 to-accent-green/10 rounded-xl shadow-lg p-8;
-  @apply border-2 border-accent-yellow/30;
+  @apply bg-gradient-to-br from-yellow-50 to-green-50 rounded-xl shadow-lg p-8;
+  @apply border-2 border-yellow-300;
 }
 
 .card-feature-secondary {
@@ -75,9 +75,7 @@
 
 /* Content Containers */
 .content-prose {
-  @apply max-w-3xl mx-auto prose prose-lg;
-  @apply prose-headings:font-heading prose-headings:font-bold;
-  @apply prose-a:text-accent-primary prose-a:no-underline hover:prose-a:underline;
+  @apply max-w-3xl mx-auto text-lg leading-relaxed;
 }
 
 /* Banner Containers */

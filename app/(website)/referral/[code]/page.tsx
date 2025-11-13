@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { getReferralByCode } from '@/lib/referral-utils';
 import { getUserById } from '@/lib/user-utils';
@@ -13,10 +12,7 @@ interface ReferralPageProps {
   };
 }
 
-export async function generateMetadata({
-  params,
-}: ReferralPageProps): Promise<Metadata> {
-  const { code } = params;
+export async function generateMetadata(): Promise<Metadata> {
   const rewardPercentage = getFeatureValue('referrals_reward_percentage');
 
   return {

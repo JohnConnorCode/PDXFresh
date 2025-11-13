@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface CheckoutButtonProps {
   priceId: string;
@@ -20,7 +19,6 @@ export function CheckoutButton({
 }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   const handleCheckout = async () => {
     try {

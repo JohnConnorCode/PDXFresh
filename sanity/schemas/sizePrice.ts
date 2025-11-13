@@ -29,5 +29,19 @@ export default defineType({
       type: 'boolean',
       initialValue: true,
     }),
+    defineField({
+      name: 'stripePriceId',
+      title: 'Stripe Price ID',
+      type: 'string',
+      description: 'Optional: The Stripe Price ID for checkout (e.g., price_xxxxx). Use when not linking to a Stripe Product.',
+      validation: (Rule) =>
+        Rule.custom((value) => {
+          if (!value) return true; // Optional field
+          if (!/^price_[a-zA-Z0-9]+$/.test(value)) {
+            return 'Must be a valid Stripe Price ID (starts with "price_")';
+          }
+          return true;
+        }),
+    }),
   ],
 });

@@ -64,7 +64,7 @@ async function getStripeProducts(): Promise<EnrichedStripeProduct[]> {
             billingInterval: getBillingInterval(price),
           };
         })
-        .filter((v): v is EnrichedProductVariant => v !== null);
+        .filter((v): v is EnrichedProductVariant => v !== null) as EnrichedProductVariant[];
 
       return {
         ...product,

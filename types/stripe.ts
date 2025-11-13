@@ -46,7 +46,7 @@ export interface StripeProduct {
 export interface EnrichedProductVariant extends ProductVariant {
   price: Stripe.Price;
   formattedPrice: string;
-  billingInterval?: string;
+  billingInterval: string;
 }
 
 /**

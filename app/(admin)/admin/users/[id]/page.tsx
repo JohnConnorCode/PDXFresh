@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { createServerClient } from '@/lib/supabase/server';
 import { getUserSubscriptions, getUserPurchases } from '@/lib/subscription';
 import { formatPrice } from '@/lib/stripe';
@@ -173,13 +173,13 @@ export default async function UserDetailPage({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold">
-                      {sub.tierKey ? sub.tierKey.charAt(0).toUpperCase() + sub.tierKey.slice(1) : 'Subscription'}
-                      {sub.sizeKey && ` - ${sub.sizeKey.replace('_', ' ')}`}
+                      {sub.tier_key ? sub.tier_key.charAt(0).toUpperCase() + sub.tier_key.slice(1) : 'Subscription'}
+                      {sub.size_key && ` - ${sub.size_key.replace('_', ' ')}`}
                     </p>
                     <p className="text-sm text-gray-600 capitalize">Status: {sub.status}</p>
-                    {sub.currentPeriodEnd && (
+                    {sub.current_period_end && (
                       <p className="text-sm text-gray-500">
-                        {sub.cancelAtPeriodEnd ? 'Expires' : 'Renews'}: {new Date(sub.currentPeriodEnd).toLocaleDateString()}
+                        {sub.cancel_at_period_end ? 'Expires' : 'Renews'}: {new Date(sub.current_period_end).toLocaleDateString()}
                       </p>
                     )}
                   </div>

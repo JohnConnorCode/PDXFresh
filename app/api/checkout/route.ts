@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { createCheckoutSession, getOrCreateCustomer } from '@/lib/stripe';
+import { getStripeClient } from '@/lib/stripe/config';
 import { client } from '@/lib/sanity.client';
 
 interface CheckoutRequestBody {
@@ -8,6 +9,8 @@ interface CheckoutRequestBody {
   mode: 'payment' | 'subscription';
   successPath?: string;
   cancelPath?: string;
+  successUrl?: string;
+  cancelUrl?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -17,7 +20,14 @@ export async function POST(req: NextRequest) {
 
     const body: CheckoutRequestBody = await req.json();
 
-    const { priceId, mode, successPath = '/checkout/success', cancelPath = '/checkout/cancel' } = body;
+    const {
+      priceId,
+      mode,
+      successPath,
+      cancelPath,
+      successUrl: providedSuccessUrl,
+      cancelUrl: providedCancelUrl,
+    } = body;
 
     // Validate request
     if (!priceId) {
@@ -63,12 +73,12 @@ export async function POST(req: NextRequest) {
       sanityProductId: product._id,
     };
 
-    if (product.tierKey) {
-      metadata.tierKey = product.tierKey;
+    if (product.tier_key) {
+      metadata.tier_key = product.tier_key;
     }
 
-    if (product.variant.sizeKey) {
-      metadata.sizeKey = product.variant.sizeKey;
+    if (product.variant.size_key) {
+      metadata.size_key = product.variant.size_key;
     }
 
     // Handle authenticated vs guest checkout
@@ -110,19 +120,25 @@ export async function POST(req: NextRequest) {
 
     // Build full URLs
     const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const successUrl = `${origin}${successPath}?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${origin}${cancelPath}`;
+    const finalSuccessUrl = providedSuccessUrl || `${origin}${successPath}?session_id={CHECKOUT_SESSION_ID}`;
+    const finalCancelUrl = providedCancelUrl || `${origin}${cancelPath}`;
 
-    // Create Stripe Checkout Session
-    const checkoutSession = await createCheckoutSession({
-      priceId,
-      mode,
-      successUrl,
-      cancelUrl,
-      customerId,
-      customerEmail,
-      metadata,
-    });
+    // Get dynamic Stripe client based on current mode (test/production)
+    const stripeClient = await getStripeClient();
+
+    // Create Stripe Checkout Session with dynamic Stripe client
+    const checkoutSession = await createCheckoutSession(
+      {
+        priceId,
+        mode,
+        successUrl: finalSuccessUrl,
+        cancelUrl: finalCancelUrl,
+        customerId,
+        customerEmail,
+        metadata,
+      },
+      stripeClient
+    );
 
     return NextResponse.json({ url: checkoutSession.url });
   } catch (error) {

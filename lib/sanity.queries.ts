@@ -126,7 +126,8 @@ export const homePageQuery = groq`*[_type == "homePage"][0]{
     volume,
     price,
     servingsPerBottle,
-    description
+    description,
+    stripePriceId
   },
   processHeading,
   processIntro,
@@ -213,7 +214,20 @@ export const blendQuery = groq`*[_type == "blend" && slug.current == $slug][0]{
     volume,
     price,
     servingsPerBottle,
-    description
+    description,
+    stripePriceId
+  },
+  "stripeProduct": stripeProduct->{
+    _id,
+    title,
+    stripeProductId,
+    "variants": variants[]{
+      sizeKey,
+      label,
+      stripePriceId,
+      isDefault,
+      uiOrder
+    } | order(uiOrder asc)
   },
   seo
 }`;
@@ -436,4 +450,11 @@ export const wholesalePageQuery = groq`*[_type == "wholesalePage"][0]{
   ctaText,
   ctaNote,
   seo
+}`;
+
+export const stripeSettingsQuery = groq`*[_type == "stripeSettings"][0]{
+  _id,
+  mode,
+  lastModified,
+  modifiedBy
 }`;

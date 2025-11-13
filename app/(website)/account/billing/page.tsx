@@ -138,10 +138,10 @@ export default async function BillingPage() {
                         <p className="text-sm text-gray-600 capitalize">
                           Status: <span className="font-semibold text-accent-primary">{subscription.status}</span>
                         </p>
-                        {subscription.currentPeriodEnd && (
+                        {subscription.current_period_end && (
                           <p className="text-sm text-gray-600">
-                            {subscription.cancelAtPeriodEnd ? 'Expires' : 'Renews'} on:{' '}
-                            {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-US', {
+                            {subscription.cancel_at_period_end ? 'Expires' : 'Renews'} on:{' '}
+                            {new Date(subscription.current_period_end).toLocaleDateString('en-US', {
                               year: 'numeric',
                               month: 'long',
                               day: 'numeric'
