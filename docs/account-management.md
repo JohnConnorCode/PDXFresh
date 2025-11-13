@@ -671,5 +671,62 @@ For issues or questions:
 
 ---
 
+## Admin Console
+
+The system includes a restricted-access admin console for managing users and system operations.
+
+### Features
+
+1. **Admin Dashboard** (`/admin`)
+   - System health metrics
+   - User count statistics
+   - Partnership tier breakdown
+
+2. **User Management** (`/admin/users`)
+   - Search users by email or name
+   - View detailed user profiles
+   - Update partnership tiers
+   - Re-sync subscription data from Stripe
+
+3. **Admin Access Control**
+   - Uses `is_admin` boolean column in profiles
+   - Protected by middleware
+   - Requires explicit grant via SQL
+
+### Granting Admin Access
+
+```sql
+UPDATE public.profiles
+SET is_admin = TRUE
+WHERE email = 'admin@example.com';
+```
+
+### Admin Operations
+
+**Update Partnership Tier:**
+1. Navigate to `/admin/users`
+2. Search for user
+3. Click "Manage →"
+4. Select new tier from dropdown
+5. Click "Update Tier"
+
+**Re-sync from Stripe:**
+1. Go to user detail page
+2. Click "Sync Now" in Admin Actions section
+3. System fetches latest data from Stripe
+4. Profile updates with current subscription status
+
+### Security
+
+- Admin routes protected by middleware
+- Non-admins redirected to `/unauthorized`
+- Admin status checked on every request
+- All admin API routes verify admin access
+
+**See [ADMIN_CONSOLE.md](./ADMIN_CONSOLE.md) for complete operator guide.**
+
+---
+
 **Migration Date**: 2025-11-13
 **Version**: 3.0.0 (Account Management System)
+**Last Updated**: 2025-11-13 (Added Admin Console)

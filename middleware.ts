@@ -67,6 +67,9 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Admin routes - require authentication AND admin access
+  const isAdminRoute = pathname.startsWith('/admin');
+
   // Protected routes - require authentication
   const protectedRoutes = ['/account'];
   const isProtectedRoute = protectedRoutes.some((route) =>
@@ -77,11 +80,25 @@ export async function middleware(request: NextRequest) {
   const authRoutes = ['/login', '/signup'];
   const isAuthRoute = authRoutes.includes(pathname);
 
-  // If user is not authenticated and trying to access protected route
-  if (isProtectedRoute && !user) {
+  // If user is not authenticated and trying to access protected/admin route
+  if ((isProtectedRoute || isAdminRoute) && !user) {
     const redirectUrl = new URL('/login', request.url);
     redirectUrl.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(redirectUrl);
+  }
+
+  // If trying to access admin route, check admin status
+  if (isAdminRoute && user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile?.is_admin) {
+      // Not an admin - redirect to unauthorized page
+      return NextResponse.redirect(new URL('/unauthorized', request.url));
+    }
   }
 
   // If user is authenticated and trying to access auth routes
