@@ -25,7 +25,7 @@ function getLegacyStripe(): Stripe {
 // Export stripe for backward compatibility, but prefer getStripeClient()
 // Using getter to defer initialization until first access (prevents build-time env var requirement)
 export const stripe = new Proxy({} as Stripe, {
-  get(target, prop) {
+  get(_target, prop) {
     const client = getLegacyStripe();
     return client[prop as keyof Stripe];
   }
