@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import { motion } from 'framer-motion';
 import { AnimatedLogo } from './AnimatedLogo';
 import { StaggerContainer } from './animations';
 import { RippleEffect } from './RippleEffect';
@@ -75,40 +76,61 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
               const isActive = pathname === href || pathname.startsWith(href + '/');
 
               return (
-                <Link
+                <motion.div
                   key={link.title || index}
-                  href={href}
-                  target={link.newTab ? '_blank' : undefined}
-                  rel={link.newTab ? 'noopener noreferrer' : undefined}
-                  className={clsx(
-                    'group text-sm font-heading font-medium transition-colors relative',
-                    isActive ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
-                  )}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: 1.0 + index * 0.1,
+                    ease: 'easeOut',
+                  }}
                 >
-                  {link.title}
-                  <span
+                  <Link
+                    href={href}
+                    target={link.newTab ? '_blank' : undefined}
+                    rel={link.newTab ? 'noopener noreferrer' : undefined}
                     className={clsx(
-                      'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
-                      isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                      'group text-sm font-heading font-medium transition-colors relative',
+                      isActive ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
                     )}
-                  />
-                </Link>
+                  >
+                    {link.title}
+                    <span
+                      className={clsx(
+                        'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
+                        isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                      )}
+                    />
+                  </Link>
+                </motion.div>
               );
             })}
           </nav>
 
           {/* Desktop CTA Button */}
-          <RippleEffect
-            className="hidden md:inline-flex rounded-full"
-            color="rgba(255, 255, 255, 0.4)"
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.4,
+              delay: 1.0 + headerLinks.length * 0.1,
+              ease: 'easeOut',
+            }}
+            className="hidden md:block"
           >
-            <Link
-              href="/blends"
-              className="px-6 py-2 rounded-full bg-accent-primary text-white text-sm font-medium hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg block"
+            <RippleEffect
+              className="inline-flex rounded-full"
+              color="rgba(255, 255, 255, 0.4)"
             >
-              {ctaLabel || 'Shop Blends'}
-            </Link>
-          </RippleEffect>
+              <Link
+                href="/blends"
+                className="px-6 py-2 rounded-full bg-accent-primary text-white text-sm font-medium hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg block"
+              >
+                {ctaLabel || 'Shop Blends'}
+              </Link>
+            </RippleEffect>
+          </motion.div>
 
           {/* Mobile Menu Button */}
           <button
