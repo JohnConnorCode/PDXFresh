@@ -7,7 +7,6 @@ import { RichText } from '@/components/RichText';
 import { BlendCard } from '@/components/BlendCard';
 import { urlFor } from '@/lib/image';
 import { FadeIn, StaggerContainer, FloatingElement, ParallaxElement } from '@/components/animations';
-import { CountUp } from '@/components/animations/CountUp';
 import { TestimonialCarousel } from '@/components/TestimonialCarousel';
 import { StatsSection } from '@/components/StatsSection';
 import { HeroSlider } from '@/components/HeroSlider';
@@ -559,7 +558,7 @@ export default async function Home() {
                   <p className="font-semibold text-gray-900">
                     Join{' '}
                     <span className="text-accent-primary">
-                      <CountUp value={socialProof.stats.customersServed} duration={2} suffix="+" />
+                      {socialProof.stats.customersServed.toLocaleString()}+
                     </span>
                     {' '}subscribers
                   </p>
