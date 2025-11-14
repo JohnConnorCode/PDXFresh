@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
  * Tests cart operations, persistence, and UI interactions
  */
 
-const PRODUCTION_URL = 'https://drinklonglife.com';
+const PRODUCTION_URL = 'https://www.drinklonglife.com';
 
 test.describe('Shopping Cart - Add to Cart', () => {
   test.beforeEach(async ({ page }) => {
