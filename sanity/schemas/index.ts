@@ -23,6 +23,7 @@ import ingredientsSourcingPage from './ingredientsSourcingPage';
 import subscriptionsPage from './subscriptionsPage';
 import wholesalePage from './wholesalePage';
 import stripeProduct from './stripeProduct';
+import stripeSettings from './stripeSettings';
 import subscriptionPageSettings from './subscriptionPageSettings';
 import partnershipPerk from './partnershipPerk';
 import userDiscount from './userDiscount';
@@ -55,6 +56,7 @@ export const schemaTypes = [
   testimonial,
   teamMember,
   stripeProduct,
+  stripeSettings,
   subscriptionPageSettings,
   partnershipPerk,
   userDiscount,
