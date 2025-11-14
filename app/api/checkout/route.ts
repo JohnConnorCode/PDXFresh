@@ -100,14 +100,17 @@ export async function POST(req: NextRequest) {
       metadata.productId = product.stripeProductId;
       metadata.sanityProductId = product._id;
 
-      if (product.tier_key) {
-        metadata.tier_key = product.tier_key;
+      if (product.tierKey) {
+        metadata.tier_key = product.tierKey;
       }
 
-      if (product.variant.size_key) {
-        metadata.size_key = product.variant.size_key;
+      if (product.variant.sizeKey) {
+        metadata.size_key = product.variant.sizeKey;
       }
     }
+
+    // Get dynamic Stripe client based on current mode (test/production)
+    const stripeClient = await getStripeClient();
 
     // Handle authenticated vs guest checkout
     let customerId: string | undefined;
@@ -131,6 +134,7 @@ export async function POST(req: NextRequest) {
           email,
           name: profile?.name || user.user_metadata?.name || undefined,
           metadata: { userId: user.id },
+          stripe: stripeClient,
         });
 
         // Save customer ID to database
@@ -150,9 +154,6 @@ export async function POST(req: NextRequest) {
     const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
     const finalSuccessUrl = providedSuccessUrl || `${origin}${successPath}?session_id={CHECKOUT_SESSION_ID}`;
     const finalCancelUrl = providedCancelUrl || `${origin}${cancelPath}`;
-
-    // Get dynamic Stripe client based on current mode (test/production)
-    const stripeClient = await getStripeClient();
 
     // Create Stripe Checkout Session with dynamic Stripe client
     const checkoutSession = await createCheckoutSession(

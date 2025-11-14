@@ -201,13 +201,17 @@ export async function getOrCreateCustomer({
   email,
   name,
   metadata = {},
+  stripe: stripeClient,
 }: {
   email: string;
   name?: string;
   metadata?: Record<string, string>;
+  stripe?: Stripe;
 }): Promise<Stripe.Customer> {
+  const client = stripeClient || stripe;
+
   // Search for existing customer by email
-  const existingCustomers = await stripe.customers.list({
+  const existingCustomers = await client.customers.list({
     email,
     limit: 1,
   });
@@ -217,7 +221,7 @@ export async function getOrCreateCustomer({
   }
 
   // Create new customer
-  return await stripe.customers.create({
+  return await client.customers.create({
     email,
     name,
     metadata,
