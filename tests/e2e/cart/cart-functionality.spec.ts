@@ -84,7 +84,7 @@ test.describe('Shopping Cart - Cart Page', () => {
     await expect(page.locator('h2:has-text("Order Summary")')).toBeVisible();
     await expect(page.locator('text=Subtotal')).toBeVisible();
     await expect(page.locator('.space-y-3 >> text=Shipping')).toBeVisible();
-    await expect(page.locator('text=Total')).toBeVisible();
+    await expect(page.locator('.text-xl >> text=Total')).toBeVisible();
   });
 
   test('should increase quantity', async ({ page }) => {
@@ -137,11 +137,12 @@ test.describe('Shopping Cart - Cart Page', () => {
   });
 
   test('should clear cart', async ({ page }) => {
+    // Set up dialog handler BEFORE clicking
+    page.once('dialog', dialog => dialog.accept());
+
     // Click clear cart button
     await page.locator('button:has-text("Clear Cart")').click();
 
-    // Confirm dialog
-    page.on('dialog', dialog => dialog.accept());
     await page.waitForTimeout(500);
 
     // Verify cart is empty
