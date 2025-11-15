@@ -161,10 +161,10 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       await sendSubscriptionConfirmationEmail({
         to: (session.customer_email || session.customer_details?.email)!,
         customerName: session.customer_details?.name || undefined,
-        planName: product?.name || 'Subscription',
+        planName: (product && 'name' in product) ? product.name : 'Subscription',
         planPrice: price?.unit_amount || 0,
         billingInterval: price?.recurring?.interval || 'month',
-        nextBillingDate: new Date(stripeSubscription.current_period_end * 1000).toLocaleDateString(),
+        nextBillingDate: new Date((stripeSubscription as any).current_period_end * 1000).toLocaleDateString(),
         currency: session.currency || 'usd',
       });
     }

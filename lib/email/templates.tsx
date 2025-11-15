@@ -176,7 +176,7 @@ export const OrderConfirmationEmail: React.FC<OrderConfirmationEmailProps> = ({
             <li>Keep your juice refrigerated upon arrival</li>
           </ul>
 
-          <div style="text-align: center;">
+          <div style={{ textAlign: 'center' }}>
             <a href="https://drinklonglife.com/account" className="button">
               View Order Status
             </a>
@@ -314,7 +314,7 @@ export const SubscriptionConfirmationEmail: React.FC<SubscriptionConfirmationEma
             <li>Manage your subscription anytime from your account</li>
           </ul>
 
-          <div style="text-align: center;">
+          <div style={{ textAlign: 'center' }}>
             <a href="https://drinklonglife.com/account" className="button">
               Manage Subscription
             </a>

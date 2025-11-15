@@ -163,7 +163,7 @@ export async function GET() {
         issues.push({
           type: 'missing_in_supabase',
           stripePriceId: stripePrice.id,
-          productName: stripeProduct?.name || 'Unknown Product',
+          productName: (stripeProduct && 'name' in stripeProduct) ? stripeProduct.name : 'Unknown Product',
           details: `Stripe price exists but not found in Supabase: ${stripePrice.id}`,
           severity: 'warning',
         });

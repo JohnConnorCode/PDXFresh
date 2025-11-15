@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { render } from '@react-email/render';
 import { resend, isEmailConfigured, DEFAULT_FROM_EMAIL } from './resend';
 import {
   OrderConfirmationEmail,
@@ -27,7 +27,7 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationPa
   }
 
   try {
-    const html = renderToStaticMarkup(
+    const html = await render(
       OrderConfirmationEmail({
         orderNumber: params.orderNumber,
         customerEmail: params.to,
@@ -77,7 +77,7 @@ export async function sendSubscriptionConfirmationEmail(params: SendSubscription
   }
 
   try {
-    const html = renderToStaticMarkup(
+    const html = await render(
       SubscriptionConfirmationEmail({
         customerEmail: params.to,
         customerName: params.customerName,
