@@ -3,6 +3,8 @@ import { createServerClient } from '@/lib/supabase/server';
 import { createTierUpgradeCheckout } from '@/lib/checkout-helpers';
 import { trackServerEvent } from '@/lib/analytics';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = createServerClient();
