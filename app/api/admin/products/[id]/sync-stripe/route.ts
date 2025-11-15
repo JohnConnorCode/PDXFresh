@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { syncProductToStripe } from '@/lib/stripe/product-sync';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 /**
  * POST /api/admin/products/[id]/sync-stripe
  * Sync a product to Stripe (create or update Stripe product and prices)

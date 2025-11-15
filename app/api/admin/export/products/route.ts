@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { productsToCSV } from '@/lib/admin/csv-export';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/admin/export/products
  * Export all products to CSV
