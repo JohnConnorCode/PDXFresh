@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
-import { urlFor, getImageDimensions } from '@/lib/image';
 
 interface BlendCardProps {
   blend: any;
@@ -17,10 +16,8 @@ const labelColorMap = {
 };
 
 export function BlendCard({ blend }: BlendCardProps) {
-  const dimensions = getImageDimensions(blend.image);
-
   return (
-    <Link href={`/blends/${blend.slug.current}`}>
+    <Link href={`/blends/${blend.slug}`}>
       <motion.div
         className="group cursor-pointer"
         initial={{ opacity: 0, y: 20 }}
@@ -33,16 +30,16 @@ export function BlendCard({ blend }: BlendCardProps) {
           className="relative overflow-hidden rounded-lg bg-gray-100 mb-4 shadow-md"
           whileHover={{ boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }}
         >
-          {blend.image ? (
+          {blend.image_url ? (
             <motion.div
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             >
               <Image
-                src={urlFor(blend.image).url()}
-                alt={blend.name}
-                width={dimensions.width}
-                height={dimensions.height}
+                src={blend.image_url}
+                alt={blend.image_alt || blend.name}
+                width={800}
+                height={600}
                 className="w-full h-64 object-cover"
               />
             </motion.div>
@@ -51,11 +48,11 @@ export function BlendCard({ blend }: BlendCardProps) {
               <span className="font-heading text-4xl font-bold text-gray-400">{blend.name}</span>
             </div>
           )}
-          {blend.labelColor && (
+          {blend.label_color && (
             <motion.div
               className={clsx(
                 'absolute top-3 right-3 w-8 h-8 rounded-full',
-                labelColorMap[blend.labelColor as keyof typeof labelColorMap]
+                labelColorMap[blend.label_color as keyof typeof labelColorMap]
               )}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -65,9 +62,9 @@ export function BlendCard({ blend }: BlendCardProps) {
         </motion.div>
         <h3 className="font-heading text-lg font-bold mb-1">{blend.name}</h3>
         <p className="text-sm text-muted mb-3">{blend.tagline}</p>
-        {blend.functionList && blend.functionList.length > 0 && (
+        {blend.function_list && blend.function_list.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {blend.functionList.slice(0, 3).map((func: string, idx: number) => (
+            {blend.function_list.slice(0, 3).map((func: string, idx: number) => (
               <motion.span
                 key={func}
                 initial={{ opacity: 0, scale: 0.8 }}

@@ -206,62 +206,65 @@ export default async function BlendPage({ params }: BlendPageProps) {
               <p className="text-xl text-gray-600">Sourced from trusted regenerative farms</p>
             </FadeIn>
             <StaggerContainer staggerDelay={0.1} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {blend.ingredients?.filter((ingredient: any) => ingredient && ingredient.name).map((ingredient: any) => (
-                <div
-                  key={ingredient._id}
-                  className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-accent-green"
-                >
-                  {/* Icon or initial */}
-                  <div className="w-14 h-14 bg-gradient-to-br from-accent-yellow/30 to-accent-green/30 rounded-full mb-4 flex items-center justify-center">
-                    <span className="text-2xl font-heading font-bold text-accent-primary">
-                      {ingredient.name?.charAt(0) || '?'}
-                    </span>
-                  </div>
-
-                  <h3 className="font-heading text-xl font-bold mb-3 text-gray-900">
-                    {ingredient.name}
-                  </h3>
-
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <svg className="w-4 h-4 text-accent-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                      </svg>
-                      <span className="font-medium">{ingredient.type}</span>
+              {blend.ingredients?.filter((item: any) => item && item.ingredient && item.ingredient.name).map((item: any) => {
+                const ingredient = item.ingredient;
+                return (
+                  <div
+                    key={item.id}
+                    className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-accent-green"
+                  >
+                    {/* Icon or initial */}
+                    <div className="w-14 h-14 bg-gradient-to-br from-accent-yellow/30 to-accent-green/30 rounded-full mb-4 flex items-center justify-center">
+                      <span className="text-2xl font-heading font-bold text-accent-primary">
+                        {ingredient.name?.charAt(0) || '?'}
+                      </span>
                     </div>
-                    {ingredient.seasonality && (
+
+                    <h3 className="font-heading text-xl font-bold mb-3 text-gray-900">
+                      {ingredient.name}
+                    </h3>
+
+                    <div className="space-y-2 mb-4">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <svg className="w-4 h-4 text-accent-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        <svg className="w-4 h-4 text-accent-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                         </svg>
-                        <span>{ingredient.seasonality}</span>
+                        <span className="font-medium">{ingredient.type}</span>
+                      </div>
+                      {ingredient.seasonality && (
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <svg className="w-4 h-4 text-accent-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+                          <span>{ingredient.seasonality}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {ingredient.farms && ingredient.farms.length > 0 && (
+                      <div className="border-t border-gray-100 pt-4">
+                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                          Farm Partners
+                        </p>
+                        <ul className="space-y-1">
+                          {ingredient.farms.map((farm: any) => (
+                            <li key={farm.id} className="text-sm text-gray-700 flex items-start gap-2">
+                              <svg className="w-4 h-4 text-accent-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              <span>
+                                <strong>{farm.name}</strong>
+                                {farm.location && <span className="text-gray-500"> • {farm.location}</span>}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
                   </div>
-
-                  {ingredient.farms && ingredient.farms.length > 0 && (
-                    <div className="border-t border-gray-100 pt-4">
-                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                        Farm Partners
-                      </p>
-                      <ul className="space-y-1">
-                        {ingredient.farms.map((farm: any) => (
-                          <li key={farm._id} className="text-sm text-gray-700 flex items-start gap-2">
-                            <svg className="w-4 h-4 text-accent-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <span>
-                              <strong>{farm.name}</strong>
-                              {farm.location && <span className="text-gray-500"> • {farm.location}</span>}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </StaggerContainer>
           </div>
         </Section>

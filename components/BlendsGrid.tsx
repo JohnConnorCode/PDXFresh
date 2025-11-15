@@ -15,8 +15,8 @@ export function BlendsGrid({ blends }: BlendsGridProps) {
   const allFunctions = useMemo(() => {
     const functionsSet = new Set<string>();
     blends.forEach((blend) => {
-      if (blend.functionList) {
-        blend.functionList.forEach((func: string) => functionsSet.add(func));
+      if (blend.function_list) {
+        blend.function_list.forEach((func: string) => functionsSet.add(func));
       }
     });
     return Array.from(functionsSet).sort();
@@ -28,7 +28,7 @@ export function BlendsGrid({ blends }: BlendsGridProps) {
       return blends;
     }
     return blends.filter((blend) =>
-      blend.functionList?.includes(selectedFilter)
+      blend.function_list?.includes(selectedFilter)
     );
   }, [blends, selectedFilter]);
 
@@ -77,7 +77,7 @@ export function BlendsGrid({ blends }: BlendsGridProps) {
       {filteredBlends.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredBlends.map((blend: any) => (
-            <BlendCard key={blend._id} blend={blend} />
+            <BlendCard key={blend.id} blend={blend} />
           ))}
         </div>
       ) : (
