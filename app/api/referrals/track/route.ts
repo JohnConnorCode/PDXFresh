@@ -1,15 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from '@/lib/supabase/server';
 import { trackReferral } from '@/lib/referral-utils';
 import { trackServerEvent } from '@/lib/analytics';
 
 export async function POST(req: NextRequest) {
   try {
+    // CRITICAL SECURITY: Require authentication
+    const supabase = createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const { referralCode, userId } = await req.json();
 
     if (!referralCode || !userId) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
+      );
+    }
+
+    // CRITICAL SECURITY: Verify userId matches authenticated user
+    if (userId !== user.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Cannot track referrals for other users' },
+        { status: 403 }
       );
     }
 

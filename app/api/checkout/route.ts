@@ -31,6 +31,15 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
     console.log('🔐 User authenticated:', !!user, user?.email);
 
+    // CRITICAL SECURITY: Require authentication for checkout
+    // Prevents guest checkout abuse and ensures all orders are associated with users
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in to continue.' },
+        { status: 401 }
+      );
+    }
+
     const body: CheckoutRequestBody = await req.json();
     console.log('📦 Checkout request body:', JSON.stringify(body, null, 2));
 
@@ -93,15 +102,65 @@ export async function POST(req: NextRequest) {
 
     // CART-BASED CHECKOUT (multiple items)
     if (items && items.length > 0) {
-      // Determine checkout mode based on items
-      // For now, assume all items are the same type (all subscriptions or all one-time)
-      // In a real scenario, you'd need to handle mixed carts or restrict cart to single type
-      const checkoutMode: 'payment' | 'subscription' = 'payment'; // Default to payment for cart
+      console.log('🔍 Validating prices server-side...');
 
-      const lineItems = items.map(item => ({
-        price: item.priceId,
-        quantity: item.quantity,
-      }));
+      // CRITICAL SECURITY: Validate all prices server-side to prevent price manipulation
+      const validatedLineItems = [];
+      let checkoutMode: 'payment' | 'subscription' = 'payment';
+
+      for (const item of items) {
+        // Validate quantity
+        if (item.quantity < 1 || item.quantity > 999 || !Number.isInteger(item.quantity)) {
+          return NextResponse.json(
+            { error: `Invalid quantity for item: ${item.quantity}. Must be between 1 and 999` },
+            { status: 400 }
+          );
+        }
+
+        // Fetch price from Stripe to ensure it's valid and active
+        try {
+          const price = await stripeClient.prices.retrieve(item.priceId);
+
+          // Security checks
+          if (!price.active) {
+            return NextResponse.json(
+              { error: `Price ${item.priceId} is not active` },
+              { status: 400 }
+            );
+          }
+
+          // Verify price belongs to an active product
+          const productId = typeof price.product === 'string' ? price.product : price.product.id;
+          const product = await stripeClient.products.retrieve(productId);
+
+          if (!product.active) {
+            return NextResponse.json(
+              { error: `Product for price ${item.priceId} is not active` },
+              { status: 400 }
+            );
+          }
+
+          // Detect if this is a subscription
+          if (price.type === 'recurring') {
+            checkoutMode = 'subscription';
+          }
+
+          console.log(`✅ Price validated: ${item.priceId} - ${price.unit_amount ? price.unit_amount / 100 : 0} ${price.currency}`);
+
+          validatedLineItems.push({
+            price: item.priceId,
+            quantity: item.quantity,
+          });
+        } catch (error) {
+          console.error(`❌ Invalid price ID: ${item.priceId}`, error);
+          return NextResponse.json(
+            { error: `Invalid price ID: ${item.priceId}` },
+            { status: 400 }
+          );
+        }
+      }
+
+      const lineItems = validatedLineItems;
 
       const checkoutSession = await createCartCheckoutSession(
         {
@@ -123,6 +182,37 @@ export async function POST(req: NextRequest) {
 
     // LEGACY SINGLE-ITEM CHECKOUT
     if (priceId && mode) {
+      console.log('🔍 Validating single-item price server-side...');
+
+      // CRITICAL SECURITY: Validate price server-side
+      try {
+        const price = await stripeClient.prices.retrieve(priceId);
+
+        if (!price.active) {
+          return NextResponse.json(
+            { error: 'Selected price is not available' },
+            { status: 400 }
+          );
+        }
+
+        // Verify price type matches mode
+        const isSubscription = price.type === 'recurring';
+        if ((mode === 'subscription' && !isSubscription) || (mode === 'payment' && isSubscription)) {
+          return NextResponse.json(
+            { error: 'Price type does not match checkout mode' },
+            { status: 400 }
+          );
+        }
+
+        console.log(`✅ Single price validated: ${priceId}`);
+      } catch (error) {
+        console.error(`❌ Invalid price ID: ${priceId}`, error);
+        return NextResponse.json(
+          { error: 'Invalid price selected' },
+          { status: 400 }
+        );
+      }
+
       const checkoutSession = await createCheckoutSession(
         {
           priceId,

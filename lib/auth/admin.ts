@@ -1,17 +1,22 @@
 import { createServerClient } from '@/lib/supabase/server';
 
-const ADMIN_EMAILS = [
-  'john@acceleratewith.us',
-  'mikemontoya@montoyacapital.org',
-  'jt.connor88@gmail.com',
-];
-
 /**
- * Check if a user is an admin based on their email
+ * Check if a user is an admin based on database is_admin flag
+ *
+ * SECURITY: This uses ONLY the database flag, not hardcoded emails.
+ * Admin status can be granted/revoked via direct database updates.
  */
-export async function isUserAdmin(email?: string): Promise<boolean> {
-  if (!email) return false;
-  return ADMIN_EMAILS.includes(email.toLowerCase());
+export async function isUserAdmin(userId: string): Promise<boolean> {
+  if (!userId) return false;
+
+  const supabase = createServerClient();
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', userId)
+    .single();
+
+  return profile?.is_admin || false;
 }
 
 /**
@@ -21,11 +26,11 @@ export async function getCurrentAdminUser() {
   const supabase = createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user?.email) {
+  if (!user) {
     return null;
   }
 
-  const isAdmin = await isUserAdmin(user.email);
+  const isAdmin = await isUserAdmin(user.id);
   if (!isAdmin) {
     return null;
   }

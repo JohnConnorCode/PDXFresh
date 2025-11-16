@@ -25,9 +25,21 @@ export function SignupForm({ redirectTo = '/account', referralCode }: SignupForm
     const password = formData.get('password') as string;
     const fullName = formData.get('fullName') as string;
 
-    // Basic validation
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long');
+    // SECURITY: Strong password validation
+    if (password.length < 12) {
+      setError('Password must be at least 12 characters long');
+      setLoading(false);
+      return;
+    }
+
+    // Check for password complexity
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (!hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecialChar) {
+      setError('Password must contain uppercase, lowercase, number, and special character');
       setLoading(false);
       return;
     }
@@ -179,12 +191,12 @@ export function SignupForm({ redirectTo = '/account', referralCode }: SignupForm
             type="password"
             required
             autoComplete="new-password"
-            minLength={8}
+            minLength={12}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-primary focus:border-transparent transition-all"
             placeholder="••••••••"
           />
           <p className="mt-1 text-xs text-gray-500">
-            Must be at least 8 characters long
+            Minimum 12 characters with uppercase, lowercase, number, and special character
           </p>
         </div>
 
