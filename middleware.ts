@@ -52,7 +52,7 @@ export async function middleware(request: NextRequest) {
           getAll() {
             return request.cookies.getAll()
           },
-          setAll(cookiesToSet) {
+          setAll(_cookiesToSet) {
             // Don't modify cookies here, just read
           },
         },
