@@ -610,6 +610,45 @@ export default async function Home() {
           </div>
         </div>
       </Section>
+
+      {/* Referral Program Section */}
+      <Section className="py-20 bg-gradient-to-br from-accent-primary/5 to-accent-secondary/5">
+        <FadeIn>
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6">
+              Share the Love, Earn Rewards
+            </h2>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Refer friends to Long Life and earn exclusive rewards. Get 15% off for every friend who makes their first purchase.
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-10">
+              <div className="bg-white p-6 rounded-xl shadow-md">
+                <div className="text-3xl mb-3">🔗</div>
+                <h3 className="font-semibold text-lg mb-2">Share Your Link</h3>
+                <p className="text-sm text-gray-600">Get your unique referral link and share it with friends</p>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-md">
+                <div className="text-3xl mb-3">🎁</div>
+                <h3 className="font-semibold text-lg mb-2">They Get 10% Off</h3>
+                <p className="text-sm text-gray-600">Friends receive a welcome discount on their first order</p>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-md">
+                <div className="text-3xl mb-3">💰</div>
+                <h3 className="font-semibold text-lg mb-2">You Get 15% Credit</h3>
+                <p className="text-sm text-gray-600">Earn rewards after their first purchase</p>
+              </div>
+            </div>
+
+            <Link
+              href="/referral"
+              className="inline-block px-8 py-4 bg-accent-primary text-white font-semibold rounded-full hover:bg-accent-dark transition-all shadow-lg hover:shadow-xl"
+            >
+              Learn More About Referrals
+            </Link>
+          </div>
+        </FadeIn>
+      </Section>
     </>
   );
 }

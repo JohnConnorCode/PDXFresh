@@ -137,6 +137,51 @@ export async function trackReferral(
 
   const supabase = createServerClient();
 
+  // Get referral details first
+  const referral = await getReferralByCode(referralCode);
+  if (!referral) {
+    console.warn('Referral code not found:', referralCode);
+    return false;
+  }
+
+  // FRAUD CHECK 1: Prevent self-referral
+  if (referral.referrer_id === newUserId) {
+    console.warn('Self-referral attempt blocked:', { userId: newUserId, code: referralCode });
+    return false;
+  }
+
+  // FRAUD CHECK 2: Rate limiting - max 10 referrals per day per referrer
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { data: recentReferrals } = await supabase
+    .from('referrals')
+    .select('id')
+    .eq('referrer_id', referral.referrer_id)
+    .not('referred_user_id', 'is', null)
+    .gte('created_at', oneDayAgo);
+
+  if (recentReferrals && recentReferrals.length >= 10) {
+    console.warn('Referral rate limit exceeded:', {
+      referrerId: referral.referrer_id,
+      count: recentReferrals.length,
+    });
+    return false;
+  }
+
+  // FRAUD CHECK 3: Check if referred user already has a referrer
+  const { data: existingProfile } = await supabase
+    .from('profiles')
+    .select('referred_by')
+    .eq('id', newUserId)
+    .single();
+
+  if (existingProfile?.referred_by) {
+    console.warn('User already has a referrer:', {
+      userId: newUserId,
+      existingReferrer: existingProfile.referred_by,
+    });
+    return false;
+  }
+
   // Update the referral entry with the new user
   const { error: updateError } = await supabase
     .from('referrals')
@@ -150,17 +195,13 @@ export async function trackReferral(
   }
 
   // Update the new user's profile to track who referred them
-  const referral = await getReferralByCode(referralCode);
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({ referred_by: referral.referrer_id })
+    .eq('id', newUserId);
 
-  if (referral) {
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({ referred_by: referral.referrer_id })
-      .eq('id', newUserId);
-
-    if (profileError) {
-      console.error('Failed to update referred_by:', profileError);
-    }
+  if (profileError) {
+    console.error('Failed to update referred_by:', profileError);
   }
 
   return true;

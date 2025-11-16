@@ -15,6 +15,17 @@ import { parseBody } from 'next-sanity/webhook';
 
 export async function POST(req: NextRequest) {
   try {
+    // CRITICAL SECURITY: ALWAYS require signature verification
+    if (!process.env.SANITY_REVALIDATE_SECRET) {
+      console.error('SANITY_REVALIDATE_SECRET is not configured - webhook endpoint is vulnerable!');
+      return new Response(
+        JSON.stringify({
+          message: 'Server misconfiguration: webhook secret not set'
+        }),
+        { status: 500 }
+      );
+    }
+
     const { body, isValidSignature } = await parseBody<{
       _type: string;
       slug?: { current: string };
@@ -23,10 +34,11 @@ export async function POST(req: NextRequest) {
       process.env.SANITY_REVALIDATE_SECRET,
     );
 
-    // Verify signature if secret is set
-    if (process.env.SANITY_REVALIDATE_SECRET && !isValidSignature) {
+    // CRITICAL SECURITY: Reject if signature is invalid
+    if (!isValidSignature) {
+      console.warn('Webhook signature verification failed - possible attack attempt');
       const message = 'Invalid signature';
-      return new Response(JSON.stringify({ message, isValidSignature, body }), {
+      return new Response(JSON.stringify({ message }), {
         status: 401,
       });
     }

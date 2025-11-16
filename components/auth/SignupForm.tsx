@@ -106,6 +106,7 @@ export function SignupForm({ redirectTo = '/account', referralCode }: SignupForm
     setError(null);
 
     try {
+      const supabase = createClient();
       const origin = window.location.origin;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',

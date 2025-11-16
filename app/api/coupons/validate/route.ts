@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripeClient } from '@/lib/stripe/config';
+import { createServerClient } from '@/lib/supabase/server';
+import { rateLimit } from '@/lib/rate-limit';
 
 interface ValidateCouponRequest {
   code: string;
@@ -7,6 +9,37 @@ interface ValidateCouponRequest {
 
 export async function POST(req: NextRequest) {
   try {
+    // CRITICAL SECURITY: Require authentication to prevent coupon enumeration attacks
+    const supabase = createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required', valid: false },
+        { status: 401 }
+      );
+    }
+
+    // CRITICAL SECURITY: Rate limiting to prevent brute force attacks
+    const rateLimitKey = `coupon-validate:${user.id}`;
+    const { success, remaining, reset } = rateLimit(rateLimitKey, 10, '1m');
+
+    if (!success) {
+      return NextResponse.json(
+        {
+          error: 'Too many validation attempts. Please try again later.',
+          valid: false,
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Remaining': remaining.toString(),
+            'X-RateLimit-Reset': new Date(reset).toISOString(),
+          },
+        }
+      );
+    }
+
     const { code }: ValidateCouponRequest = await req.json();
 
     if (!code || typeof code !== 'string') {

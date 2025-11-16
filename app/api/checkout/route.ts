@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { createCheckoutSession, createCartCheckoutSession, getOrCreateCustomer } from '@/lib/stripe';
 import { getStripeClient } from '@/lib/stripe/config';
+import { rateLimit } from '@/lib/rate-limit';
 
 interface CartItemRequest {
   priceId: string;
@@ -40,6 +41,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // CRITICAL SECURITY: Rate limiting to prevent checkout spam
+    const rateLimitKey = `checkout:${user.id}`;
+    const { success, remaining, reset } = rateLimit(rateLimitKey, 20, '5m');
+
+    if (!success) {
+      return NextResponse.json(
+        {
+          error: 'Too many checkout attempts. Please wait a moment and try again.',
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Remaining': remaining.toString(),
+            'X-RateLimit-Reset': new Date(reset).toISOString(),
+          },
+        }
+      );
+    }
+
     const body: CheckoutRequestBody = await req.json();
     console.log('📦 Checkout request body:', JSON.stringify(body, null, 2));
 
@@ -54,10 +74,10 @@ export async function POST(req: NextRequest) {
       cancelUrl: providedCancelUrl,
     } = body;
 
-    // Build full URLs
-    const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const finalSuccessUrl = providedSuccessUrl || `${origin}${successPath || '/checkout/success'}?session_id={CHECKOUT_SESSION_ID}`;
-    const finalCancelUrl = providedCancelUrl || `${origin}${cancelPath || '/cart'}`;
+    // CRITICAL SECURITY: Only trust environment variable for origin, not client headers
+    const trustedOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const finalSuccessUrl = providedSuccessUrl || `${trustedOrigin}${successPath || '/checkout/success'}?session_id={CHECKOUT_SESSION_ID}`;
+    const finalCancelUrl = providedCancelUrl || `${trustedOrigin}${cancelPath || '/cart'}`;
 
     // Get dynamic Stripe client based on current mode (test/production)
     const stripeClient = getStripeClient();
