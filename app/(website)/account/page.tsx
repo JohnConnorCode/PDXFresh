@@ -11,6 +11,7 @@ import { getActiveUser, calculateProfileCompletion, shouldShowProfileCompletion 
 import { getReferralStats } from '@/lib/referral-utils';
 import { ProfileCompletionCard } from '@/components/account/ProfileCompletionCard';
 import { ReferralShareCard } from '@/components/account/ReferralShareCard';
+import { EmailPreferences } from '@/components/account/EmailPreferences';
 import { isFeatureEnabled } from '@/lib/feature-flags';
 
 export const metadata: Metadata = {
@@ -186,6 +187,11 @@ export default async function AccountPage() {
               </div>
             </Link>
           </div>
+        </FadeIn>
+
+        {/* Email Preferences */}
+        <FadeIn direction="up" delay={0.23}>
+          <EmailPreferences userEmail={user.email || ''} />
         </FadeIn>
 
         {/* Profile Completion */}
