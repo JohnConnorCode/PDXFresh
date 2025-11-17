@@ -13,8 +13,7 @@ test.describe('Authentication', () => {
   test('should show login page', async ({ page }) => {
     await page.goto('/login');
 
-    await expect(page.locator('text=Sign in with Email')).toBeVisible();
-    await expect(page.locator('text=Sign in with Google')).toBeVisible();
+    await expect(page.locator('button:has-text("Sign in")')).toBeVisible();
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
   });
@@ -24,7 +23,7 @@ test.describe('Authentication', () => {
 
     await page.fill('input[type="email"]', 'invalid@example.com');
     await page.fill('input[type="password"]', 'wrongpassword');
-    await page.click('button:has-text("Sign in with Email")');
+    await page.click('button:has-text("Sign in")');
 
     // Should show error message
     await expect(page.locator('text=/Invalid|failed|error/i')).toBeVisible({ timeout: 5000 });

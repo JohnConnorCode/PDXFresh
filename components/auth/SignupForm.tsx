@@ -9,7 +9,7 @@ interface SignupFormProps {
   referralCode?: string;
 }
 
-export function SignupForm({ redirectTo = '/account', referralCode }: SignupFormProps) {
+export function SignupForm({ redirectTo = '/welcome', referralCode }: SignupFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

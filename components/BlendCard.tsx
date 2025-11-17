@@ -16,8 +16,14 @@ const labelColorMap = {
 };
 
 export function BlendCard({ blend }: BlendCardProps) {
-  const slug = typeof blend.slug === 'string' ? blend.slug : blend.slug?.current;
+  const slug = typeof blend.slug === 'string' ? blend.slug : (blend.slug?.current || blend.id || '');
   const imageUrl = blend.image_url || blend.image?.asset?.url;
+
+  // Don't render if no valid slug
+  if (!slug) {
+    console.error('BlendCard: No valid slug found for blend:', blend);
+    return null;
+  }
 
   return (
     <Link href={`/blends/${slug}`}>
