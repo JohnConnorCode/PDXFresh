@@ -91,7 +91,9 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
           <div>
             <h4 className="font-semibold text-sm mb-4">Explore</h4>
             <ul className="space-y-2">
-              {footerLinks.map((link: any) => (
+              {footerLinks
+                .filter((link: any) => link.title?.toLowerCase() !== 'ingredients')
+                .map((link: any) => (
                 <li key={link.title}>
                   <Link
                     href={

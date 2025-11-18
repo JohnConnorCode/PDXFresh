@@ -129,49 +129,13 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {headerLinks.map((link: any, index: number) => {
-              const href = link.externalUrl || (link.reference?.slug?.current ? `/${link.reference.slug.current}` : '#');
-              const isActive = pathname === href || pathname.startsWith(href + '/');
-
-              return (
-                <motion.div
-                  key={link.title || index}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.4,
-                    delay: 1.0 + index * 0.1,
-                    ease: 'easeOut',
-                  }}
-                >
-                  <Link
-                    href={href}
-                    target={link.newTab ? '_blank' : undefined}
-                    rel={link.newTab ? 'noopener noreferrer' : undefined}
-                    className={clsx(
-                      'group text-sm font-heading font-medium transition-colors relative',
-                      isActive ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
-                    )}
-                  >
-                    {link.title}
-                    <span
-                      className={clsx(
-                        'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
-                        isActive ? 'w-full' : 'w-0 group-hover:w-full'
-                      )}
-                    />
-                  </Link>
-                </motion.div>
-              );
-            })}
-
-            {/* Blends Dropdown */}
+            {/* Blends Dropdown - First */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: 0.4,
-                delay: 1.0 + headerLinks.length * 0.1,
+                delay: 1.0,
                 ease: 'easeOut',
               }}
               className="relative"
@@ -220,13 +184,52 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
               )}
             </motion.div>
 
+            {/* Other Navigation Links (filter out Blends and Ingredients) */}
+            {headerLinks
+              .filter((link: any) => !['blends', 'ingredients'].includes(link.title?.toLowerCase()))
+              .map((link: any, index: number) => {
+                const href = link.externalUrl || (link.reference?.slug?.current ? `/${link.reference.slug.current}` : '#');
+                const isActive = pathname === href || pathname.startsWith(href + '/');
+
+                return (
+                  <motion.div
+                    key={link.title || index}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: 1.0 + (index + 1) * 0.1,
+                      ease: 'easeOut',
+                    }}
+                  >
+                    <Link
+                      href={href}
+                      target={link.newTab ? '_blank' : undefined}
+                      rel={link.newTab ? 'noopener noreferrer' : undefined}
+                      className={clsx(
+                        'group text-sm font-heading font-medium transition-colors relative',
+                        isActive ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
+                      )}
+                    >
+                      {link.title}
+                      <span
+                        className={clsx(
+                          'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
+                          isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                        )}
+                      />
+                    </Link>
+                  </motion.div>
+                );
+              })}
+
             {/* Ambassadors Link (hardcoded) */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: 0.4,
-                delay: 1.0 + (headerLinks.length + 1) * 0.1,
+                delay: 1.0 + headerLinks.length * 0.1,
                 ease: 'easeOut',
               }}
             >
