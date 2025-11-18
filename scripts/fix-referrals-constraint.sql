@@ -1,11 +1,10 @@
 -- =====================================================
--- CREATE PROFILES FOR AUTH USERS
+-- FIX REFERRALS TABLE CONSTRAINT
 -- =====================================================
--- Run this in Supabase SQL Editor: https://supabase.com/dashboard/project/qjgenpwbaquqrvyrfsdo/sql
---
--- This will create profile records for auth users that don't have them yet.
+-- This ensures the referral_code column has a UNIQUE constraint
+-- so the ON CONFLICT clause in the trigger works properly
 
--- STEP 1: Fix the referrals table constraint (needed for the trigger to work)
+-- First check if the constraint exists
 DO $$
 BEGIN
   -- Add unique constraint if it doesn't exist
@@ -23,17 +22,7 @@ BEGIN
   END IF;
 END $$;
 
--- STEP 2: Let's see what we're missing
-SELECT
-  au.id,
-  au.email,
-  au.created_at,
-  CASE WHEN p.id IS NULL THEN 'MISSING PROFILE' ELSE 'HAS PROFILE' END as status
-FROM auth.users au
-LEFT JOIN public.profiles p ON au.id = p.id
-ORDER BY au.created_at DESC;
-
--- STEP 3: Now create the missing profiles
+-- Now we can create profiles for auth users without the trigger failing
 INSERT INTO public.profiles (id, email, full_name)
 SELECT
   au.id,
@@ -47,11 +36,10 @@ FROM auth.users au
 LEFT JOIN public.profiles p ON au.id = p.id
 WHERE p.id IS NULL;
 
--- STEP 4: Verify the profiles were created
+-- Verify all auth users now have profiles
 SELECT
-  id,
-  email,
-  full_name,
-  created_at
-FROM public.profiles
-ORDER BY created_at DESC;
+  au.email,
+  CASE WHEN p.id IS NULL THEN '❌ MISSING' ELSE '✅ EXISTS' END as profile_status
+FROM auth.users au
+LEFT JOIN public.profiles p ON au.id = p.id
+ORDER BY au.created_at DESC;
