@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { resend, EMAIL_CONFIG } from './email/client';
 import NewsletterWelcomeEmail from './email/templates/newsletter-welcome';
 import ContactFormEmail from './email/templates/contact-form';
+import { createServiceRoleClient } from './supabase/server';
 
 // Newsletter subscription schema
 const newsletterSchema = z.object({
@@ -28,14 +29,44 @@ export async function submitNewsletter(formData: FormData) {
     const validatedData = newsletterSchema.parse({ email });
 
     // Send welcome email via Resend
-    await resend.emails.send({
-      from: EMAIL_CONFIG.from,
-      to: validatedData.email,
-      subject: 'Welcome to Long Life! 🌱',
-      react: NewsletterWelcomeEmail({ email: validatedData.email }),
-    });
+    try {
+      await resend.emails.send({
+        from: EMAIL_CONFIG.from,
+        to: validatedData.email,
+        subject: 'Welcome to Long Life! 🌱',
+        react: NewsletterWelcomeEmail({ email: validatedData.email }),
+      });
+    } catch (emailError) {
+      console.error('Error sending welcome email:', emailError);
+      // Continue even if email fails - still save to database
+    }
 
-    // TODO: Save to database/Klaviyo for ongoing campaigns
+    // Save to database for marketing campaigns
+    const supabase = createServiceRoleClient();
+    const { error: dbError } = await supabase
+      .from('newsletter_subscribers')
+      .insert({
+        email: validatedData.email,
+        source: 'website',
+        subscribed: true,
+      })
+      .select()
+      .single();
+
+    if (dbError) {
+      // Check if email already exists (unique constraint violation)
+      if (dbError.code === '23505') {
+        return {
+          success: true,
+          message: 'You\'re already subscribed! Check your email.',
+        };
+      }
+      console.error('Error saving newsletter subscription:', dbError);
+      return {
+        success: false,
+        error: 'Could not complete subscription. Please try again.',
+      };
+    }
 
     return {
       success: true,
@@ -48,6 +79,7 @@ export async function submitNewsletter(formData: FormData) {
         error: error.errors[0].message,
       };
     }
+    console.error('Newsletter subscription error:', error);
     return {
       success: false,
       error: 'Something went wrong. Please try again.',
@@ -78,20 +110,47 @@ export async function submitWholesaleInquiry(formData: FormData) {
     const validatedData = wholesaleSchema.parse(data);
 
     // Send to sales team via Resend
-    await resend.emails.send({
-      from: EMAIL_CONFIG.from,
-      to: EMAIL_CONFIG.supportEmail,
-      replyTo: validatedData.email,
-      subject: `Wholesale Inquiry from ${validatedData.name}`,
-      react: ContactFormEmail({
+    try {
+      await resend.emails.send({
+        from: EMAIL_CONFIG.from,
+        to: EMAIL_CONFIG.supportEmail,
+        replyTo: validatedData.email,
+        subject: `Wholesale Inquiry from ${validatedData.name}`,
+        react: ContactFormEmail({
+          name: validatedData.name,
+          email: validatedData.email,
+          message: `Company: ${validatedData.company}\nLocation: ${validatedData.location}\nExpected Volume: ${validatedData.expectedVolume}\n\n${validatedData.message}`,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+    } catch (emailError) {
+      console.error('Error sending wholesale inquiry email:', emailError);
+      // Continue even if email fails - still save to database
+    }
+
+    // Save to database for CRM tracking
+    const supabase = createServiceRoleClient();
+    const { error: dbError } = await supabase
+      .from('wholesale_inquiries')
+      .insert({
         name: validatedData.name,
         email: validatedData.email,
-        message: `Company: ${validatedData.company}\nLocation: ${validatedData.location}\nExpected Volume: ${validatedData.expectedVolume}\n\n${validatedData.message}`,
-        timestamp: new Date().toISOString(),
-      }),
-    });
+        company: validatedData.company,
+        location: validatedData.location,
+        expected_volume: validatedData.expectedVolume,
+        message: validatedData.message,
+        status: 'new',
+      })
+      .select()
+      .single();
 
-    // TODO: Save to database/CRM for tracking
+    if (dbError) {
+      console.error('Error saving wholesale inquiry:', dbError);
+      return {
+        success: false,
+        error: 'Could not submit inquiry. Please try again.',
+      };
+    }
 
     return {
       success: true,
@@ -105,6 +164,7 @@ export async function submitWholesaleInquiry(formData: FormData) {
         error: error.errors[0].message,
       };
     }
+    console.error('Wholesale inquiry error:', error);
     return {
       success: false,
       error: 'Something went wrong. Please try again.',
