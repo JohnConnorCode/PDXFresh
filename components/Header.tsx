@@ -380,29 +380,6 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
                 )}
               </motion.div>
             )}
-
-            {/* Shop Blends CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.4,
-                delay: 1.0 + headerLinks.length * 0.1 + 0.1,
-                ease: 'easeOut',
-              }}
-            >
-              <RippleEffect
-                className="inline-flex rounded-full"
-                color="rgba(255, 255, 255, 0.4)"
-              >
-                <Link
-                  href="/blends"
-                  className="px-6 py-2 rounded-full bg-gradient-to-r from-accent-yellow to-accent-green text-white text-sm font-medium hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg block"
-                >
-                  {ctaLabel || 'Shop Blends'}
-                </Link>
-              </RippleEffect>
-            </motion.div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -551,19 +528,6 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
                   </SignOutButton>
                 </div>
               )}
-
-              {/* Mobile CTA */}
-              <RippleEffect
-                className="block mt-6 rounded-full"
-                color="rgba(255, 255, 255, 0.4)"
-              >
-                <Link
-                  href="/blends"
-                  className="block px-6 py-3 text-center rounded-full bg-gradient-to-r from-accent-yellow to-accent-green text-white font-medium hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-lg"
-                >
-                  {ctaLabel || 'Shop Blends'}
-                </Link>
-              </RippleEffect>
             </StaggerContainer>
           </nav>
         </>
