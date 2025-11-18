@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
         const email = profile?.email || user.email!;
         const customer = await getOrCreateCustomer({
           email,
-          name: profile?.name || user.user_metadata?.name || undefined,
+          name: profile?.full_name || user.user_metadata?.name || undefined,
           metadata: { userId: user.id },
           stripe: stripeClient,
         });

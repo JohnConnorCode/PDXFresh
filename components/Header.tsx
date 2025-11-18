@@ -26,6 +26,7 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const headerLinks = navigation?.primaryLinks || [];
   const cartItemCount = useCartStore((state) => state.getItemCount());
 
@@ -60,16 +61,40 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
   useEffect(() => {
     const supabase = createClient();
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Get initial session and check admin status
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null);
+
+      // Check if user is admin
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_admin')
+          .eq('id', session.user.id)
+          .single();
+        setIsAdmin(profile?.is_admin === true);
+      } else {
+        setIsAdmin(false);
+      }
     });
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
+
+      // Check if user is admin
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_admin')
+          .eq('id', session.user.id)
+          .single();
+        setIsAdmin(profile?.is_admin === true);
+      } else {
+        setIsAdmin(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -276,6 +301,15 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
                       >
                         My Account
                       </Link>
+                      {isAdmin && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors"
+                        >
+                          Admin
+                        </Link>
+                      )}
                       <SignOutButton className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors">
                         Sign Out
                       </SignOutButton>
@@ -442,6 +476,14 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
                   >
                     My Account
                   </Link>
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      className="block px-6 py-3 text-center rounded-full border-2 border-accent-primary text-accent-primary font-medium hover:bg-accent-primary/5 transition-all duration-300"
+                    >
+                      Admin
+                    </Link>
+                  )}
                   <SignOutButton className="w-full block px-6 py-3 text-center rounded-full border-2 border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-all duration-300">
                     Sign Out
                   </SignOutButton>

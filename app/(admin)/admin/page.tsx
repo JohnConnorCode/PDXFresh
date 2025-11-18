@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { getAdminStats } from '@/lib/admin';
 import { getAnalyticsMetrics } from '@/lib/supabase/queries/analytics';
+import { FadeIn, StaggerContainer } from '@/components/animations';
 import {
   DollarSign,
   ShoppingCart,
@@ -23,21 +24,24 @@ export default async function AdminDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="font-heading text-3xl font-bold text-gray-900 mb-2">
-          Admin Dashboard
-        </h1>
-        <p className="text-gray-600">
-          E-commerce performance, system health, and user stats
-        </p>
-      </div>
+      <FadeIn direction="up" delay={0.05}>
+        <div>
+          <h1 className="font-heading text-3xl font-bold text-gray-900 mb-2">
+            Admin Dashboard
+          </h1>
+          <p className="text-gray-600">
+            E-commerce performance, system health, and user stats
+          </p>
+        </div>
+      </FadeIn>
 
       {/* E-commerce Metrics */}
-      <div>
+      <FadeIn direction="up" delay={0.1}>
         <h2 className="font-heading text-xl font-bold text-gray-900 mb-4">
           E-commerce Performance
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      </FadeIn>
+      <StaggerContainer staggerDelay={0.05} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white rounded-lg shadow p-6 border-2 border-green-200">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-gray-600">Total Revenue</h3>
@@ -89,15 +93,15 @@ export default async function AdminDashboard() {
             </p>
             <p className="text-sm text-gray-500 mt-1">Per transaction</p>
           </div>
-        </div>
-      </div>
+      </StaggerContainer>
 
       {/* Product Stats */}
-      <div>
+      <FadeIn direction="up" delay={0.35}>
         <h2 className="font-heading text-xl font-bold text-gray-900 mb-4">
           Product Catalog
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      </FadeIn>
+      <StaggerContainer staggerDelay={0.05} className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-white rounded-lg shadow p-6 border-2 border-gray-200">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-gray-600">Total Products</h3>
@@ -144,15 +148,15 @@ export default async function AdminDashboard() {
             <p className="text-3xl font-bold text-gray-900">{ecommerceMetrics.products.withoutVariants}</p>
             <p className="text-sm text-gray-500 mt-1">Need pricing</p>
           </div>
-        </div>
-      </div>
+      </StaggerContainer>
 
       {/* Health Check Stats */}
-      <div>
+      <FadeIn direction="up" delay={0.55}>
         <h2 className="font-heading text-xl font-bold text-gray-900 mb-4">
           System Health
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      </FadeIn>
+      <StaggerContainer staggerDelay={0.05} className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-lg shadow p-6 border-2 border-gray-200">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-gray-600">Total Users</h3>
@@ -189,14 +193,15 @@ export default async function AdminDashboard() {
             <p className="text-3xl font-bold text-gray-900">{stats.activeSubscriptions}</p>
             <p className="text-sm text-gray-500 mt-1">Active or trialing</p>
           </div>
-        </div>
-      </div>
+      </StaggerContainer>
 
       {/* Partnership Tier Breakdown */}
-      <div>
+      <FadeIn direction="up" delay={0.7}>
         <h2 className="font-heading text-xl font-bold text-gray-900 mb-4">
           Partnership Tiers
         </h2>
+      </FadeIn>
+      <FadeIn direction="up" delay={0.75}>
         <div className="bg-white rounded-lg shadow p-6 border-2 border-gray-200">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {Object.entries(stats.tierCounts).map(([tier, count]) => (
@@ -214,14 +219,15 @@ export default async function AdminDashboard() {
             )}
           </div>
         </div>
-      </div>
+      </FadeIn>
 
       {/* Quick Actions */}
-      <div>
+      <FadeIn direction="up" delay={0.85}>
         <h2 className="font-heading text-xl font-bold text-gray-900 mb-4">
           Quick Actions
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      </FadeIn>
+      <StaggerContainer staggerDelay={0.05} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
             href="/admin/products/new"
             className="bg-white rounded-lg shadow p-6 border-2 border-gray-200 hover:border-accent-primary transition-colors group"
@@ -285,11 +291,11 @@ export default async function AdminDashboard() {
               </div>
             </div>
           </Link>
-        </div>
-      </div>
+      </StaggerContainer>
 
       {/* System Info */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <FadeIn direction="up" delay={1.1}>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
           <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
@@ -301,7 +307,8 @@ export default async function AdminDashboard() {
             </p>
           </div>
         </div>
-      </div>
+        </div>
+      </FadeIn>
     </div>
   );
 }

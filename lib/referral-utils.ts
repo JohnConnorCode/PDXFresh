@@ -483,7 +483,7 @@ export async function getReferralLeaderboardWithUsers(limit: number = 10): Promi
     const user = users.find((u) => u.id === entry.userId);
     return {
       userId: entry.userId,
-      userName: user?.full_name || user?.name || 'Unknown',
+      userName: user?.full_name || 'Unknown',
       email: user?.email || '',
       count: entry.count,
       completedCount: entry.completedCount,
