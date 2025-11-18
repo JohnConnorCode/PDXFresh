@@ -180,7 +180,7 @@ export function Header({ siteSettings, navigation, ctaLabel }: HeaderProps) {
                   className="relative p-2 text-gray-700 hover:text-black transition-colors"
                 >
                   <ShoppingCart className="w-6 h-6" />
-                  <span className="absolute top-0 right-0 bg-accent-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center transform translate-x-1/4 -translate-y-1/4">
+                  <span className="absolute -top-1 -right-1 bg-accent-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                     {cartItemCount}
                   </span>
                 </Link>
