@@ -471,7 +471,7 @@ export async function getReferralLeaderboardWithUsers(limit: number = 10): Promi
 
   const { data: users, error } = await supabase
     .from('profiles')
-    .select('id, full_name, name, email')
+    .select('id, full_name, email')
     .in('id', userIds);
 
   if (error || !users) {

@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
       // Get user profile from Supabase
       const { data: profile } = await supabase
         .from('profiles')
-        .select('stripe_customer_id, email, name')
+        .select('stripe_customer_id, email, full_name')
         .eq('id', user.id)
         .single();
 

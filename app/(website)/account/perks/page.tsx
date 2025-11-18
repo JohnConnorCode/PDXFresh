@@ -116,7 +116,7 @@ export default async function PerksPage() {
   // Get user profile with partnership tier
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, email, full_name, partnership_tier')
+    .select('email, full_name, partnership_tier')
     .eq('id', user.id)
     .single();
 

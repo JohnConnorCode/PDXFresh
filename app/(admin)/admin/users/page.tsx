@@ -16,20 +16,26 @@ async function UserList({ searchQuery }: { searchQuery?: string }) {
 
   let query = supabase
     .from('profiles')
-    .select('id, email, full_name, name, partnership_tier, subscription_status, current_plan, stripe_customer_id, created_at')
+    .select('id, email, full_name, partnership_tier, subscription_status, current_plan, stripe_customer_id, created_at')
     .order('created_at', { ascending: false })
     .limit(50);
 
   if (searchQuery) {
-    query = query.or(`email.ilike.%${searchQuery}%,full_name.ilike.%${searchQuery}%,name.ilike.%${searchQuery}%`);
+    query = query.or(`email.ilike.%${searchQuery}%,full_name.ilike.%${searchQuery}%`);
   }
 
   const { data: users, error } = await query;
 
   if (error) {
+    console.error('Error loading users:', error);
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-        <p className="text-red-600">Failed to load users. Please try again.</p>
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <p className="text-red-600 font-semibold mb-2">Failed to load users</p>
+        <p className="text-sm text-red-500">{error.message}</p>
+        <details className="mt-2">
+          <summary className="text-xs text-red-400 cursor-pointer">Error details</summary>
+          <pre className="text-xs text-red-400 mt-2 overflow-auto">{JSON.stringify(error, null, 2)}</pre>
+        </details>
       </div>
     );
   }
@@ -72,7 +78,7 @@ async function UserList({ searchQuery }: { searchQuery?: string }) {
               <td className="px-6 py-4 whitespace-nowrap">
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    {user.full_name || user.name || 'No name'}
+                    {user.full_name || 'No name'}
                   </p>
                   <p className="text-sm text-gray-500">{user.email}</p>
                 </div>

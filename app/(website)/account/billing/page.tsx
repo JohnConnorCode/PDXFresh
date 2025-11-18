@@ -25,7 +25,7 @@ export default async function BillingPage() {
   // Get user profile
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, email, full_name, stripe_customer_id, subscription_status, current_plan')
+    .select('email, full_name, stripe_customer_id, subscription_status, current_plan')
     .eq('id', user.id)
     .single();
 

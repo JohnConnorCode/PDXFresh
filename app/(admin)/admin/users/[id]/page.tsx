@@ -61,7 +61,7 @@ export default async function UserDetailPage({
             ← Back to Users
           </Link>
           <h1 className="font-heading text-3xl font-bold text-gray-900">
-            {profile.full_name || profile.name || 'User Details'}
+            {profile.full_name || 'User Details'}
           </h1>
           <p className="text-gray-600">{profile.email}</p>
         </div>
