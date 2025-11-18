@@ -21,8 +21,6 @@ interface SendOrderConfirmationParams {
 
 export async function sendOrderConfirmationEmail(params: SendOrderConfirmationParams) {
   if (!isEmailConfigured()) {
-    console.warn('Email not configured. Skipping order confirmation email.');
-    console.log('Order confirmation would have been sent to:', params.to);
     return { success: false, error: 'Email not configured' };
   }
 
@@ -51,7 +49,6 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationPa
       return { success: false, error };
     }
 
-    console.log('Order confirmation email sent:', data);
     return { success: true, data };
   } catch (error) {
     console.error('Error sending order confirmation email:', error);
@@ -71,8 +68,6 @@ interface SendSubscriptionConfirmationParams {
 
 export async function sendSubscriptionConfirmationEmail(params: SendSubscriptionConfirmationParams) {
   if (!isEmailConfigured()) {
-    console.warn('Email not configured. Skipping subscription confirmation email.');
-    console.log('Subscription confirmation would have been sent to:', params.to);
     return { success: false, error: 'Email not configured' };
   }
 
@@ -101,7 +96,6 @@ export async function sendSubscriptionConfirmationEmail(params: SendSubscription
       return { success: false, error };
     }
 
-    console.log('Subscription confirmation email sent:', data);
     return { success: true, data };
   } catch (error) {
     console.error('Error sending subscription confirmation email:', error);

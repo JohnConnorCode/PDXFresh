@@ -26,11 +26,9 @@ interface CheckoutRequestBody {
 }
 
 export async function POST(req: NextRequest) {
-  console.log('🛒 CHECKOUT API CALLED');
   try {
     const supabase = createServerClient();
     const { data: { user } } = await supabase.auth.getUser();
-    console.log('🔐 User authenticated:', !!user, user?.email);
 
     // CRITICAL SECURITY: Rate limiting to prevent checkout spam
     // For authenticated users: rate limit by user ID
@@ -57,7 +55,6 @@ export async function POST(req: NextRequest) {
     }
 
     const body: CheckoutRequestBody = await req.json();
-    console.log('📦 Checkout request body:', JSON.stringify(body, null, 2));
 
     const {
       priceId,
@@ -122,8 +119,6 @@ export async function POST(req: NextRequest) {
 
     // CART-BASED CHECKOUT (multiple items)
     if (items && items.length > 0) {
-      console.log('🔍 Validating prices server-side...');
-
       // CRITICAL SECURITY: Validate all prices server-side to prevent price manipulation
       const validatedLineItems = [];
       let checkoutMode: 'payment' | 'subscription' = 'payment';
@@ -165,8 +160,6 @@ export async function POST(req: NextRequest) {
             checkoutMode = 'subscription';
           }
 
-          console.log(`✅ Price validated: ${item.priceId} - ${price.unit_amount ? price.unit_amount / 100 : 0} ${price.currency}`);
-
           validatedLineItems.push({
             price: item.priceId,
             quantity: item.quantity,
@@ -195,15 +188,11 @@ export async function POST(req: NextRequest) {
         stripeClient
       );
 
-      console.log('✅ Checkout session created:', checkoutSession.id);
-      console.log('🔗 Redirect URL:', checkoutSession.url);
       return NextResponse.json({ url: checkoutSession.url });
     }
 
     // LEGACY SINGLE-ITEM CHECKOUT
     if (priceId && mode) {
-      console.log('🔍 Validating single-item price server-side...');
-
       // CRITICAL SECURITY: Validate price server-side
       try {
         const price = await stripeClient.prices.retrieve(priceId);
@@ -223,8 +212,6 @@ export async function POST(req: NextRequest) {
             { status: 400 }
           );
         }
-
-        console.log(`✅ Single price validated: ${priceId}`);
       } catch (error) {
         console.error(`❌ Invalid price ID: ${priceId}`, error);
         return NextResponse.json(

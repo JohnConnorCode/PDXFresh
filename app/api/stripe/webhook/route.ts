@@ -62,9 +62,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Handle the event
-    console.log(`Processing webhook event: ${event.type}`);
+    // IDEMPOTENCY: Check if we've already processed this webhook event
+    const supabase = createServiceRoleClient();
+    const { data: existingEvent } = await supabase
+      .from('webhook_events')
+      .select('id')
+      .eq('event_id', event.id)
+      .single();
 
+    if (existingEvent) {
+      // Event already processed, return success to prevent retry
+      return NextResponse.json({ received: true, duplicate: true });
+    }
+
+    // Record that we're processing this event
+    await supabase
+      .from('webhook_events')
+      .insert({
+        event_id: event.id,
+        event_type: event.type,
+      });
+
+    // Handle the event
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
@@ -104,7 +123,8 @@ export async function POST(req: NextRequest) {
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        // Unhandled event type
+        break;
     }
 
     return NextResponse.json({ received: true });
@@ -200,8 +220,6 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     if (orderError) {
       console.error('Error creating order record:', orderError);
     } else {
-      console.log(`Order record created for session ${session.id}`);
-
       // Send order confirmation email
       const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
       if (lineItems && lineItems.data.length > 0 && (session.customer_email || session.customer_details?.email)) {
@@ -302,8 +320,6 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
       updated_at: new Date().toISOString(),
     })
     .eq('id', profile.id);
-
-  console.log(`Subscription ${id} ${status} for user ${profile.id}`);
 }
 
 /**
@@ -351,8 +367,6 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       }
     }
   }
-
-  console.log(`Subscription ${id} deleted`);
 }
 
 /**
@@ -368,8 +382,6 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
   const subscriptionId = typeof subscription === 'string' ? subscription : subscription.id;
   const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
   await handleSubscriptionChange(stripeSubscription);
-
-  console.log(`Invoice paid for subscription ${subscriptionId}`);
 }
 
 /**
@@ -389,8 +401,6 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     .from('subscriptions')
     .update({ status: 'past_due' })
     .eq('stripe_subscription_id', subscriptionId);
-
-  console.log(`Invoice payment failed for subscription ${subscriptionId}`);
 }
 
 /**
@@ -444,8 +454,6 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
     status: 'succeeded',
     stripePaymentIntentId: id,
   });
-
-  console.log(`One-time purchase ${id} succeeded for user ${profile.id}`);
 }
 
 /**
@@ -478,6 +486,4 @@ async function handleTierUpgrade(userId: string, newTier: string) {
     oldTier,
     newTier,
   });
-
-  console.log(`User ${userId} tier upgraded from ${oldTier} to ${newTier}`);
 }
