@@ -44,6 +44,8 @@ async function getSubscriptions() {
   return subscriptions || [];
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function SubscriptionsPage() {
   const subscriptions = await getSubscriptions();
 

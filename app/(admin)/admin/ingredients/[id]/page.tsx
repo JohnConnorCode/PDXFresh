@@ -19,6 +19,8 @@ async function getIngredient(id: string) {
   return data;
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function EditIngredientPage({
   params,
 }: {

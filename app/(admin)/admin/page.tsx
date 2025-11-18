@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: 'Admin console for managing users and system health',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboard() {
   const stats = await getAdminStats();
   const ecommerceMetrics = await getAnalyticsMetrics();

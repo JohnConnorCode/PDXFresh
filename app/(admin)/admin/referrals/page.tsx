@@ -46,6 +46,8 @@ async function getReferrals() {
   return referrals || [];
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function ReferralsPage() {
   const referrals = await getReferrals();
   const leaderboard = await getReferralLeaderboardWithUsers(10);

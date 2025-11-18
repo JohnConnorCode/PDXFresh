@@ -39,11 +39,11 @@ export async function getAnalyticsMetrics(): Promise<AnalyticsMetrics> {
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
 
-  // Get all orders
+  // Get all paid orders (status is 'paid' from Stripe webhook)
   const { data: allOrders } = await supabase
     .from('orders')
     .select('amount_total, created_at, metadata')
-    .eq('status', 'completed');
+    .eq('status', 'paid');
 
   const orders = allOrders || [];
 
@@ -152,7 +152,7 @@ export async function getRevenueTrends() {
   const { data: orders } = await supabase
     .from('orders')
     .select('amount_total, created_at')
-    .eq('status', 'completed')
+    .eq('status', 'paid')
     .gte('created_at', thirtyDaysAgo.toISOString());
 
   if (!orders) return [];

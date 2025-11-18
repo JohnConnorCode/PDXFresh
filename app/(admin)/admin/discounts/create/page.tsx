@@ -7,6 +7,8 @@ export const metadata = {
   description: 'Create a new discount code',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function CreateDiscountPage() {
   await requireAdmin();
 

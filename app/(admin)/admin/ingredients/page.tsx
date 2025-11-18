@@ -47,6 +47,8 @@ async function getIngredients() {
   return ingredients;
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function IngredientsPage() {
   const ingredients = await getIngredients();
 

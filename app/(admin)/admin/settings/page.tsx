@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: 'Manage feature flags and system configuration',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminSettingsPage() {
   const flags = getFeatureFlags();
 

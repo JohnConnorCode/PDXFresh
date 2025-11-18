@@ -130,6 +130,8 @@ async function UserList({ searchQuery }: { searchQuery?: string }) {
   );
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function UsersPage({
   searchParams,
 }: {

@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { IngredientForm } from '../IngredientForm';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function NewIngredientPage() {
   const supabase = createClient();
 

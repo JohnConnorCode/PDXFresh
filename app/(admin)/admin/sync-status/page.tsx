@@ -27,6 +27,8 @@ interface SyncStatus {
   };
 }
 
+export const dynamic = 'force-dynamic';
+
 export default function SyncStatusPage() {
   const [status, setStatus] = useState<SyncStatus | null>(null);
   const [loading, setLoading] = useState(true);
