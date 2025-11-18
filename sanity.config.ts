@@ -1,8 +1,9 @@
 import { defineConfig, type Config } from 'sanity';
+// @ts-expect-error - structureTool exists at runtime but TypeScript definitions are missing
 import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './sanity/schemas';
-import { structure } from './sanity/structure';
+import { deskStructure } from './sanity/structure';
 import { OpenPreviewAction } from './sanity/actions/OpenPreviewAction';
 
 const config: Config = defineConfig({
@@ -14,7 +15,7 @@ const config: Config = defineConfig({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
 
   plugins: [
-    structureTool({ structure }),
+    structureTool({ structure: deskStructure }),
     visionTool(),
   ],
 
@@ -23,7 +24,7 @@ const config: Config = defineConfig({
   },
 
   document: {
-    actions: (prev, context) => {
+    actions: (prev) => {
       return [...prev, OpenPreviewAction];
     },
   },

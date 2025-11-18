@@ -16,9 +16,16 @@ export type SanitySlug = Slug & {
   current: string;
 };
 
-export type SanityReference<T> = Reference & {
+export type SanityReference<T = any> = Reference & {
   _ref: string;
   _type: 'reference';
+  _weak?: boolean;
+  _strengthenOnPublish?: {
+    type: string;
+  };
+} & {
+  // Type parameter for referenced document type
+  __type?: T;
 };
 
 // Block Content

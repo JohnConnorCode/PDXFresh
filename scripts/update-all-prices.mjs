@@ -32,34 +32,34 @@ const prices = {
   test: {
     'green-bomb': {
       shot: 'price_1ST3b9Cu8SiOGapK5ndfaXXq',
-      'half-gallon': 'price_1ST3bBCu8SiOGapK0VLbGPrB',
+      half_gallon: 'price_1ST3bBCu8SiOGapK0VLbGPrB',
       gallon: 'price_1ST3bACu8SiOGapKdLqS5jKl'
     },
     'red-bomb': {
       shot: 'price_1ST3bCCu8SiOGapKFOUvXHc6',
-      'half-gallon': 'price_1ST3bDCu8SiOGapKvqCqT2IY',
+      half_gallon: 'price_1ST3bDCu8SiOGapKvqCqT2IY',
       gallon: 'price_1ST3bECu8SiOGapKUc5PkCkY'
     },
     'yellow-bomb': {
       shot: 'price_1STpKHCu8SiOGapKHTtIPpAa',
-      'half-gallon': 'price_1STpKGCu8SiOGapK7ea8ZCQe',
+      half_gallon: 'price_1STpKGCu8SiOGapK7ea8ZCQe',
       gallon: 'price_1STpKFCu8SiOGapK1NrQEtCX'
     }
   },
   live: {
     'green-bomb': {
       shot: 'price_1STyVVCu8SiOGapKBlSdIRPs',
-      'half-gallon': 'price_1STyVVCu8SiOGapK5TWRV9wY',
+      half_gallon: 'price_1STyVVCu8SiOGapK5TWRV9wY',
       gallon: 'price_1STyVWCu8SiOGapKH1Dmftj3'
     },
     'red-bomb': {
       shot: 'price_1STyVWCu8SiOGapKQo3vjfmt',
-      'half-gallon': 'price_1STyVXCu8SiOGapK55CV4uSl',
+      half_gallon: 'price_1STyVXCu8SiOGapK55CV4uSl',
       gallon: 'price_1STyVXCu8SiOGapKIW94OQi7'
     },
     'yellow-bomb': {
       shot: 'price_1STHSDCu8SiOGapKqsIGDR3s',
-      'half-gallon': 'price_1STHSFCu8SiOGapKEUGSXv31',
+      half_gallon: 'price_1STHSFCu8SiOGapKEUGSXv31',
       gallon: 'price_1STHSHCu8SiOGapK7hF5P0Jp'
     }
   }

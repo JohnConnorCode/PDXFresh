@@ -206,14 +206,14 @@ export async function getProductBySlug(
     return null;
   }
 
-  // Sort ingredients and variants by display_order
+  // Sort ingredients and variants by display_order and filter active variants
   if (data) {
     data.ingredients = data.ingredients?.sort(
       (a: any, b: any) => a.display_order - b.display_order
     ) || [];
-    data.variants = data.variants?.sort(
-      (a: any, b: any) => a.display_order - b.display_order
-    ) || [];
+    data.variants = data.variants
+      ?.filter((v: any) => v.is_active)
+      .sort((a: any, b: any) => a.display_order - b.display_order) || [];
   }
 
   return data as ProductWithIngredients;

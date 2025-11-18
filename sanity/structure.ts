@@ -3,7 +3,8 @@
  * Organizes documents into logical groups for better editor experience
  */
 
-import { StructureBuilder } from 'sanity/structure';
+// @ts-expect-error - StructureResolver type exists at runtime but may have definition issues
+import type { StructureResolver } from 'sanity/structure';
 import {
   CogIcon,
   DocumentIcon,
@@ -19,7 +20,7 @@ import {
   ClipboardIcon,
 } from '@sanity/icons';
 
-export const structure = (S: StructureBuilder) =>
+export const deskStructure: StructureResolver = (S: any) =>
   S.list()
     .title('Content')
     .items([

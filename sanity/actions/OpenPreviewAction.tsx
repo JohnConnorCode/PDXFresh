@@ -26,7 +26,10 @@ export const OpenPreviewAction: DocumentActionComponent = (props) => {
   }
 
   // Get the slug from the document
-  const slug = (draft || published)?.slug?.current || id;
+  const doc = draft || published;
+  const slug = (doc && 'slug' in doc && doc.slug && typeof doc.slug === 'object' && 'current' in doc.slug)
+    ? doc.slug.current
+    : id;
 
   const previewUrl = `${siteUrl}/api/draft?secret=${previewSecret}&type=${type}&slug=${slug}`;
 
