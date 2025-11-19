@@ -8,16 +8,20 @@ console.log('🧪 Testing Checkout API...\n');
 
 async function testCheckout() {
   try {
-    // Test Yellow Bomb Gallon ($50)
-    console.log('Testing Yellow Bomb - Gallon ($50)');
+    // Test Yellow Bomb Half Gallon (active test mode price)
+    console.log('Testing Yellow Bomb - Half Gallon (test mode)');
     const response = await fetch('http://localhost:3000/api/checkout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        priceId: 'price_1STpKFCu8SiOGapK1NrQEtCX',
-        mode: 'payment',
+        items: [
+          {
+            priceId: 'price_1STLYuCu8SiOGapK8Zv4O8D2',
+            quantity: 1
+          }
+        ],
         successPath: '/checkout/success',
         cancelPath: '/blends/yellow-bomb',
       }),

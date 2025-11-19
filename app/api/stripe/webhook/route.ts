@@ -199,10 +199,10 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   if (mode === 'payment' && payment_intent) {
     const paymentIntentId = typeof payment_intent === 'string' ? payment_intent : payment_intent.id;
 
-    // Create order record for E2E test verification
+    // Create order record for E2E test verification (upsert to prevent duplicates)
     const { error: orderError } = await supabase
       .from('orders')
-      .insert({
+      .upsert({
         stripe_session_id: session.id,
         stripe_customer_id: customer,
         stripe_payment_intent_id: paymentIntentId,
@@ -210,11 +210,14 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         amount_total: session.amount_total,
         amount_subtotal: session.amount_subtotal,
         currency: session.currency,
-        status: 'paid', // Use 'paid' status for test compatibility
+        status: 'completed', // Order is completed after successful payment
         payment_status: session.payment_status,
         payment_method_id: session.payment_method_types?.[0],
         user_id: userId || null,
         metadata: session.metadata || {},
+      }, {
+        onConflict: 'stripe_session_id',
+        ignoreDuplicates: false, // Update if already exists
       });
 
     if (orderError) {

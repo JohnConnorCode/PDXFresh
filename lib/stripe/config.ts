@@ -1,24 +1,52 @@
 import Stripe from 'stripe';
 
 /**
- * Get the current Stripe mode (test or production) from environment variables
+ * Fetch the current Stripe mode from Supabase
+ * This allows runtime switching via admin panel
  */
-function getStripeMode(): 'test' | 'production' {
-  const envMode = process.env.STRIPE_MODE as 'test' | 'production' | undefined;
+async function getStripeModeFromDatabase(): Promise<'test' | 'production'> {
+  try {
+    const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (envMode === 'production' || envMode === 'test') {
-    return envMode;
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+      console.warn('Supabase not configured, falling back to test mode');
+      return 'test';
+    }
+
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/stripe_settings?select=mode&limit=1`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+      },
+      // Short cache to avoid hitting DB on every request
+      cache: 'no-store', // Don't use Next.js cache in API routes
+    });
+
+    if (!response.ok) {
+      console.warn('Failed to fetch Stripe mode from database, falling back to test mode');
+      return 'test';
+    }
+
+    const data = await response.json();
+
+    if (data && data.length > 0 && data[0].mode) {
+      return data[0].mode as 'test' | 'production';
+    }
+
+    // Default to test mode for safety
+    return 'test';
+  } catch (error) {
+    console.error('Error fetching Stripe mode:', error);
+    return 'test'; // Fail-safe to test mode
   }
-
-  // Default to 'test' for safety
-  return 'test';
 }
 
 /**
- * Get Stripe API keys based on current mode
+ * Get Stripe API keys based on current mode from database
  */
-export function getStripeKeys() {
-  const mode = getStripeMode();
+export async function getStripeKeys() {
+  const mode = await getStripeModeFromDatabase();
 
   if (mode === 'production') {
     return {
@@ -39,10 +67,10 @@ export function getStripeKeys() {
 }
 
 /**
- * Initialize Stripe client with correct keys based on mode
+ * Initialize Stripe client with correct keys based on mode from database
  */
-export function getStripeClient() {
-  const keys = getStripeKeys();
+export async function getStripeClient() {
+  const keys = await getStripeKeys();
 
   if (!keys.secretKey) {
     throw new Error('Stripe secret key is not configured');
@@ -57,8 +85,8 @@ export function getStripeClient() {
 }
 
 /**
- * Get current Stripe mode for frontend
+ * Get current Stripe mode from database (for API routes)
  */
-export function getCurrentStripeMode(): 'test' | 'production' {
-  return getStripeMode();
+export async function getCurrentStripeMode(): Promise<'test' | 'production'> {
+  return await getStripeModeFromDatabase();
 }

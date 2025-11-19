@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     const finalCancelUrl = providedCancelUrl || `${trustedOrigin}${cancelPath || '/cart'}`;
 
     // Get dynamic Stripe client based on current mode (test/production)
-    const stripeClient = getStripeClient();
+    const stripeClient = await getStripeClient();
 
     // Handle authenticated vs guest checkout
     let customerId: string | undefined;

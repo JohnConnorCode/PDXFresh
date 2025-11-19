@@ -1,14 +1,26 @@
-import { Metadata } from 'next';
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Section } from '@/components/Section';
 import { FadeIn } from '@/components/animations';
-
-export const metadata: Metadata = {
-  title: 'Payment Successful | Long Life',
-  description: 'Your payment was successful!',
-};
+import { useCartStore } from '@/lib/store/cartStore';
 
 export default function CheckoutSuccessPage() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get('session_id');
+  const clearCart = useCartStore((state) => state.clearCart);
+
+  useEffect(() => {
+    // Clear cart after successful purchase
+    // Only clear if we have a session_id to prevent accidental clears
+    if (sessionId) {
+      console.log('✅ Payment successful - clearing cart');
+      clearCart();
+    }
+  }, [sessionId, clearCart]);
+
   return (
     <Section className="min-h-screen bg-gradient-to-br from-accent-cream via-accent-yellow/20 to-accent-green/20 flex items-center justify-center">
       <div className="max-w-2xl mx-auto text-center">
