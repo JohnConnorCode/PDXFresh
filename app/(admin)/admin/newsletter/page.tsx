@@ -157,11 +157,11 @@ export default async function NewsletterPage() {
         </p>
       </div>
 
-      <Suspense fallback={<LoadingSkeleton count={3} />}>
+      <Suspense fallback={<LoadingSkeleton variant="stat" lines={3} />}>
         <NewsletterStats />
       </Suspense>
 
-      <Suspense fallback={<LoadingSkeleton count={5} />}>
+      <Suspense fallback={<LoadingSkeleton variant="table" lines={5} />}>
         <SubscriberList />
       </Suspense>
     </FadeIn>

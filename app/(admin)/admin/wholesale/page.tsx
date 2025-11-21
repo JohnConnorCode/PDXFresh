@@ -177,11 +177,11 @@ export default async function WholesalePage() {
         </p>
       </div>
 
-      <Suspense fallback={<LoadingSkeleton count={5} />}>
+      <Suspense fallback={<LoadingSkeleton variant="stat" lines={5} />}>
         <WholesaleStats />
       </Suspense>
 
-      <Suspense fallback={<LoadingSkeleton count={5} />}>
+      <Suspense fallback={<LoadingSkeleton variant="table" lines={5} />}>
         <InquiryList />
       </Suspense>
     </FadeIn>
