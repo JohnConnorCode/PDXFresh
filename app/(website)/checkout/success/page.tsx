@@ -1,17 +1,43 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { logger } from '@/lib/logger';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Section } from '@/components/Section';
 import { FadeIn } from '@/components/animations';
 import { useCartStore } from '@/lib/store/cartStore';
+import { formatCurrency } from '@/lib/utils/formatCurrency';
+
+interface OrderDetails {
+  orderNumber: string;
+  email: string;
+  amount: number;
+  currency: string;
+  items: Array<{
+    description: string;
+    quantity: number;
+    amount: number;
+  }>;
+  shipping?: {
+    name?: string;
+    address?: {
+      line1?: string;
+      line2?: string;
+      city?: string;
+      state?: string;
+      postal_code?: string;
+      country?: string;
+    };
+  };
+}
 
 function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const clearCart = useCartStore((state) => state.clearCart);
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Clear cart after successful purchase
@@ -19,8 +45,27 @@ function CheckoutSuccessContent() {
     if (sessionId) {
       logger.info('✅ Payment successful - clearing cart');
       clearCart();
+
+      // Fetch order details
+      fetchOrderDetails(sessionId);
+    } else {
+      setLoading(false);
     }
   }, [sessionId, clearCart]);
+
+  const fetchOrderDetails = async (sessionId: string) => {
+    try {
+      const response = await fetch(`/api/checkout/session?session_id=${sessionId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setOrderDetails(data);
+      }
+    } catch (error) {
+      logger.error('Error fetching order details:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Section className="min-h-screen bg-gradient-to-br from-accent-cream via-accent-yellow/20 to-accent-green/20 flex items-center justify-center">
@@ -56,6 +101,77 @@ function CheckoutSuccessContent() {
             receive a confirmation email shortly.
           </p>
         </FadeIn>
+
+        {/* Order Details */}
+        {orderDetails && !loading && (
+          <FadeIn direction="up" delay={0.35}>
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-8 border-2 border-accent-primary/20">
+              <h2 className="font-heading text-2xl font-bold mb-4 text-gray-900">
+                Order Summary
+              </h2>
+
+              <div className="text-left space-y-4">
+                <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                  <span className="text-sm text-gray-600">Order Number:</span>
+                  <span className="font-mono font-semibold text-gray-900">{orderDetails.orderNumber}</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                  <span className="text-sm text-gray-600">Email:</span>
+                  <span className="text-gray-900">{orderDetails.email}</span>
+                </div>
+
+                {orderDetails.items && orderDetails.items.length > 0 && (
+                  <div className="pb-3 border-b border-gray-200">
+                    <div className="text-sm text-gray-600 mb-2">Items:</div>
+                    <div className="space-y-2">
+                      {orderDetails.items.map((item, index) => (
+                        <div key={index} className="flex justify-between items-center text-sm">
+                          <span className="text-gray-900">
+                            {item.description} {item.quantity > 1 && `× ${item.quantity}`}
+                          </span>
+                          <span className="font-semibold text-gray-900">
+                            {formatCurrency(item.amount)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {orderDetails.shipping && (
+                  <div className="pb-3 border-b border-gray-200">
+                    <div className="text-sm text-gray-600 mb-2">Shipping To:</div>
+                    <div className="text-sm text-gray-900">
+                      {orderDetails.shipping.name && <div className="font-medium">{orderDetails.shipping.name}</div>}
+                      {orderDetails.shipping.address && (
+                        <>
+                          {orderDetails.shipping.address.line1 && <div>{orderDetails.shipping.address.line1}</div>}
+                          {orderDetails.shipping.address.line2 && <div>{orderDetails.shipping.address.line2}</div>}
+                          <div>
+                            {[
+                              orderDetails.shipping.address.city,
+                              orderDetails.shipping.address.state,
+                              orderDetails.shipping.address.postal_code,
+                            ].filter(Boolean).join(', ')}
+                          </div>
+                          {orderDetails.shipping.address.country && <div>{orderDetails.shipping.address.country}</div>}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center pt-2">
+                  <span className="text-lg font-semibold text-gray-900">Total:</span>
+                  <span className="text-2xl font-bold text-accent-primary">
+                    {formatCurrency(orderDetails.amount)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
 
         <FadeIn direction="up" delay={0.4}>
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl mb-8 border-2 border-accent-yellow/20">
