@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Section } from '@/components/Section';
 import { FadeIn } from '@/components/animations';
 import { useCartStore } from '@/lib/store/cartStore';
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const clearCart = useCartStore((state) => state.clearCart);
@@ -120,5 +120,33 @@ export default function CheckoutSuccessPage() {
         </FadeIn>
       </div>
     </Section>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={
+      <Section className="min-h-screen bg-gradient-to-br from-accent-cream via-accent-yellow/20 to-accent-green/20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-accent-green to-accent-primary rounded-full mb-8 shadow-2xl">
+            <svg
+              className="w-12 h-12 text-white animate-pulse"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={3}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+        </div>
+      </Section>
+    }>
+      <CheckoutSuccessContent />
+    </Suspense>
   );
 }
