@@ -105,6 +105,15 @@ export default async function AdminLayout({
                 >
                   Wholesale
                 </Link>
+                <Link
+                  href="/admin/stripe-mode"
+                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-white/10 transition-colors border-l border-white/20 ml-1 pl-3"
+                >
+                  <span className="flex items-center gap-1">
+                    <span>⚙️</span>
+                    <span>Stripe Mode</span>
+                  </span>
+                </Link>
               </nav>
             </div>
             <div className="flex items-center gap-4">
