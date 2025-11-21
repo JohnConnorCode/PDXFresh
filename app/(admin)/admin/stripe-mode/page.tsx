@@ -31,7 +31,7 @@ async function getProductVariantCount() {
   return count || 0;
 }
 
-export default async function StripeMod ePage() {
+export default async function StripeModePage() {
   await requireAdmin();
 
   const [currentMode, variantCount] = await Promise.all([
