@@ -27,6 +27,7 @@ const productSchema = z.object({
   meta_title: z.string().optional().nullable(),
   meta_description: z.string().optional().nullable(),
   publish: z.boolean(),
+  auto_sync: z.boolean().optional(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -93,6 +94,7 @@ export function ProductForm({ product, ingredients, variants, allIngredients }: 
       meta_title: product?.meta_title || '',
       meta_description: product?.meta_description || '',
       publish: !!product?.published_at,
+      auto_sync: true, // Default to auto-sync enabled
     },
   });
 
@@ -200,6 +202,38 @@ export function ProductForm({ product, ingredients, variants, allIngredients }: 
         throw new Error(errorData.error || 'Failed to save product');
       }
 
+      const responseData = await response.json();
+      const savedProductId = responseData.id || product?.id;
+
+      // Auto-sync to Stripe if enabled
+      if (data.auto_sync && savedProductId && productVariants.length > 0) {
+        try {
+          setSyncing(true);
+          setSyncMessage('Syncing to Stripe...');
+
+          const syncResponse = await fetch(`/api/admin/products/${savedProductId}/sync-stripe`, {
+            method: 'POST',
+          });
+
+          if (syncResponse.ok) {
+            const syncData = await syncResponse.json();
+            setSyncMessage(`✅ Synced to Stripe! Product: ${syncData.productId}, Prices: ${syncData.priceIds?.length || 0}`);
+          } else {
+            const syncError = await syncResponse.json();
+            setSyncMessage(`⚠️ Sync failed: ${syncError.error}`);
+          }
+
+          // Keep sync message visible for 2 seconds before redirecting
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } catch (syncErr: any) {
+          console.error('Sync error:', syncErr);
+          setSyncMessage(`⚠️ Sync error: ${syncErr.message}`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } finally {
+          setSyncing(false);
+        }
+      }
+
       // Success - redirect to products list
       router.push('/admin/products');
       router.refresh();
@@ -216,6 +250,24 @@ export function ProductForm({ product, ingredients, variants, allIngredients }: 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-800">{error}</p>
+        </div>
+      )}
+
+      {syncMessage && (
+        <div className={`border rounded-lg p-4 ${
+          syncMessage.startsWith('✅')
+            ? 'bg-green-50 border-green-200'
+            : syncMessage.startsWith('⚠️')
+            ? 'bg-yellow-50 border-yellow-200'
+            : 'bg-blue-50 border-blue-200'
+        }`}>
+          <p className={`${
+            syncMessage.startsWith('✅')
+              ? 'text-green-800'
+              : syncMessage.startsWith('⚠️')
+              ? 'text-yellow-800'
+              : 'text-blue-800'
+          }`}>{syncMessage}</p>
         </div>
       )}
 
@@ -536,6 +588,18 @@ export function ProductForm({ product, ingredients, variants, allIngredients }: 
               (Unpublished products are drafts)
             </p>
           </div>
+
+          <div className="border-t pt-4 mt-4">
+            <div className="flex items-start gap-2">
+              <input type="checkbox" {...register('auto_sync')} className="w-4 h-4 mt-1" />
+              <div>
+                <label className="font-medium">Auto-sync to Stripe</label>
+                <p className="text-sm text-gray-500 mt-1">
+                  Automatically create/update Stripe product and prices after saving. Requires variants to have price_usd set.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -569,15 +633,16 @@ export function ProductForm({ product, ingredients, variants, allIngredients }: 
       <div className="flex gap-4 sticky bottom-4 bg-white p-6 rounded-lg shadow-lg border border-gray-200">
         <button
           type="submit"
-          disabled={saving}
+          disabled={saving || syncing}
           className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
         >
-          {saving ? 'Saving...' : product ? 'Update Product' : 'Create Product'}
+          {syncing ? 'Syncing to Stripe...' : saving ? 'Saving...' : product ? 'Update Product' : 'Create Product'}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 font-medium transition-colors"
+          disabled={saving || syncing}
+          className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
         >
           Cancel
         </button>

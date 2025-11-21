@@ -144,3 +144,47 @@ const config: Config = defineConfig({
 - `/studio` → Shows homepage (catch-all route) or 404
 - `/admin/studio` → Redirects to login if not authenticated
 - After login with admin account → Shows Sanity Studio
+
+## Product Management & Stripe Integration
+
+### Auto-Sync to Stripe
+
+**Rule**: Products and prices are managed in Supabase and can automatically sync to Stripe.
+
+**Workflow** (`/admin/products`):
+1. Admin creates/edits product in Supabase admin UI
+2. Adds variants with `price_usd` values
+3. Checks "Auto-sync to Stripe" checkbox (enabled by default)
+4. Clicks "Create Product" or "Update Product"
+5. System automatically:
+   - Saves product to Supabase
+   - Creates/updates Stripe product
+   - Creates/updates Stripe prices for all variants
+   - Updates Supabase with new Stripe IDs
+
+**Key Features**:
+- ✅ Auto-sync checkbox in Settings section
+- ✅ Real-time sync status messages
+- ✅ Automatic Stripe product/price creation
+- ✅ No need to visit Stripe Dashboard
+- ✅ Manual "Sync to Stripe" button still available for existing products
+
+**Requirements for Auto-Sync**:
+- Product must have at least one variant
+- Variants must have `price_usd` set (dollar amount)
+- Auto-sync checkbox must be checked
+
+**File Locations**:
+- Form: `app/(admin)/admin/products/ProductForm.tsx`
+- API: `app/api/admin/products/[id]/sync-stripe/route.ts`
+- Logic: `lib/stripe/product-sync.ts`
+
+**Example**:
+```
+1. Create "Orange Bomb" product
+2. Add variant: "1 Gallon", price_usd = 49.99
+3. Check "Auto-sync to Stripe" ✓
+4. Click "Create Product"
+5. System shows: "✅ Synced to Stripe! Product: prod_xxx, Prices: 1"
+6. Product ready for checkout immediately
+```
