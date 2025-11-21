@@ -66,6 +66,38 @@ export default function AdminOrdersPage() {
 - Syntax errors (typos in function names)
 - Missing imports
 - Invalid component props
+- `useSearchParams()` not wrapped in Suspense boundary
+- Client components using Next.js hooks without proper setup
+
+### useSearchParams and Client Components
+
+When using `useSearchParams()` in a client component, it MUST be wrapped in a Suspense boundary:
+
+```tsx
+// ❌ WRONG - Will cause build error
+'use client';
+export default function Page() {
+  const searchParams = useSearchParams(); // ERROR
+  return <div>...</div>;
+}
+
+// ✅ CORRECT - Wrapped in Suspense
+'use client';
+import { Suspense } from 'react';
+
+function PageContent() {
+  const searchParams = useSearchParams(); // OK
+  return <div>...</div>;
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PageContent />
+    </Suspense>
+  );
+}
+```
 
 ## Component Prop Consistency
 
