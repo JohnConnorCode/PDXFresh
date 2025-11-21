@@ -88,22 +88,51 @@ export const useCartStore = create<CartStore>()(
           set({ error: 'Invalid product data. Please refresh the page.' });
           return;
         }
+
+        // CRITICAL: Prevent mixing one-time and subscription items
+        const currentItems = get().items;
+        if (currentItems.length > 0) {
+          const existingType = currentItems[0].productType;
+          if (existingType !== item.productType) {
+            const errorMsg = item.productType === 'subscription'
+              ? 'Cannot add subscription to cart with one-time purchases. Please checkout separately or clear your cart first.'
+              : 'Cannot add one-time purchase to cart with subscriptions. Please checkout separately or clear your cart first.';
+            console.warn('Mixed billing types in cart:', { existingType, newType: item.productType });
+            set({ error: errorMsg });
+            return;
+          }
+        }
+
+        // Enforce quantity=1 for subscription items
+        if (item.productType === 'subscription' && item.quantity > 1) {
+          console.warn('Subscription items must have quantity of 1');
+          set({ error: 'Subscription items can only have a quantity of 1.' });
+          return;
+        }
+
         const id = generateCartItemId(item.priceId, item.metadata);
         const existingItem = get().items.find((i) => i.id === id);
 
         if (existingItem) {
-          // Update quantity if item already exists
-          set({
-            items: get().items.map((i) =>
-              i.id === id
-                ? { ...i, quantity: i.quantity + item.quantity }
-                : i
-            ),
-          });
+          // Update quantity if item already exists (only for one-time items)
+          if (item.productType === 'one-time') {
+            set({
+              items: get().items.map((i) =>
+                i.id === id
+                  ? { ...i, quantity: i.quantity + item.quantity }
+                  : i
+              ),
+              error: undefined, // Clear any previous errors
+            });
+          } else {
+            // Subscription items can't increase quantity
+            set({ error: 'This subscription is already in your cart.' });
+          }
         } else {
           // Add new item
           set({
             items: [...get().items, { ...item, id }],
+            error: undefined, // Clear any previous errors
           });
         }
       },

@@ -132,8 +132,8 @@ async function syncVariantToStripe(
       return null;
     }
 
-    // Create new price
-    const price = await stripe.prices.create({
+    // Create new price with conditional recurring configuration
+    const priceParams: any = {
       product: stripeProductId,
       unit_amount: unitAmount,
       currency: 'usd',
@@ -142,8 +142,22 @@ async function syncVariantToStripe(
       metadata: {
         supabase_variant_id: variant.id,
         size_key: variant.size_key,
+        billing_type: variant.billing_type || 'one_time',
       },
-    });
+    };
+
+    // Add recurring configuration for subscription variants
+    if (variant.billing_type === 'recurring') {
+      priceParams.recurring = {
+        interval: variant.recurring_interval || 'month',
+        interval_count: variant.recurring_interval_count || 1,
+      };
+      logger.info(`Creating recurring price for variant ${variant.id}: ${variant.recurring_interval || 'month'}ly`);
+    } else {
+      logger.info(`Creating one-time price for variant ${variant.id}`);
+    }
+
+    const price = await stripe.prices.create(priceParams);
 
     return price.id;
   } catch (error: any) {

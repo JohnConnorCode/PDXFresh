@@ -122,6 +122,7 @@ export async function POST(req: NextRequest) {
       // CRITICAL SECURITY: Validate all prices server-side to prevent price manipulation
       const validatedLineItems = [];
       let checkoutMode: 'payment' | 'subscription' = 'payment';
+      const billingTypes = new Set<string>();
 
       for (const item of items) {
         // Validate quantity
@@ -155,9 +156,32 @@ export async function POST(req: NextRequest) {
             );
           }
 
-          // Detect if this is a subscription
+          // Detect billing type and check for mixed cart
+          const billingType = price.type === 'recurring' ? 'subscription' : 'one-time';
+          billingTypes.add(billingType);
+
+          // CRITICAL: Prevent mixing one-time and subscription items
+          if (billingTypes.size > 1) {
+            return NextResponse.json(
+              {
+                error: 'Cannot mix one-time purchases and subscriptions in the same cart. Please checkout separately.',
+                details: 'Stripe requires separate checkout sessions for one-time and recurring billing.'
+              },
+              { status: 400 }
+            );
+          }
+
+          // Set checkout mode based on billing type
           if (price.type === 'recurring') {
             checkoutMode = 'subscription';
+
+            // Enforce quantity=1 for subscription items
+            if (item.quantity > 1) {
+              return NextResponse.json(
+                { error: `Subscription items must have quantity of 1. Item ${item.priceId} has quantity ${item.quantity}` },
+                { status: 400 }
+              );
+            }
           }
 
           validatedLineItems.push({
