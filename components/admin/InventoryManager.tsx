@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { createBrowserClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
 
 interface ProductVariant {
@@ -47,7 +47,7 @@ export function InventoryManager() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const supabase = createBrowserClient();
+  const supabase = createClient();
 
   useEffect(() => {
     loadVariants();
@@ -77,7 +77,7 @@ export function InventoryManager() {
       if (error) throw error;
 
       // Transform data to match interface
-      const transformedData = data?.map(v => ({
+      const transformedData = data?.map((v: any) => ({
         ...v,
         product: {
           name: Array.isArray(v.products) ? v.products[0]?.name : v.products?.name || 'Unknown Product'
@@ -192,7 +192,7 @@ export function InventoryManager() {
 
     try {
       // Call increase_inventory RPC function
-      const { data, error } = await supabase.rpc('increase_inventory', {
+      const { error } = await supabase.rpc('increase_inventory', {
         p_variant_id: selectedVariant.id,
         p_quantity: amount,
         p_type: 'restock',

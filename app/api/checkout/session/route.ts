@@ -36,9 +36,9 @@ export async function GET(req: NextRequest) {
         quantity: item.quantity || 1,
         amount: item.amount_total || 0,
       })) || [],
-      shipping: session.shipping_details ? {
-        name: session.shipping_details.name,
-        address: session.shipping_details.address,
+      shipping: (session as any).shipping_details ? {
+        name: (session as any).shipping_details.name,
+        address: (session as any).shipping_details.address,
       } : undefined,
     };
 

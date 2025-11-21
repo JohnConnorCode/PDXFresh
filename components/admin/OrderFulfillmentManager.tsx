@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { createBrowserClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
 import { logger } from '@/lib/logger';
 
@@ -77,7 +77,7 @@ export function OrderFulfillmentManager() {
   const [carrier, setCarrier] = useState('');
   const [notes, setNotes] = useState('');
 
-  const supabase = createBrowserClient();
+  const supabase = createClient();
 
   useEffect(() => {
     loadOrders();
@@ -148,7 +148,7 @@ export function OrderFulfillmentManager() {
 
     try {
       // Call update_order_fulfillment_status RPC function
-      const { data, error } = await supabase.rpc('update_order_fulfillment_status', {
+      const { error } = await supabase.rpc('update_order_fulfillment_status', {
         p_order_id: selectedOrder.id,
         p_new_status: newStatus,
         p_notes: notes || null,

@@ -218,13 +218,13 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         metadata: session.metadata || {},
         fulfillment_status: 'pending', // Default fulfillment status
         // Capture shipping information from Stripe
-        shipping_name: session.shipping_details?.name || session.customer_details?.name,
-        shipping_address_line1: session.shipping_details?.address?.line1,
-        shipping_address_line2: session.shipping_details?.address?.line2,
-        shipping_city: session.shipping_details?.address?.city,
-        shipping_state: session.shipping_details?.address?.state,
-        shipping_postal_code: session.shipping_details?.address?.postal_code,
-        shipping_country: session.shipping_details?.address?.country,
+        shipping_name: (session as any).shipping_details?.name || session.customer_details?.name,
+        shipping_address_line1: (session as any).shipping_details?.address?.line1,
+        shipping_address_line2: (session as any).shipping_details?.address?.line2,
+        shipping_city: (session as any).shipping_details?.address?.city,
+        shipping_state: (session as any).shipping_details?.address?.state,
+        shipping_postal_code: (session as any).shipping_details?.address?.postal_code,
+        shipping_country: (session as any).shipping_details?.address?.country,
       }, {
         onConflict: 'stripe_session_id',
         ignoreDuplicates: false, // Update if already exists
