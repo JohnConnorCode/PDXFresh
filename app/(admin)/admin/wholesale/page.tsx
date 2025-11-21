@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { logger } from '@/lib/logger';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -59,7 +60,7 @@ async function InquiryList() {
     .limit(100);
 
   if (error) {
-    console.error('Error loading inquiries:', error);
+    logger.error('Error loading inquiries:', error);
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <p className="text-red-600 font-semibold mb-2">Failed to load inquiries</p>

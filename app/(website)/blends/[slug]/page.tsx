@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { logger } from '@/lib/logger';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getProductBySlug, getAllProductsForStaticGen, getAllProducts } from '@/lib/supabase/queries/products';
@@ -21,7 +22,7 @@ async function getBlend(slug: string) {
   try {
     return await getProductBySlug(slug);
   } catch (error) {
-    console.error('Error fetching blend:', error);
+    logger.error('Error fetching blend:', error);
     return null;
   }
 }
@@ -33,7 +34,7 @@ export async function generateStaticParams() {
       slug: blend.slug,
     }));
   } catch (error) {
-    console.error('Error generating static params:', error);
+    logger.error('Error generating static params:', error);
     return [];
   }
 }

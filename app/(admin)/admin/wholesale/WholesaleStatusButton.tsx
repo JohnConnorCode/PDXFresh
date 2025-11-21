@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { logger } from '@/lib/logger';
 import { useRouter } from 'next/navigation';
 
 const STATUS_OPTIONS = [
@@ -38,7 +39,7 @@ export function WholesaleStatusButton({ inquiryId, currentStatus }: WholesaleSta
       setStatus(newStatus);
       router.refresh();
     } catch (error) {
-      console.error('Error updating status:', error);
+      logger.error('Error updating status:', error);
       alert('Failed to update status');
     } finally {
       setIsUpdating(false);

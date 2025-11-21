@@ -4,6 +4,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 import { createClient as createBrowserClient } from '@supabase/supabase-js';
 
 // =====================================================
@@ -105,7 +106,7 @@ export async function getAllProducts(): Promise<Product[]> {
     .order('display_order', { ascending: true });
 
   if (error) {
-    console.error('Error fetching products:', error);
+    logger.error('Error fetching products:', error);
     return [];
   }
 
@@ -143,7 +144,7 @@ export async function getAllProductsForStaticGen(): Promise<Product[]> {
     .order('display_order', { ascending: true});
 
   if (error) {
-    console.error('Error fetching products for static gen:', error);
+    logger.error('Error fetching products for static gen:', error);
     return [];
   }
 
@@ -202,7 +203,7 @@ export async function getProductBySlug(
     .single();
 
   if (error) {
-    console.error('Error fetching product:', error);
+    logger.error('Error fetching product:', error);
     return null;
   }
 
@@ -261,7 +262,7 @@ export async function getActiveStripeProducts(): Promise<ProductWithIngredients[
     .order('display_order', { ascending: true });
 
   if (error) {
-    console.error('Error fetching Stripe products:', error);
+    logger.error('Error fetching Stripe products:', error);
     return [];
   }
 
@@ -308,7 +309,7 @@ export async function getFeaturedProducts(): Promise<Product[]> {
     .limit(6);
 
   if (error) {
-    console.error('Error fetching featured products:', error);
+    logger.error('Error fetching featured products:', error);
     return [];
   }
 
@@ -328,7 +329,7 @@ export async function getAllIngredients(): Promise<Ingredient[]> {
     .order('name', { ascending: true });
 
   if (error) {
-    console.error('Error fetching ingredients:', error);
+    logger.error('Error fetching ingredients:', error);
     return [];
   }
 
@@ -360,7 +361,7 @@ export async function searchProducts(query: string): Promise<Product[]> {
     .order('display_order', { ascending: true });
 
   if (error) {
-    console.error('Error searching products:', error);
+    logger.error('Error searching products:', error);
     return [];
   }
 
@@ -383,7 +384,7 @@ export async function getAllProductsAdmin(): Promise<Product[]> {
     .order('display_order', { ascending: true });
 
   if (error) {
-    console.error('Error fetching products (admin):', error);
+    logger.error('Error fetching products (admin):', error);
     return [];
   }
 
@@ -413,7 +414,7 @@ export async function getProductById(id: string): Promise<ProductWithIngredients
     .single();
 
   if (error) {
-    console.error('Error fetching product by ID:', error);
+    logger.error('Error fetching product by ID:', error);
     return null;
   }
 

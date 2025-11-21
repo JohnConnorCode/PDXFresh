@@ -1,6 +1,8 @@
 import { Header } from '@/components/Header';
+import { logger } from '@/lib/logger';
 import { Footer } from '@/components/Footer';
 import { BackToTop } from '@/components/BackToTop';
+import { ToastProvider } from '@/components/ui/Toast';
 import { client } from '@/lib/sanity.client';
 import { siteSettingsQuery, navigationQuery } from '@/lib/sanity.queries';
 
@@ -12,7 +14,7 @@ async function getGlobalData() {
     ]);
     return { siteSettings, navigation };
   } catch (error) {
-    console.error('Error fetching global data:', error);
+    logger.error('Error fetching global data:', error);
     return { siteSettings: null, navigation: null };
   }
 }
@@ -25,7 +27,7 @@ export default async function WebsiteLayout({
   const { siteSettings, navigation } = await getGlobalData();
 
   return (
-    <>
+    <ToastProvider>
       <Header
         siteSettings={siteSettings}
         navigation={navigation}
@@ -33,6 +35,6 @@ export default async function WebsiteLayout({
       <main className="min-h-screen">{children}</main>
       <Footer siteSettings={siteSettings} navigation={navigation} />
       <BackToTop />
-    </>
+    </ToastProvider>
   );
 }

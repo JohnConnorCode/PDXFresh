@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { isCurrentUserAdmin } from '@/lib/admin';
 
@@ -35,7 +36,7 @@ export async function PUT(
       .single();
 
     if (error) {
-      console.error('Error updating inquiry status:', error);
+      logger.error('Error updating inquiry status:', error);
       return NextResponse.json(
         { error: 'Failed to update inquiry status' },
         { status: 500 }
@@ -44,7 +45,7 @@ export async function PUT(
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error('Error in status update:', error);
+    logger.error('Error in status update:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

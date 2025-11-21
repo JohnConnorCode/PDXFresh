@@ -1,4 +1,5 @@
 import { render } from '@react-email/render';
+import { logger } from '@/lib/logger';
 import { resend, isEmailConfigured, DEFAULT_FROM_EMAIL } from './resend';
 import {
   OrderConfirmationEmail,
@@ -45,13 +46,13 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationPa
     });
 
     if (error) {
-      console.error('Failed to send order confirmation email:', error);
+      logger.error('Failed to send order confirmation email:', error);
       return { success: false, error };
     }
 
     return { success: true, data };
   } catch (error) {
-    console.error('Error sending order confirmation email:', error);
+    logger.error('Error sending order confirmation email:', error);
     return { success: false, error };
   }
 }
@@ -92,13 +93,13 @@ export async function sendSubscriptionConfirmationEmail(params: SendSubscription
     });
 
     if (error) {
-      console.error('Failed to send subscription confirmation email:', error);
+      logger.error('Failed to send subscription confirmation email:', error);
       return { success: false, error };
     }
 
     return { success: true, data };
   } catch (error) {
-    console.error('Error sending subscription confirmation email:', error);
+    logger.error('Error sending subscription confirmation email:', error);
     return { success: false, error };
   }
 }

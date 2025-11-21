@@ -1,6 +1,7 @@
 'use server';
 
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
 import { resend, EMAIL_CONFIG } from './email/client';
 import NewsletterWelcomeEmail from './email/templates/newsletter-welcome';
 import ContactFormEmail from './email/templates/contact-form';
@@ -37,7 +38,7 @@ export async function submitNewsletter(formData: FormData) {
         react: NewsletterWelcomeEmail({ email: validatedData.email }),
       });
     } catch (emailError) {
-      console.error('Error sending welcome email:', emailError);
+      logger.error('Error sending welcome email:', emailError);
       // Continue even if email fails - still save to database
     }
 
@@ -61,7 +62,7 @@ export async function submitNewsletter(formData: FormData) {
           message: 'You\'re already subscribed! Check your email.',
         };
       }
-      console.error('Error saving newsletter subscription:', dbError);
+      logger.error('Error saving newsletter subscription:', dbError);
       return {
         success: false,
         error: 'Could not complete subscription. Please try again.',
@@ -79,7 +80,7 @@ export async function submitNewsletter(formData: FormData) {
         error: error.errors[0].message,
       };
     }
-    console.error('Newsletter subscription error:', error);
+    logger.error('Newsletter subscription error:', error);
     return {
       success: false,
       error: 'Something went wrong. Please try again.',
@@ -124,7 +125,7 @@ export async function submitWholesaleInquiry(formData: FormData) {
         }),
       });
     } catch (emailError) {
-      console.error('Error sending wholesale inquiry email:', emailError);
+      logger.error('Error sending wholesale inquiry email:', emailError);
       // Continue even if email fails - still save to database
     }
 
@@ -145,7 +146,7 @@ export async function submitWholesaleInquiry(formData: FormData) {
       .single();
 
     if (dbError) {
-      console.error('Error saving wholesale inquiry:', dbError);
+      logger.error('Error saving wholesale inquiry:', dbError);
       return {
         success: false,
         error: 'Could not submit inquiry. Please try again.',
@@ -164,7 +165,7 @@ export async function submitWholesaleInquiry(formData: FormData) {
         error: error.errors[0].message,
       };
     }
-    console.error('Wholesale inquiry error:', error);
+    logger.error('Wholesale inquiry error:', error);
     return {
       success: false,
       error: 'Something went wrong. Please try again.',

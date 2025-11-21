@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { logger } from '@/lib/logger';
 import { useRouter } from 'next/navigation';
 
 interface StripeModeToggleProps {
@@ -41,7 +42,7 @@ export function StripeModeToggle({ currentMode, variantCount }: StripeModeToggle
       router.refresh();
       alert(`Successfully switched to ${targetMode.toUpperCase()} mode!\n\nAll checkout sessions will now use ${targetMode} Stripe ${targetMode === 'production' ? '(REAL MONEY)' : '(test cards)'}.`);
     } catch (error) {
-      console.error('Error switching mode:', error);
+      logger.error('Error switching mode:', error);
       alert('Failed to switch mode. Check console for details.');
     } finally {
       setIsChanging(false);

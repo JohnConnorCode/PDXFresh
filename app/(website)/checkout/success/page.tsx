@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, Suspense } from 'react';
+import { logger } from '@/lib/logger';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Section } from '@/components/Section';
@@ -16,7 +17,7 @@ function CheckoutSuccessContent() {
     // Clear cart after successful purchase
     // Only clear if we have a session_id to prevent accidental clears
     if (sessionId) {
-      console.log('✅ Payment successful - clearing cart');
+      logger.info('✅ Payment successful - clearing cart');
       clearCart();
     }
   }, [sessionId, clearCart]);

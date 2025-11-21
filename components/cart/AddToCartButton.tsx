@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/store/cartStore';
+import { useToast } from '@/components/ui/Toast';
 import { ShoppingCart, Check } from 'lucide-react';
 
 interface AddToCartButtonProps {
@@ -32,9 +33,14 @@ export function AddToCartButton({
   const [justAdded, setJustAdded] = useState(false);
   const router = useRouter();
   const addItem = useCartStore((state) => state.addItem);
+  const cartError = useCartStore((state) => state.error);
+  const { showToast } = useToast();
 
   const handleAddToCart = async () => {
     setIsAdding(true);
+
+    // Clear any previous errors before attempting to add
+    const previousError = cartError;
 
     // Add item to cart
     addItem({
@@ -51,14 +57,27 @@ export function AddToCartButton({
       },
     });
 
-    // Show success state
-    setJustAdded(true);
-    setIsAdding(false);
-
-    // Reset success state after 2 seconds
+    // Check if an error occurred (error changed after addItem)
+    // Use a small delay to ensure state has updated
     setTimeout(() => {
-      setJustAdded(false);
-    }, 2000);
+      const currentError = useCartStore.getState().error;
+
+      if (currentError && currentError !== previousError) {
+        // New error occurred
+        showToast(currentError, 'error');
+        setIsAdding(false);
+      } else {
+        // Success - show success state
+        showToast(`${productName} added to cart!`, 'success');
+        setJustAdded(true);
+        setIsAdding(false);
+
+        // Reset success state after 2 seconds
+        setTimeout(() => {
+          setJustAdded(false);
+        }, 2000);
+      }
+    }, 50);
   };
 
   const handleViewCart = () => {

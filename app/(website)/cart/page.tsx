@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCartStore, formatPrice } from '@/lib/store/cartStore';
 import { CartItem } from '@/components/cart/CartItem';
 import { CouponInput } from '@/components/cart/CouponInput';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import Link from 'next/link';
 import { ShoppingBag, ArrowLeft, AlertCircle } from 'lucide-react';
 import { logger } from '@/lib/logger';
@@ -12,10 +13,26 @@ export default function CartPage() {
   const { items, getSubtotal, getDiscount, getTotal, clearCart, removeItem } = useCartStore();
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const subtotal = getSubtotal();
   const discount = getDiscount();
   const total = getTotal();
+
+  // Clear checkout errors on mount and when cart changes
+  useEffect(() => {
+    setCheckoutError(null);
+  }, [items]);
+
+  // Auto-clear checkout errors after 10 seconds
+  useEffect(() => {
+    if (checkoutError) {
+      const timer = setTimeout(() => {
+        setCheckoutError(null);
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [checkoutError]);
 
   const handleCheckout = async () => {
     logger.debug('handleCheckout called');
@@ -206,11 +223,7 @@ export default function CartPage() {
 
               {/* Clear Cart */}
               <button
-                onClick={() => {
-                  if (confirm('Are you sure you want to clear your cart?')) {
-                    clearCart();
-                  }
-                }}
+                onClick={() => setShowClearConfirm(true)}
                 className="w-full text-gray-600 hover:text-red-600 py-2 text-sm transition-colors"
               >
                 Clear Cart
@@ -236,6 +249,18 @@ export default function CartPage() {
             </div>
           </div>
         </div>
+
+        {/* Clear Cart Confirmation Modal */}
+        <ConfirmModal
+          isOpen={showClearConfirm}
+          onClose={() => setShowClearConfirm(false)}
+          onConfirm={clearCart}
+          title="Clear Cart?"
+          message="Are you sure you want to remove all items from your cart? This action cannot be undone."
+          confirmText="Clear Cart"
+          cancelText="Cancel"
+          variant="danger"
+        />
       </div>
     </div>
   );

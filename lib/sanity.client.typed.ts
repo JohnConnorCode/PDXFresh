@@ -4,6 +4,7 @@
  */
 
 import { client, previewClient } from './sanity.client';
+import { logger } from '@/lib/logger';
 import type {
   SiteSettings,
   Navigation,
@@ -38,7 +39,7 @@ export async function typedFetch<T>(
 
     return data;
   } catch (error) {
-    console.error('Sanity fetch error:', error);
+    logger.error('Sanity fetch error:', error);
     return null;
   }
 }

@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { logger } from '@/lib/logger';
 import Link from 'next/link';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
@@ -28,7 +29,7 @@ async function UserList({ searchQuery }: { searchQuery?: string }) {
   const { data: users, error } = await query;
 
   if (error) {
-    console.error('Error loading users:', error);
+    logger.error('Error loading users:', error);
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <p className="text-red-600 font-semibold mb-2">Failed to load users</p>

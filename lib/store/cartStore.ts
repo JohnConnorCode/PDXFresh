@@ -87,7 +87,14 @@ export const useCartStore = create<CartStore>()(
         // Validate price ID before adding
         if (!item.priceId || !item.priceId.startsWith('price_') || item.priceId.length < 20) {
           logger.error('Invalid priceId:', item.priceId);
-          set({ error: 'Invalid product data. Please refresh the page.' });
+          const errorMsg = 'Invalid product data. Please refresh the page.';
+          set({ error: errorMsg });
+          // Auto-clear error after 8 seconds
+          setTimeout(() => {
+            if (get().error === errorMsg) {
+              set({ error: undefined });
+            }
+          }, 8000);
           return;
         }
 
@@ -101,6 +108,12 @@ export const useCartStore = create<CartStore>()(
               : 'Cannot add one-time purchase to cart with subscriptions. Please checkout separately or clear your cart first.';
             logger.warn('Mixed billing types in cart:', { existingType, newType: item.productType });
             set({ error: errorMsg });
+            // Auto-clear error after 8 seconds
+            setTimeout(() => {
+              if (get().error === errorMsg) {
+                set({ error: undefined });
+              }
+            }, 8000);
             return;
           }
         }
@@ -108,7 +121,14 @@ export const useCartStore = create<CartStore>()(
         // Enforce quantity=1 for subscription items
         if (item.productType === 'subscription' && item.quantity > 1) {
           logger.warn('Subscription items must have quantity of 1');
-          set({ error: 'Subscription items can only have a quantity of 1.' });
+          const errorMsg = 'Subscription items can only have a quantity of 1.';
+          set({ error: errorMsg });
+          // Auto-clear error after 8 seconds
+          setTimeout(() => {
+            if (get().error === errorMsg) {
+              set({ error: undefined });
+            }
+          }, 8000);
           return;
         }
 
@@ -128,7 +148,14 @@ export const useCartStore = create<CartStore>()(
             });
           } else {
             // Subscription items can't increase quantity
-            set({ error: 'This subscription is already in your cart.' });
+            const errorMsg = 'This subscription is already in your cart.';
+            set({ error: errorMsg });
+            // Auto-clear error after 8 seconds
+            setTimeout(() => {
+              if (get().error === errorMsg) {
+                set({ error: undefined });
+              }
+            }, 8000);
           }
         } else {
           // Add new item
@@ -184,10 +211,17 @@ export const useCartStore = create<CartStore>()(
 
           set({ coupon, isLoading: false });
         } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'Failed to apply coupon';
           set({
-            error: error instanceof Error ? error.message : 'Failed to apply coupon',
+            error: errorMsg,
             isLoading: false,
           });
+          // Auto-clear error after 8 seconds
+          setTimeout(() => {
+            if (get().error === errorMsg) {
+              set({ error: undefined });
+            }
+          }, 8000);
         }
       },
 

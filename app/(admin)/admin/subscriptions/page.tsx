@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 import { redirect } from 'next/navigation';
 import { SubscriptionsTable } from './SubscriptionsTable';
 import { FadeIn } from '@/components/animations';
@@ -37,7 +38,7 @@ async function getSubscriptions() {
     .limit(200);
 
   if (error) {
-    console.error('Error fetching subscriptions:', error);
+    logger.error('Error fetching subscriptions:', error);
     return [];
   }
 

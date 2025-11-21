@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { isCurrentUserAdmin } from '@/lib/admin';
 
@@ -19,7 +20,7 @@ export async function GET() {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching inquiries:', error);
+      logger.error('Error fetching inquiries:', error);
       return NextResponse.json({ error: 'Failed to fetch inquiries' }, { status: 500 });
     }
 
@@ -61,7 +62,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('Error exporting inquiries:', error);
+    logger.error('Error exporting inquiries:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
