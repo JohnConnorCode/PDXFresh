@@ -9,7 +9,7 @@ import { ShoppingBag, ArrowLeft, AlertCircle } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
 export default function CartPage() {
-  const { items, getSubtotal, getDiscount, getTotal, clearCart } = useCartStore();
+  const { items, getSubtotal, getDiscount, getTotal, clearCart, removeItem } = useCartStore();
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -29,9 +29,21 @@ export default function CartPage() {
       );
 
       if (invalidItems.length > 0) {
-        logger.error('Invalid items in cart:', invalidItems);
-        clearCart();
-        throw new Error('Your cart contains invalid items. Cart has been cleared. Please add items again.');
+        logger.warn('Found invalid items in cart, removing them:', invalidItems.map(i => i.id));
+
+        // Remove only invalid items, not the entire cart
+        invalidItems.forEach(item => removeItem(item.id));
+
+        // If ALL items were invalid, show error
+        if (invalidItems.length === items.length) {
+          throw new Error('All items in your cart were invalid and have been removed. Please add items again.');
+        }
+
+        // Show warning but allow checkout to continue with valid items
+        setCheckoutError(`${invalidItems.length} invalid item(s) were removed from your cart. Proceeding with checkout...`);
+
+        // Continue with checkout after short delay to show message
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
 
       // Prepare checkout items
