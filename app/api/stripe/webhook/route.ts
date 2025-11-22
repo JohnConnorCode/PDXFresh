@@ -132,14 +132,18 @@ export async function POST(req: NextRequest) {
     logger.error('Webhook error:', error);
 
     // CRITICAL: Log webhook failure for manual retry/investigation
-    if (event) {
-      const supabase = createServiceRoleClient();
-      await supabase.from('webhook_failures').insert({
-        event_id: event.id,
-        event_type: event.type,
-        event_data: event,
-        error_message: error instanceof Error ? error.message : 'Unknown error',
-      });
+    try {
+      if (event) {
+        const supabase = createServiceRoleClient();
+        await supabase.from('webhook_failures').insert({
+          event_id: event.id,
+          event_type: event.type,
+          event_data: event,
+          error_message: error instanceof Error ? error.message : 'Unknown error',
+        });
+      }
+    } catch (logError) {
+      logger.error('Failed to log webhook failure:', logError);
     }
 
     return NextResponse.json(
