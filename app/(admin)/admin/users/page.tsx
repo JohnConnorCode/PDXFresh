@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Suspense } from 'react';
 import { requireAdmin } from '@/lib/admin';
 import { FadeIn } from '@/components/animations';
+import { Users } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'User Management | Admin',
@@ -45,7 +46,7 @@ async function UserList({ searchQuery }: { searchQuery?: string }) {
   if (!users || users.length === 0) {
     return (
       <EmptyState
-        icon="👥"
+        icon={Users}
         title="No users found"
         description={searchQuery ? `No users match "${searchQuery}"` : 'No users in the system yet'}
       />

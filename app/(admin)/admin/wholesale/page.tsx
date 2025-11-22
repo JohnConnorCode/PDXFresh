@@ -7,6 +7,7 @@ import { Suspense } from 'react';
 import { requireAdmin } from '@/lib/admin';
 import { FadeIn } from '@/components/animations';
 import { WholesaleStatusButton } from './WholesaleStatusButton';
+import { Building2 } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Wholesale Inquiries | Admin',
@@ -72,7 +73,7 @@ async function InquiryList() {
   if (!inquiries || inquiries.length === 0) {
     return (
       <EmptyState
-        icon="🏢"
+        icon={Building2}
         title="No wholesale inquiries yet"
         description="Business inquiries will appear here"
       />

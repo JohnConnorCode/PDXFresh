@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Suspense } from 'react';
 import { requireAdmin } from '@/lib/admin';
 import { FadeIn } from '@/components/animations';
+import { Mail } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Newsletter Subscribers | Admin',
@@ -65,7 +66,7 @@ async function SubscriberList() {
   if (!subscribers || subscribers.length === 0) {
     return (
       <EmptyState
-        icon="📧"
+        icon={Mail}
         title="No subscribers yet"
         description="Newsletter subscribers will appear here"
       />

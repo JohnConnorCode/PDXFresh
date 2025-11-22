@@ -229,12 +229,80 @@ export async function POST(req: NextRequest) {
         .digest('hex')
         .substring(0, 40); // Stripe max length is 40 chars
 
+      // CRITICAL: Reserve inventory BEFORE creating Stripe session to prevent overselling
+      // Generate tracking ID for reservations (we'll update with Stripe session ID later)
+      const reservationTrackingId = crypto.randomUUID();
+      const reservedItems: Array<{ variantId: string; quantity: number }> = [];
+
+      try {
+        // Reserve inventory for each item atomically
+        for (const item of validatedLineItems) {
+          const { data: reservationResult, error: reservationError } = await supabase.rpc(
+            'reserve_inventory',
+            {
+              p_variant_id: item.variantId,
+              p_quantity: item.quantity,
+              p_session_id: reservationTrackingId,
+            }
+          );
+
+          if (reservationError) {
+            logger.error('Reservation database error:', reservationError);
+            throw new Error(`Failed to reserve inventory: ${reservationError.message}`);
+          }
+
+          const result = reservationResult as { success: boolean; error?: string; available_stock?: number };
+
+          if (!result.success) {
+            // Reservation failed - insufficient stock
+            const errorMsg = result.error === 'Insufficient stock'
+              ? `Only ${result.available_stock || 0} available`
+              : result.error || 'Failed to reserve inventory';
+
+            // Rollback: Release all previously reserved items
+            if (reservedItems.length > 0) {
+              await supabase.rpc('release_reservation', { p_session_id: reservationTrackingId });
+            }
+
+            return NextResponse.json(
+              {
+                error: `Out of stock: ${errorMsg}`,
+                available: result.available_stock || 0,
+              },
+              { status: 400 }
+            );
+          }
+
+          // Track successfully reserved items
+          reservedItems.push({
+            variantId: item.variantId,
+            quantity: item.quantity,
+          });
+        }
+
+        logger.info(`✅ Reserved inventory for ${reservedItems.length} items`, {
+          trackingId: reservationTrackingId,
+        });
+      } catch (error) {
+        // Unexpected error during reservation - release all
+        if (reservedItems.length > 0) {
+          await supabase.rpc('release_reservation', { p_session_id: reservationTrackingId });
+        }
+
+        logger.error('Inventory reservation failed:', error);
+        return NextResponse.json(
+          { error: 'Failed to reserve inventory. Please try again.' },
+          { status: 500 }
+        );
+      }
+
       // Strip variantId before passing to Stripe (it's only for our internal use)
       const stripeLineItems = validatedLineItems.map(({ price, quantity }) => ({
         price,
         quantity,
       }));
 
+      // Create Stripe checkout session (inventory is now reserved)
       const checkoutSession = await createCartCheckoutSession(
         {
           lineItems: stripeLineItems,
@@ -242,40 +310,27 @@ export async function POST(req: NextRequest) {
           successUrl: finalSuccessUrl,
           cancelUrl: finalCancelUrl,
           customerId,
-          metadata,
+          metadata: {
+            ...metadata,
+            reservationTrackingId, // Store for later mapping
+          },
           couponCode,
           idempotencyKey,
         },
         stripeClient
       );
 
-      // CRITICAL: Atomically reserve inventory to prevent race conditions
-      // This must happen AFTER session creation to have a session ID
-      for (const item of validatedLineItems) {
-        if (item.variantId) {
-          const { data: reservationResult, error: reservationError } = await supabase
-            .rpc('reserve_inventory', {
-              p_variant_id: item.variantId,
-              p_quantity: item.quantity,
-              p_session_id: checkoutSession.id,
-            });
+      // Update reservations with actual Stripe session ID
+      await supabase
+        .from('inventory_reservations')
+        .update({ checkout_session_id: checkoutSession.id })
+        .eq('checkout_session_id', reservationTrackingId);
 
-          if (reservationError || !reservationResult?.success) {
-            // Reservation failed - release any reservations and return error
-            await supabase.rpc('release_reservation', {
-              p_session_id: checkoutSession.id,
-            });
-
-            return NextResponse.json(
-              {
-                error: reservationResult?.error || 'Insufficient stock',
-                availableStock: reservationResult?.available_stock || 0,
-              },
-              { status: 400 }
-            );
-          }
-        }
-      }
+      logger.info('✅ Checkout session created with inventory reserved', {
+        sessionId: checkoutSession.id,
+        trackingId: reservationTrackingId,
+        items: reservedItems.length,
+      });
 
       return NextResponse.json({ url: checkoutSession.url, sessionId: checkoutSession.id });
     }

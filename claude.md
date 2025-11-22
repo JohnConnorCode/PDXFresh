@@ -210,12 +210,12 @@ The email system uses **database-driven templates** with a Supabase Edge Functio
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-RESEND_API_KEY=re_8UeJfPqu_PRRGUb3rCYCJBEZytgTgjkJk
+RESEND_API_KEY=re_your_resend_api_key_here
 ```
 
 **Supabase Edge Function** (Project Settings → Edge Functions):
 ```bash
-RESEND_API_KEY=re_8UeJfPqu_PRRGUb3rCYCJBEZytgTgjkJk
+RESEND_API_KEY=re_your_resend_api_key_here
 EMAIL_FROM="Long Life <hello@drinklonglife.com>"
 ```
 

@@ -69,11 +69,6 @@ class Logger {
     if (level === 'warn' || level === 'error') {
       console.error(`[${level.toUpperCase()}]`, ...redactedArgs);
     }
-
-    // TODO: Send to external logging service (e.g., Sentry, LogRocket, Datadog)
-    // if (process.env.SENTRY_DSN) {
-    //   Sentry.captureMessage(redactedArgs.join(' '));
-    // }
   }
 
   debug(...args: any[]) {
