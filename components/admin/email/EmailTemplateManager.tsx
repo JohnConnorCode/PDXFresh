@@ -3,12 +3,29 @@
 import { useState, useEffect } from 'react';
 import { getEmailTemplates } from '@/lib/actions/emailTemplate';
 import { EmailTemplate } from '@/lib/services/emailTemplateService';
+import { EditEmailTemplateModal } from './EditEmailTemplateModal';
+import { PreviewEmailModal } from './PreviewEmailModal';
+import { SendTestEmailModal } from './SendTestEmailModal';
 
 export function EmailTemplateManager() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  // Modal states
+  const [editModal, setEditModal] = useState<{ isOpen: boolean; template: EmailTemplate | null }>({
+    isOpen: false,
+    template: null
+  });
+  const [previewModal, setPreviewModal] = useState<{ isOpen: boolean; template: EmailTemplate | null }>({
+    isOpen: false,
+    template: null
+  });
+  const [testEmailModal, setTestEmailModal] = useState<{ isOpen: boolean; template: EmailTemplate | null }>({
+    isOpen: false,
+    template: null
+  });
 
   useEffect(() => {
     loadTemplates();
@@ -88,6 +105,17 @@ export function EmailTemplateManager() {
 
   return (
     <div className="space-y-6">
+      {/* Header with Create New Button */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">Email Templates</h1>
+        <button
+          onClick={() => setEditModal({ isOpen: true, template: null })}
+          className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+        >
+          Create New Template
+        </button>
+      </div>
+
       {/* Category Filter */}
       <div className="flex gap-2">
         {categories.map(category => (
@@ -168,30 +196,21 @@ export function EmailTemplateManager() {
 
                   <div className="flex gap-2 ml-4">
                     <button
-                      onClick={() => {
-                        // TODO: Open editor modal
-                        alert(`Edit functionality coming soon for: ${templateName}`);
-                      }}
+                      onClick={() => setEditModal({ isOpen: true, template: displayTemplate })}
                       className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
                     >
                       Edit
                     </button>
 
                     <button
-                      onClick={() => {
-                        // TODO: Open preview modal
-                        alert(`Preview functionality coming soon for: ${templateName}`);
-                      }}
+                      onClick={() => setPreviewModal({ isOpen: true, template: displayTemplate })}
                       className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
                     >
                       Preview
                     </button>
 
                     <button
-                      onClick={() => {
-                        // TODO: Open test email modal
-                        alert(`Test email functionality coming soon for: ${templateName}`);
-                      }}
+                      onClick={() => setTestEmailModal({ isOpen: true, template: displayTemplate })}
                       className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
                     >
                       Send Test
@@ -211,9 +230,50 @@ export function EmailTemplateManager() {
           <li>✅ Database-driven templates active</li>
           <li>✅ {templates.filter(t => t.version_type === 'published').length} templates published</li>
           <li>✅ Edge function deployed for email sending</li>
-          <li>⚠️  Admin UI in development (edit/preview/test coming soon)</li>
+          <li>✅ Full admin UI with edit, preview, and test functionality</li>
         </ul>
       </div>
+
+      {/* Modals */}
+      {editModal.template && (
+        <EditEmailTemplateModal
+          isOpen={editModal.isOpen}
+          onClose={() => setEditModal({ isOpen: false, template: null })}
+          template={editModal.template}
+          onSave={() => {
+            loadTemplates();
+            setEditModal({ isOpen: false, template: null });
+          }}
+        />
+      )}
+
+      {editModal.isOpen && !editModal.template && (
+        <EditEmailTemplateModal
+          isOpen={editModal.isOpen}
+          onClose={() => setEditModal({ isOpen: false, template: null })}
+          template={null}
+          onSave={() => {
+            loadTemplates();
+            setEditModal({ isOpen: false, template: null });
+          }}
+        />
+      )}
+
+      {previewModal.template && (
+        <PreviewEmailModal
+          isOpen={previewModal.isOpen}
+          onClose={() => setPreviewModal({ isOpen: false, template: null })}
+          template={previewModal.template}
+        />
+      )}
+
+      {testEmailModal.template && (
+        <SendTestEmailModal
+          isOpen={testEmailModal.isOpen}
+          onClose={() => setTestEmailModal({ isOpen: false, template: null })}
+          template={testEmailModal.template}
+        />
+      )}
     </div>
   );
 }

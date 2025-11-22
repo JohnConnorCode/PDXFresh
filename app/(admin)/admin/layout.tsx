@@ -106,6 +106,12 @@ export default async function AdminLayout({
                   Wholesale
                 </Link>
                 <Link
+                  href="/admin/email-templates"
+                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-white/10 transition-colors"
+                >
+                  Email Templates
+                </Link>
+                <Link
                   href="/admin/stripe-mode"
                   className="px-3 py-2 rounded-md text-sm font-medium hover:bg-white/10 transition-colors border-l border-white/20 ml-1 pl-3"
                 >

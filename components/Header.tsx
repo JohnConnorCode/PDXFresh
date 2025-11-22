@@ -115,20 +115,30 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
           : 'bg-white border-b border-gray-100'
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
+        <div className="flex items-center justify-between h-14 lg:h-16 gap-2">
+          {/* Logo - Progressive text hiding */}
           <Link href="/" className="flex-shrink-0 relative z-50">
-            <AnimatedLogo
-              size="md"
-              variant="header"
-              logoUrl={siteSettings?.logo?.asset?.url}
-              showText={true}
-            />
+            <div className="hidden lg:block">
+              <AnimatedLogo
+                size="md"
+                variant="header"
+                logoUrl={siteSettings?.logo?.asset?.url}
+                showText={true}
+              />
+            </div>
+            <div className="lg:hidden">
+              <AnimatedLogo
+                size="md"
+                variant="header"
+                logoUrl={siteSettings?.logo?.asset?.url}
+                showText={false}
+              />
+            </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          {/* Desktop Navigation - Progressive gap reduction */}
+          <nav className="hidden md:flex items-center gap-3 lg:gap-6 xl:gap-8">
             {/* Blends Dropdown - First */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -145,12 +155,12 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
               <Link
                 href="/blends"
                 className={clsx(
-                  'group text-sm font-heading font-medium transition-colors relative flex items-center gap-1',
+                  'group text-xs lg:text-sm font-heading font-medium transition-colors relative flex items-center gap-0.5 lg:gap-1 whitespace-nowrap',
                   pathname.startsWith('/blends') ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
                 )}
               >
                 Blends
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
                 <span
@@ -207,7 +217,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                       target={link.newTab ? '_blank' : undefined}
                       rel={link.newTab ? 'noopener noreferrer' : undefined}
                       className={clsx(
-                        'group text-sm font-heading font-medium transition-colors relative',
+                        'group text-xs lg:text-sm font-heading font-medium transition-colors relative whitespace-nowrap',
                         isActive ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
                       )}
                     >
@@ -236,7 +246,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
               <Link
                 href="/referral"
                 className={clsx(
-                  'group text-sm font-heading font-medium transition-colors relative',
+                  'group text-xs lg:text-sm font-heading font-medium transition-colors relative whitespace-nowrap',
                   pathname === '/referral' ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
                 )}
               >
@@ -251,8 +261,8 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
             </motion.div>
           </nav>
 
-          {/* Desktop Auth & CTA */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* Desktop Auth & CTA - Progressive gap reduction */}
+          <div className="hidden md:flex items-center gap-2 lg:gap-3 xl:gap-4">
             {/* Cart Button - Only show if cart has items */}
             {cartItemCount > 0 && (
               <motion.div
@@ -266,10 +276,10 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
               >
                 <Link
                   href="/cart"
-                  className="relative p-2 text-gray-700 hover:text-black transition-colors"
+                  className="relative p-1.5 lg:p-2 text-gray-700 hover:text-black transition-colors"
                 >
-                  <ShoppingCart className="w-6 h-6" />
-                  <span className="absolute bg-accent-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center" style={{ top: '1rem', right: '-0.25rem' }}>
+                  <ShoppingCart className="w-5 h-5 lg:w-6 lg:h-6" />
+                  <span className="absolute bg-accent-primary text-white text-[10px] lg:text-xs font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center" style={{ top: '0.75rem', right: '-0.25rem' }}>
                     {cartItemCount}
                   </span>
                 </Link>
@@ -290,7 +300,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                 >
                   <Link
                     href="/login"
-                    className="px-4 py-2 text-sm font-semibold text-gray-900 hover:text-accent-primary transition-colors"
+                    className="px-2 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold text-gray-900 hover:text-accent-primary transition-colors whitespace-nowrap"
                   >
                     Login
                   </Link>
@@ -310,7 +320,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                   >
                     <Link
                       href="/signup"
-                      className="px-6 py-2 rounded-full bg-accent-primary text-white text-sm font-medium hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg block"
+                      className="px-4 lg:px-6 py-1.5 lg:py-2 rounded-full bg-accent-primary text-white text-xs lg:text-sm font-medium hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg block whitespace-nowrap"
                     >
                       Sign Up
                     </Link>
@@ -331,16 +341,16 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
               >
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors rounded-lg hover:bg-gray-50"
+                  className="flex items-center gap-1 lg:gap-2 px-2 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-medium text-gray-700 hover:text-black transition-colors rounded-lg hover:bg-gray-50"
                 >
-                  <div className="w-8 h-8 rounded-full bg-accent-primary/10 flex items-center justify-center">
-                    <span className="text-accent-primary font-semibold text-sm">
+                  <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-accent-primary/10 flex items-center justify-center">
+                    <span className="text-accent-primary font-semibold text-xs lg:text-sm">
                       {user.email?.charAt(0).toUpperCase()}
                     </span>
                   </div>
-                  <span className="max-w-[120px] truncate">{user.email?.split('@')[0]}</span>
+                  <span className="hidden lg:block max-w-[120px] truncate">{user.email?.split('@')[0]}</span>
                   <svg
-                    className={clsx('w-4 h-4 transition-transform', userMenuOpen && 'rotate-180')}
+                    className={clsx('w-3 h-3 lg:w-4 lg:h-4 transition-transform', userMenuOpen && 'rotate-180')}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -387,11 +397,11 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden relative z-50 p-3 -mr-2 touch-manipulation"
+            className="md:hidden relative z-50 p-2 -mr-1 touch-manipulation"
             aria-label="Toggle menu"
             aria-expanded={mobileMenuOpen}
           >
-            <div className="w-6 h-5 flex flex-col justify-between">
+            <div className="w-5 h-4 flex flex-col justify-between">
               <span
                 className={clsx(
                   'w-full h-0.5 bg-black transition-all',
@@ -426,7 +436,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
           />
 
           {/* Mobile Menu Panel */}
-          <nav className="md:hidden fixed top-16 left-0 right-0 bottom-0 bg-white z-40 overflow-y-auto">
+          <nav className="md:hidden fixed top-14 lg:top-16 left-0 right-0 bottom-0 bg-white z-40 overflow-y-auto">
             <StaggerContainer staggerDelay={0.1} className="px-4 py-6 space-y-1">
               {headerLinks.map((link: any, index: number) => {
                 const href = link.externalUrl || (link.reference?.slug?.current ? `/${link.reference.slug.current}` : '#');
