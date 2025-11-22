@@ -4,6 +4,7 @@ import { createCheckoutSession, createCartCheckoutSession, getOrCreateCustomer }
 import { getStripeClient } from '@/lib/stripe/config';
 import { rateLimit } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
+import crypto from 'crypto';
 
 interface CartItemRequest {
   priceId: string;
@@ -219,6 +220,21 @@ export async function POST(req: NextRequest) {
 
       const lineItems = validatedLineItems;
 
+      // CRITICAL: Generate idempotency key to prevent double charges
+      // Key is based on: user/IP + cart contents + 1-minute time window
+      // This prevents duplicate checkout sessions if user clicks button twice
+      const timeWindow = Math.floor(Date.now() / 60000); // 1-minute windows
+      const cartFingerprint = JSON.stringify({
+        items: lineItems.map(item => ({ price: item.price, qty: item.quantity })).sort(),
+        coupon: couponCode || null,
+        time: timeWindow,
+      });
+      const idempotencyKey = crypto
+        .createHash('sha256')
+        .update(`${user?.id || clientIp}:${cartFingerprint}`)
+        .digest('hex')
+        .substring(0, 40); // Stripe max length is 40 chars
+
       const checkoutSession = await createCartCheckoutSession(
         {
           lineItems,
@@ -228,6 +244,7 @@ export async function POST(req: NextRequest) {
           customerId,
           metadata,
           couponCode,
+          idempotencyKey,
         },
         stripeClient
       );
@@ -283,6 +300,19 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      // CRITICAL: Generate idempotency key for single-item checkout
+      const timeWindow = Math.floor(Date.now() / 60000);
+      const checkoutFingerprint = JSON.stringify({
+        price: priceId,
+        mode,
+        time: timeWindow,
+      });
+      const idempotencyKey = crypto
+        .createHash('sha256')
+        .update(`${user?.id || clientIp}:${checkoutFingerprint}`)
+        .digest('hex')
+        .substring(0, 40);
+
       const checkoutSession = await createCheckoutSession(
         {
           priceId,
@@ -291,6 +321,7 @@ export async function POST(req: NextRequest) {
           cancelUrl: finalCancelUrl,
           customerId,
           metadata,
+          idempotencyKey,
         },
         stripeClient
       );

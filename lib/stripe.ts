@@ -116,6 +116,7 @@ export async function createCheckoutSession(
     customerId,
     customerEmail,
     metadata = {},
+    idempotencyKey,
   }: {
     priceId: string;
     mode: 'payment' | 'subscription';
@@ -124,6 +125,7 @@ export async function createCheckoutSession(
     customerId?: string;
     customerEmail?: string;
     metadata?: Record<string, string>;
+    idempotencyKey?: string;
   },
   stripeClient?: Stripe
 ): Promise<Stripe.Checkout.Session> {
@@ -170,7 +172,10 @@ export async function createCheckoutSession(
     enabled: true,
   };
 
-  return await client.checkout.sessions.create(sessionParams);
+  // Use idempotency key if provided to prevent duplicate charges
+  const requestOptions = idempotencyKey ? { idempotencyKey } : undefined;
+
+  return await client.checkout.sessions.create(sessionParams, requestOptions);
 }
 
 /**
@@ -187,6 +192,7 @@ export async function createCartCheckoutSession(
     customerEmail,
     metadata = {},
     couponCode,
+    idempotencyKey,
   }: {
     lineItems: Array<{ price: string; quantity: number }>;
     mode: 'payment' | 'subscription';
@@ -196,6 +202,7 @@ export async function createCartCheckoutSession(
     customerEmail?: string;
     metadata?: Record<string, string>;
     couponCode?: string;
+    idempotencyKey?: string;
   },
   stripeClient?: Stripe
 ): Promise<Stripe.Checkout.Session> {
@@ -245,7 +252,10 @@ export async function createCartCheckoutSession(
     enabled: true,
   };
 
-  return await client.checkout.sessions.create(sessionParams);
+  // Use idempotency key if provided to prevent duplicate charges
+  const requestOptions = idempotencyKey ? { idempotencyKey } : undefined;
+
+  return await client.checkout.sessions.create(sessionParams, requestOptions);
 }
 
 /**

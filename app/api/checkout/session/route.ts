@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { logger } from '@/lib/logger';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,6 +11,23 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(
         { error: 'Missing session_id parameter' },
         { status: 400 }
+      );
+    }
+
+    // CRITICAL: Rate limit session fetches to prevent order data scraping
+    const rateLimitKey = `session-fetch:${sessionId}`;
+    const { success, remaining, reset } = rateLimit(rateLimitKey, 5, '1m');
+
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Too many requests for this session' },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Remaining': remaining.toString(),
+            'X-RateLimit-Reset': new Date(reset).toISOString(),
+          },
+        }
       );
     }
 

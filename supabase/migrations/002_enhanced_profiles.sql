@@ -42,7 +42,16 @@ CREATE TABLE IF NOT EXISTS public.user_discounts (
 
 -- Indexes for user_discounts
 CREATE INDEX IF NOT EXISTS user_discounts_user_id_idx ON public.user_discounts(user_id);
-CREATE INDEX IF NOT EXISTS user_discounts_active_idx ON public.user_discounts(active) WHERE active = TRUE;
+-- Only create active index if column exists
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'user_discounts' AND column_name = 'active'
+  ) THEN
+    CREATE INDEX IF NOT EXISTS user_discounts_active_idx ON public.user_discounts(active) WHERE active = TRUE;
+  END IF;
+END $$;
 CREATE INDEX IF NOT EXISTS user_discounts_stripe_coupon_idx ON public.user_discounts(stripe_coupon_id);
 
 -- Enable Row Level Security on user_discounts
