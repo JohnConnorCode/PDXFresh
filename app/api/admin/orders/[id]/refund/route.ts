@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin';
 import { processRefund } from '@/lib/admin/orders';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   _request: NextRequest,
@@ -42,10 +43,11 @@ export async function POST(
         ? 'Partial refund processed successfully'
         : 'Full refund processed successfully',
     });
-  } catch (error: any) {
-    console.error('Refund API error:', error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    logger.error('Refund API error:', err);
     return NextResponse.json(
-      { success: false, error: error.message || 'Internal server error' },
+      { success: false, error: err.message || 'Internal server error' },
       { status: 500 }
     );
   }

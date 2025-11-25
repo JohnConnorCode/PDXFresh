@@ -71,6 +71,19 @@ export default function CartPage() {
       }));
       logger.debug('Checkout items:', checkoutItems);
 
+      // Validate cart items are still available (inventory check)
+      logger.debug('Validating cart items...');
+      const validateResponse = await fetch('/api/cart/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: checkoutItems }),
+      });
+
+      if (!validateResponse.ok) {
+        const validateError = await validateResponse.json();
+        throw new Error(validateError.error || 'Some items in your cart are no longer available');
+      }
+
       // Get coupon code if applied
       const { coupon } = useCartStore.getState();
       const couponCode = coupon?.valid ? coupon.code : undefined;

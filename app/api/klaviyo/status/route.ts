@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createServerClient } from '@/lib/supabase/server';
 
 const KLAVIYO_API_KEY = process.env.KLAVIYO_PRIVATE_API_KEY;
@@ -16,7 +17,7 @@ export async function GET(_req: NextRequest) {
 
   // Check if Klaviyo API key is configured
   if (!KLAVIYO_API_KEY) {
-    console.error('KLAVIYO_PRIVATE_API_KEY not configured');
+    logger.error('KLAVIYO_PRIVATE_API_KEY not configured');
     return NextResponse.json({
       subscribed: false,
       message: 'Klaviyo not configured',
@@ -42,7 +43,7 @@ export async function GET(_req: NextRequest) {
     );
 
     if (!searchResponse.ok) {
-      console.error('Failed to search for Klaviyo profile');
+      logger.error('Failed to search for Klaviyo profile');
       throw new Error('Failed to find profile');
     }
 
@@ -69,7 +70,7 @@ export async function GET(_req: NextRequest) {
     );
 
     if (!listResponse.ok) {
-      console.error('Failed to get list profiles');
+      logger.error('Failed to get list profiles');
       throw new Error('Failed to check subscription status');
     }
 
@@ -85,7 +86,7 @@ export async function GET(_req: NextRequest) {
       profileId,
     });
   } catch (error) {
-    console.error('Klaviyo status check error:', error);
+    logger.error('Klaviyo status check error:', error);
     return NextResponse.json(
       {
         error: 'Failed to check subscription status',

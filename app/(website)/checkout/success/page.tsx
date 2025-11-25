@@ -38,6 +38,7 @@ function CheckoutSuccessContent() {
   const clearCart = useCartStore((state) => state.clearCart);
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     // Clear cart after successful purchase
@@ -56,12 +57,17 @@ function CheckoutSuccessContent() {
   const fetchOrderDetails = async (sessionId: string) => {
     try {
       const response = await fetch(`/api/checkout/session?session_id=${sessionId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setOrderDetails(data);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to fetch order details (${response.status})`);
       }
+      const data = await response.json();
+      setOrderDetails(data);
+      setFetchError(null);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load order details';
       logger.error('Error fetching order details:', error);
+      setFetchError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -102,8 +108,34 @@ function CheckoutSuccessContent() {
           </p>
         </FadeIn>
 
+        {/* Error Message */}
+        {fetchError && !loading && (
+          <FadeIn direction="up" delay={0.35}>
+            <div className="bg-blue-50/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-8 border-2 border-blue-200">
+              <div className="flex items-start gap-3 text-left">
+                <svg className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <p className="font-semibold text-blue-900 mb-1">Order details unavailable</p>
+                  <p className="text-sm text-blue-700 mb-2">
+                    Your payment was successful, but we couldn't load your order details.
+                    Don't worry - you'll receive a confirmation email shortly.
+                  </p>
+                  <button
+                    onClick={() => sessionId && fetchOrderDetails(sessionId)}
+                    className="text-sm text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Try again
+                  </button>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
+
         {/* Order Details */}
-        {orderDetails && !loading && (
+        {orderDetails && !loading && !fetchError && (
           <FadeIn direction="up" delay={0.35}>
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-8 border-2 border-accent-primary/20">
               <h2 className="font-heading text-2xl font-bold mb-4 text-gray-900">

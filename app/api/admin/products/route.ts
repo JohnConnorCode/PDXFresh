@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 import { productSchema, variantSchema } from '@/lib/validations/product';
 import { z } from 'zod';
@@ -40,7 +41,7 @@ export async function GET(_request: NextRequest) {
 
     return NextResponse.json({ products: data });
   } catch (error: any) {
-    console.error('Error fetching products:', error);
+    logger.error('Error fetching products:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to fetch products' },
       { status: 500 }
@@ -151,7 +152,7 @@ export async function POST(_request: NextRequest) {
 
     return NextResponse.json({ product }, { status: 201 });
   } catch (error: any) {
-    console.error('Error creating product:', error);
+    logger.error('Error creating product:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to create product' },
       { status: 500 }

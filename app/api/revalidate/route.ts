@@ -1,4 +1,5 @@
 import { revalidateTag } from 'next/cache';
+import { logger } from '@/lib/logger';
 import { type NextRequest, NextResponse } from 'next/server';
 import { parseBody } from 'next-sanity/webhook';
 
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
   try {
     // CRITICAL SECURITY: ALWAYS require signature verification
     if (!process.env.SANITY_REVALIDATE_SECRET) {
-      console.error('SANITY_REVALIDATE_SECRET is not configured - webhook endpoint is vulnerable!');
+      logger.error('SANITY_REVALIDATE_SECRET is not configured - webhook endpoint is vulnerable!');
       return new Response(
         JSON.stringify({
           message: 'Server misconfiguration: webhook secret not set'
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     // CRITICAL SECURITY: Reject if signature is invalid
     if (!isValidSignature) {
-      console.warn('Webhook signature verification failed - possible attack attempt');
+      logger.warn('Webhook signature verification failed - possible attack attempt');
       const message = 'Invalid signature';
       return new Response(JSON.stringify({ message }), {
         status: 401,
@@ -126,7 +127,7 @@ export async function POST(req: NextRequest) {
       now: Date.now(),
     });
   } catch (err: any) {
-    console.error('Revalidation error:', err);
+    logger.error('Revalidation error:', err);
     return new Response(err.message, { status: 500 });
   }
 }

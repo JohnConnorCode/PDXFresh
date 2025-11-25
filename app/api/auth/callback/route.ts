@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
@@ -13,7 +14,7 @@ function validateRedirectPath(path: string | null): string {
 
   // CRITICAL: Prevent open redirects - only allow paths starting with single /
   if (!path.startsWith('/') || path.startsWith('//')) {
-    console.warn(`Rejected invalid redirect path: ${path}`);
+    logger.warn(`Rejected invalid redirect path: ${path}`);
     return '/account';
   }
 
@@ -30,7 +31,7 @@ function validateRedirectPath(path: string | null): string {
 
   const isAllowed = allowedPrefixes.some(prefix => path.startsWith(prefix));
   if (!isAllowed) {
-    console.warn(`Redirect path not in whitelist: ${path}`);
+    logger.warn(`Redirect path not in whitelist: ${path}`);
     return '/account';
   }
 
@@ -85,7 +86,7 @@ export async function GET(req: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      console.error('Auth callback error:', error);
+      logger.error('Auth callback error:', error);
       return NextResponse.redirect(
         `${origin}/login?message=${encodeURIComponent('Authentication failed. Please try again.')}`
       );

@@ -54,13 +54,6 @@ function NavigationButton({ direction, onClick, ariaLabel }: NavigationButtonPro
 
 export function HeroSlider({ slides }: HeroSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-  useEffect(() => {
-    // Trigger animation after mount with slight delay for initial load
-    const timer = setTimeout(() => setIsInitialLoad(false), 150);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -85,14 +78,9 @@ export function HeroSlider({ slides }: HeroSliderProps) {
     }
   };
 
-  // Helper function to generate animation classes
-  const getAnimationClasses = (delayClass: string) => {
-    const isActive = !isInitialLoad;
-    const baseClasses = 'transition-all duration-1000';
-    const animationState = isActive
-      ? `translate-y-0 opacity-100 ${delayClass}`
-      : 'translate-y-10 opacity-0';
-    return `${baseClasses} ${animationState}`;
+  // Helper function to generate animation classes - content visible immediately
+  const getAnimationClasses = (_delayClass: string) => {
+    return 'translate-y-0 opacity-100';
   };
 
   const goToSlide = (index: number) => {
@@ -112,8 +100,8 @@ export function HeroSlider({ slides }: HeroSliderProps) {
       {/* Slides */}
       {slides.map((slide, index) => {
         const isActive = index === currentSlide;
-        // Ken Burns effect: scale-100 on mount, then scale-110 after initial load
-        const kenBurnsScale = isActive && !isInitialLoad ? 'scale-110' : 'scale-100';
+        // Ken Burns effect - subtle zoom for active slide
+        const kenBurnsScale = isActive ? 'scale-105' : 'scale-100';
 
         return (
           <div

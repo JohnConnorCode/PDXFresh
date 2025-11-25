@@ -63,11 +63,26 @@ interface CartActions {
 export type CartStore = CartState & CartActions;
 
 /**
- * Generate unique cart item ID
+ * Generate unique cart item ID using a simple hash to avoid collisions
  */
 function generateCartItemId(priceId: string, metadata: CartItem['metadata']): string {
-  const parts = [priceId, metadata.sizeKey, metadata.blendSlug].filter(Boolean);
-  return parts.join('-');
+  // Create a unique string from all identifying fields
+  const uniqueStr = JSON.stringify({
+    p: priceId,
+    s: metadata.sizeKey || '',
+    b: metadata.blendSlug || '',
+  });
+
+  // Simple hash function to create a short, unique ID
+  let hash = 0;
+  for (let i = 0; i < uniqueStr.length; i++) {
+    const char = uniqueStr.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+
+  // Return priceId prefix + hash for readability and uniqueness
+  return `${priceId.slice(0, 20)}_${Math.abs(hash).toString(36)}`;
 }
 
 /**

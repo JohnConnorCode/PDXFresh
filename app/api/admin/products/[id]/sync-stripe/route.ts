@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 import { syncProductToStripe } from '@/lib/stripe/product-sync';
 
@@ -52,7 +53,7 @@ export async function POST(
       message: 'Product synced to Stripe successfully',
     });
   } catch (error: any) {
-    console.error('Error syncing product to Stripe:', error);
+    logger.error('Error syncing product to Stripe:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to sync product' },
       { status: 500 }

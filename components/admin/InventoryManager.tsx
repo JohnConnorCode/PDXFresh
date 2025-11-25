@@ -6,7 +6,7 @@
  * Admin interface for managing product inventory levels
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/browser';
 import { logger } from '@/lib/logger';
 
@@ -49,11 +49,7 @@ export function InventoryManager() {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    loadVariants();
-  }, []);
-
-  const loadVariants = async () => {
+  const loadVariants = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -91,7 +87,11 @@ export function InventoryManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
+
+  useEffect(() => {
+    loadVariants();
+  }, [loadVariants]);
 
   const loadTransactions = async (variantId: string) => {
     try {

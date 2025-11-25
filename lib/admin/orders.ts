@@ -6,6 +6,7 @@
 
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { getStripeClient } from '@/lib/stripe/config';
+import { logger } from '@/lib/logger';
 
 // Order status type based on database schema
 export type OrderStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
@@ -92,7 +93,7 @@ export async function getOrders(filters: OrderFilters = {}): Promise<Order[]> {
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error fetching orders:', error);
+    logger.error('Error fetching orders:', error);
     throw new Error(`Failed to fetch orders: ${error.message}`);
   }
 
@@ -112,7 +113,7 @@ export async function getOrderById(orderId: string): Promise<Order | null> {
     .single();
 
   if (error) {
-    console.error('Error fetching order:', error);
+    logger.error('Error fetching order:', error);
     return null;
   }
 
@@ -131,7 +132,7 @@ export async function getOrderStats(): Promise<OrderStats> {
     .select('amount_total, status, payment_status');
 
   if (error) {
-    console.error('Error fetching order stats:', error);
+    logger.error('Error fetching order stats:', error);
     return {
       totalOrders: 0,
       totalRevenue: 0,
@@ -170,7 +171,7 @@ export async function getStripeSession(sessionId: string) {
     });
     return session;
   } catch (error) {
-    console.error('Error fetching Stripe session:', error);
+    logger.error('Error fetching Stripe session:', error);
     return null;
   }
 }
@@ -188,6 +189,14 @@ export async function processRefund(orderId: string, amount?: number): Promise<{
   const order = await getOrderById(orderId);
   if (!order) {
     return { success: false, error: 'Order not found' };
+  }
+
+  // Validate partial refund amount against order total
+  if (amount !== undefined && amount > order.amount_total) {
+    return {
+      success: false,
+      error: `Refund amount (${amount}) exceeds order total (${order.amount_total})`,
+    };
   }
 
   // Get Stripe session
@@ -225,9 +234,10 @@ export async function processRefund(orderId: string, amount?: number): Promise<{
     } else {
       return { success: false, error: 'Refund failed' };
     }
-  } catch (error: any) {
-    console.error('Error processing refund:', error);
-    return { success: false, error: error.message || 'Refund failed' };
+  } catch (error: unknown) {
+    const err = error as Error;
+    logger.error('Error processing refund:', err);
+    return { success: false, error: err.message || 'Refund failed' };
   }
 }
 
@@ -254,8 +264,9 @@ export async function updateOrderStatus(
     }
 
     return { success: true };
-  } catch (error: any) {
-    console.error('Error updating order status:', error);
-    return { success: false, error: error.message || 'Failed to update order status' };
+  } catch (error: unknown) {
+    const err = error as Error;
+    logger.error('Error updating order status:', err);
+    return { success: false, error: err.message || 'Failed to update order status' };
   }
 }

@@ -9,6 +9,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { logger } from '@/lib/logger';
 
 export default function CheckoutSuccessError({
   error,
@@ -18,8 +19,12 @@ export default function CheckoutSuccessError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('Checkout success page error:', error);
-    // TODO: Alert support team - payment succeeded but order display failed
+    // Log error for monitoring - payment succeeded but order display failed
+    logger.error('Checkout success page error - payment succeeded but display failed:', {
+      message: error.message,
+      digest: error.digest,
+      stack: error.stack,
+    });
   }, [error]);
 
   return (

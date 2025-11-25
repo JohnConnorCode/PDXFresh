@@ -67,6 +67,22 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      // Check if coupon has expired (redeem_by is in Unix timestamp)
+      if (coupon.redeem_by && coupon.redeem_by < Math.floor(Date.now() / 1000)) {
+        return NextResponse.json(
+          { error: 'This coupon has expired', valid: false },
+          { status: 400 }
+        );
+      }
+
+      // Check if max redemptions has been reached
+      if (coupon.max_redemptions && coupon.times_redeemed >= coupon.max_redemptions) {
+        return NextResponse.json(
+          { error: 'This coupon has reached its maximum redemptions', valid: false },
+          { status: 400 }
+        );
+      }
+
       // Return coupon details
       return NextResponse.json({
         code: coupon.id,
@@ -74,9 +90,10 @@ export async function POST(req: NextRequest) {
         discountPercent: coupon.percent_off ?? undefined,
         discountAmount: coupon.amount_off ?? undefined,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const stripeError = error as { code?: string };
       // Coupon not found or invalid
-      if (error.code === 'resource_missing') {
+      if (stripeError.code === 'resource_missing') {
         return NextResponse.json(
           { error: 'Invalid coupon code', valid: false },
           { status: 404 }

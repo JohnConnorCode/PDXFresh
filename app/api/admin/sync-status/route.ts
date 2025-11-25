@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { stripe } from '@/lib/stripe';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 
@@ -191,7 +192,7 @@ export async function GET() {
 
     return NextResponse.json(status);
   } catch (error) {
-    console.error('Sync status check error:', error);
+    logger.error('Sync status check error:', error);
     return NextResponse.json(
       {
         error: 'Failed to check sync status',

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { isCurrentUserAdmin } from '@/lib/admin';
 
@@ -34,7 +35,7 @@ export async function PATCH(
       .single();
 
     if (error) {
-      console.error('Error updating discount:', error);
+      logger.error('Error updating discount:', error);
       return NextResponse.json(
         { error: 'Failed to update discount: ' + error.message },
         { status: 500 }
@@ -43,7 +44,7 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, discount });
   } catch (error: any) {
-    console.error('Error in PATCH /api/admin/discounts/[id]:', error);
+    logger.error('Error in PATCH /api/admin/discounts/[id]:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }
@@ -71,7 +72,7 @@ export async function DELETE(
       .eq('id', params.id);
 
     if (error) {
-      console.error('Error deleting discount:', error);
+      logger.error('Error deleting discount:', error);
       return NextResponse.json(
         { error: 'Failed to delete discount: ' + error.message },
         { status: 500 }
@@ -80,7 +81,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Error in DELETE /api/admin/discounts/[id]:', error);
+    logger.error('Error in DELETE /api/admin/discounts/[id]:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }

@@ -333,10 +333,17 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
  */
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   const { id, customer, items, status, metadata } = subscription;
-  const current_period_start = (subscription as any).current_period_start;
-  const current_period_end = (subscription as any).current_period_end;
-  const cancel_at_period_end = (subscription as any).cancel_at_period_end;
-  const canceled_at = (subscription as any).canceled_at;
+  // Type assertion for subscription period properties (exist but may not be in TS types)
+  const sub = subscription as Stripe.Subscription & {
+    current_period_start: number;
+    current_period_end: number;
+    cancel_at_period_end: boolean;
+    canceled_at: number | null;
+  };
+  const current_period_start = sub.current_period_start;
+  const current_period_end = sub.current_period_end;
+  const cancel_at_period_end = sub.cancel_at_period_end;
+  const canceled_at = sub.canceled_at;
 
   if (typeof customer !== 'string') {
     logger.error('Invalid customer in subscription');
@@ -452,7 +459,11 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
  * Handle successful invoice payment
  */
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
-  const subscription = (invoice as any).subscription;
+  // Type assertion for subscription property on invoice
+  const invoiceWithSub = invoice as Stripe.Invoice & {
+    subscription?: string | Stripe.Subscription | null;
+  };
+  const subscription = invoiceWithSub.subscription;
 
   if (!subscription) {
     return; // Not a subscription invoice
@@ -467,7 +478,11 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
  * Handle failed invoice payment
  */
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  const subscription = (invoice as any).subscription;
+  // Type assertion for subscription property on invoice
+  const invoiceWithSub = invoice as Stripe.Invoice & {
+    subscription?: string | Stripe.Subscription | null;
+  };
+  const subscription = invoiceWithSub.subscription;
 
   if (!subscription) {
     return; // Not a subscription invoice

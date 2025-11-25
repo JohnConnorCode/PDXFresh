@@ -6,7 +6,7 @@
  * Admin interface for managing order fulfillment status
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/browser';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
 import { logger } from '@/lib/logger';
@@ -79,11 +79,7 @@ export function OrderFulfillmentManager() {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    loadOrders();
-  }, [filterStatus]);
-
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     setLoading(true);
     try {
       let query = supabase
@@ -105,7 +101,11 @@ export function OrderFulfillmentManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, filterStatus]);
+
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
 
   const loadStatusHistory = async (orderId: string) => {
     try {

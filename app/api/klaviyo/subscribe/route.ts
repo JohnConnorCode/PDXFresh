@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createServerClient } from '@/lib/supabase/server';
 
 const KLAVIYO_API_KEY = process.env.KLAVIYO_PRIVATE_API_KEY;
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   // Check if Klaviyo API key is configured
   if (!KLAVIYO_API_KEY) {
-    console.error('KLAVIYO_PRIVATE_API_KEY not configured');
+    logger.error('KLAVIYO_PRIVATE_API_KEY not configured');
     // Return success even if Klaviyo isn't configured (graceful degradation)
     return NextResponse.json({ success: true, message: 'Klaviyo not configured' });
   }
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
 
     if (!profileResponse.ok) {
       const errorData = await profileResponse.json();
-      console.error('Klaviyo profile creation error:', errorData);
+      logger.error('Klaviyo profile creation error:', errorData);
 
       // If profile already exists, that's okay - we'll get the existing one
       if (profileResponse.status !== 409) {
@@ -112,7 +113,7 @@ export async function POST(req: NextRequest) {
 
     if (!subscribeResponse.ok) {
       const errorData = await subscribeResponse.json();
-      console.error('Klaviyo subscription error:', errorData);
+      logger.error('Klaviyo subscription error:', errorData);
 
       // If already subscribed, that's okay
       if (subscribeResponse.status !== 409) {
@@ -125,7 +126,7 @@ export async function POST(req: NextRequest) {
       profileId: finalProfileId,
     });
   } catch (error) {
-    console.error('Klaviyo subscription error:', error);
+    logger.error('Klaviyo subscription error:', error);
     return NextResponse.json(
       {
         error: 'Failed to subscribe to newsletter',

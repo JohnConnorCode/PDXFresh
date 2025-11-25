@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createServerClient } from '@/lib/supabase/server';
 
 const KLAVIYO_API_KEY = process.env.KLAVIYO_PRIVATE_API_KEY;
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   // Check if Klaviyo API key is configured
   if (!KLAVIYO_API_KEY) {
-    console.error('KLAVIYO_PRIVATE_API_KEY not configured');
+    logger.error('KLAVIYO_PRIVATE_API_KEY not configured');
     return NextResponse.json({ success: true, message: 'Klaviyo not configured' });
   }
 
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
     );
 
     if (!searchResponse.ok) {
-      console.error('Failed to search for Klaviyo profile');
+      logger.error('Failed to search for Klaviyo profile');
       throw new Error('Failed to find profile');
     }
 
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     if (!unsubscribeResponse.ok) {
       const errorData = await unsubscribeResponse.json();
-      console.error('Klaviyo unsubscribe error:', errorData);
+      logger.error('Klaviyo unsubscribe error:', errorData);
       throw new Error('Failed to unsubscribe from list');
     }
 
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
       message: 'Successfully unsubscribed',
     });
   } catch (error) {
-    console.error('Klaviyo unsubscribe error:', error);
+    logger.error('Klaviyo unsubscribe error:', error);
     return NextResponse.json(
       {
         error: 'Failed to unsubscribe from newsletter',

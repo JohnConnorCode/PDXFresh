@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 import { productSchema, variantSchema } from '@/lib/validations/product';
 import { z } from 'zod';
@@ -54,7 +55,7 @@ export async function GET(
 
     return NextResponse.json({ product: data });
   } catch (error: any) {
-    console.error('Error fetching product:', error);
+    logger.error('Error fetching product:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to fetch product' },
       { status: 500 }
@@ -186,7 +187,7 @@ export async function PATCH(
 
     return NextResponse.json({ product: updatedProduct });
   } catch (error: any) {
-    console.error('Error updating product:', error);
+    logger.error('Error updating product:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to update product' },
       { status: 500 }
@@ -235,7 +236,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Error deleting product:', error);
+    logger.error('Error deleting product:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to delete product' },
       { status: 500 }

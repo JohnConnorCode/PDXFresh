@@ -9,6 +9,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { logger } from '@/lib/logger';
 
 export default function Error({
   error,
@@ -18,11 +19,12 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log error to console for debugging
-    console.error('Application error:', error);
-
-    // TODO: Send error to monitoring service (e.g., Sentry, LogRocket)
-    // Example: Sentry.captureException(error);
+    // Log error for monitoring
+    logger.error('Application error:', {
+      message: error.message,
+      digest: error.digest,
+      stack: error.stack,
+    });
   }, [error]);
 
   return (

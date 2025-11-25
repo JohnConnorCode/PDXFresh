@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { createUpsellCheckout } from '@/lib/checkout-helpers';
 import { trackServerEvent } from '@/lib/analytics';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
-    console.error('Upsell checkout error:', error);
+    logger.error('Upsell checkout error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

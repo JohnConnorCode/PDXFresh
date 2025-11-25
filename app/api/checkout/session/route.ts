@@ -43,6 +43,24 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // Verify payment was completed
+    if (session.payment_status !== 'paid') {
+      return NextResponse.json(
+        { error: 'Payment not completed' },
+        { status: 400 }
+      );
+    }
+
+    // Safely access shipping_details (available on sessions with shipping)
+    // Use type assertion since Stripe types may not include this in all SDK versions
+    const sessionWithShipping = session as typeof session & {
+      shipping_details?: {
+        name?: string;
+        address?: Record<string, string>;
+      };
+    };
+    const shippingDetails = sessionWithShipping.shipping_details;
+
     // Format order details for display
     const orderDetails = {
       orderNumber: session.id.replace('cs_', '').toUpperCase(),
@@ -54,9 +72,9 @@ export async function GET(req: NextRequest) {
         quantity: item.quantity || 1,
         amount: item.amount_total || 0,
       })) || [],
-      shipping: (session as any).shipping_details ? {
-        name: (session as any).shipping_details.name,
-        address: (session as any).shipping_details.address,
+      shipping: shippingDetails ? {
+        name: shippingDetails.name,
+        address: shippingDetails.address,
       } : undefined,
     };
 

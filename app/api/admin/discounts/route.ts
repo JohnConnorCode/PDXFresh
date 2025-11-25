@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { isCurrentUserAdmin } from '@/lib/admin';
 
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (discountError) {
-      console.error('Error creating discount:', discountError);
+      logger.error('Error creating discount:', discountError);
       return NextResponse.json(
         { error: 'Failed to create discount: ' + discountError.message },
         { status: 500 }
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, discount });
   } catch (error: any) {
-    console.error('Error in POST /api/admin/discounts:', error);
+    logger.error('Error in POST /api/admin/discounts:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }

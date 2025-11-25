@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe';
 
@@ -63,7 +64,7 @@ export async function POST(
       subscription: stripeSubscription,
     });
   } catch (error: any) {
-    console.error('Error canceling subscription:', error);
+    logger.error('Error canceling subscription:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to cancel subscription' },
       { status: 500 }

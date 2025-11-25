@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
@@ -78,7 +79,7 @@ export async function GET(_request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error('Error exporting orders:', error);
+    logger.error('Error exporting orders:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to export orders' },
       { status: 500 }

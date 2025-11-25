@@ -325,7 +325,7 @@ export default async function IngredientsSourcingPage() {
                   color="rgba(255, 255, 255, 0.4)"
                 >
                   <Link
-                    href="mailto:hello@dringlonglife.com"
+                    href="mailto:hello@drinklonglife.com"
                     className="inline-block px-8 py-4 bg-accent-primary text-white rounded-full font-semibold text-lg hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
                   >
                     Get In Touch

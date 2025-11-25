@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-import { motion } from 'framer-motion';
 import { AnimatedLogo } from './AnimatedLogo';
 import { StaggerContainer } from './animations';
 import { RippleEffect } from './RippleEffect';
@@ -140,14 +139,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
           {/* Desktop Navigation - Progressive gap reduction */}
           <nav className="hidden md:flex items-center gap-3 lg:gap-6 xl:gap-8">
             {/* Blends Dropdown - First */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.4,
-                delay: 1.0,
-                ease: 'easeOut',
-              }}
+            <div
               className="relative"
               onMouseEnter={() => setBlendsMenuOpen(true)}
               onMouseLeave={() => setBlendsMenuOpen(false)}
@@ -192,7 +184,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                   ))}
                 </div>
               )}
-            </motion.div>
+            </div>
 
             {/* Other Navigation Links (filter out Blends and Ingredients) */}
             {headerLinks
@@ -202,143 +194,84 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                 const isActive = pathname === href || pathname.startsWith(href + '/');
 
                 return (
-                  <motion.div
+                  <Link
                     key={link.title || index}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.4,
-                      delay: 1.0 + (index + 1) * 0.1,
-                      ease: 'easeOut',
-                    }}
+                    href={href}
+                    target={link.newTab ? '_blank' : undefined}
+                    rel={link.newTab ? 'noopener noreferrer' : undefined}
+                    className={clsx(
+                      'group text-xs lg:text-sm font-heading font-medium transition-colors relative whitespace-nowrap',
+                      isActive ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
+                    )}
                   >
-                    <Link
-                      href={href}
-                      target={link.newTab ? '_blank' : undefined}
-                      rel={link.newTab ? 'noopener noreferrer' : undefined}
+                    {link.title}
+                    <span
                       className={clsx(
-                        'group text-xs lg:text-sm font-heading font-medium transition-colors relative whitespace-nowrap',
-                        isActive ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
+                        'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
+                        isActive ? 'w-full' : 'w-0 group-hover:w-full'
                       )}
-                    >
-                      {link.title}
-                      <span
-                        className={clsx(
-                          'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
-                          isActive ? 'w-full' : 'w-0 group-hover:w-full'
-                        )}
-                      />
-                    </Link>
-                  </motion.div>
+                    />
+                  </Link>
                 );
               })}
 
             {/* Ambassadors Link (hardcoded) */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.4,
-                delay: 1.0 + headerLinks.length * 0.1,
-                ease: 'easeOut',
-              }}
+            <Link
+              href="/referral"
+              className={clsx(
+                'group text-xs lg:text-sm font-heading font-medium transition-colors relative whitespace-nowrap',
+                pathname === '/referral' ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
+              )}
             >
-              <Link
-                href="/referral"
+              Ambassadors
+              <span
                 className={clsx(
-                  'group text-xs lg:text-sm font-heading font-medium transition-colors relative whitespace-nowrap',
-                  pathname === '/referral' ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
+                  'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
+                  pathname === '/referral' ? 'w-full' : 'w-0 group-hover:w-full'
                 )}
-              >
-                Ambassadors
-                <span
-                  className={clsx(
-                    'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
-                    pathname === '/referral' ? 'w-full' : 'w-0 group-hover:w-full'
-                  )}
-                />
-              </Link>
-            </motion.div>
+              />
+            </Link>
           </nav>
 
           {/* Desktop Auth & CTA - Progressive gap reduction */}
           <div className="hidden md:flex items-center gap-2 lg:gap-3 xl:gap-4">
             {/* Cart Button - Only show if cart has items */}
             {cartItemCount > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.4,
-                  delay: 1.0 + headerLinks.length * 0.1,
-                  ease: 'easeOut',
-                }}
+              <Link
+                href="/cart"
+                className="relative p-1.5 lg:p-2 text-gray-700 hover:text-black transition-colors"
               >
-                <Link
-                  href="/cart"
-                  className="relative p-1.5 lg:p-2 text-gray-700 hover:text-black transition-colors"
-                >
-                  <ShoppingCart className="w-5 h-5 lg:w-6 lg:h-6" />
-                  <span className="absolute bg-accent-primary text-white text-[10px] lg:text-xs font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center" style={{ top: '0.75rem', right: '-0.25rem' }}>
-                    {cartItemCount}
-                  </span>
-                </Link>
-              </motion.div>
+                <ShoppingCart className="w-5 h-5 lg:w-6 lg:h-6" />
+                <span className="absolute bg-accent-primary text-white text-[10px] lg:text-xs font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center" style={{ top: '0.75rem', right: '-0.25rem' }}>
+                  {cartItemCount}
+                </span>
+              </Link>
             )}
 
             {!user ? (
               // Not logged in - show Login and Sign Up buttons
               <>
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.4,
-                    delay: 1.0 + headerLinks.length * 0.1,
-                    ease: 'easeOut',
-                  }}
+                <Link
+                  href="/login"
+                  className="px-2 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold text-gray-900 hover:text-accent-primary transition-colors whitespace-nowrap"
+                >
+                  Login
+                </Link>
+                <RippleEffect
+                  className="inline-flex rounded-full"
+                  color="rgba(255, 255, 255, 0.4)"
                 >
                   <Link
-                    href="/login"
-                    className="px-2 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold text-gray-900 hover:text-accent-primary transition-colors whitespace-nowrap"
+                    href="/signup"
+                    className="px-4 lg:px-6 py-1.5 lg:py-2 rounded-full bg-accent-primary text-white text-xs lg:text-sm font-medium hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg block whitespace-nowrap"
                   >
-                    Login
+                    Sign Up
                   </Link>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.4,
-                    delay: 1.0 + headerLinks.length * 0.1 + 0.05,
-                    ease: 'easeOut',
-                  }}
-                >
-                  <RippleEffect
-                    className="inline-flex rounded-full"
-                    color="rgba(255, 255, 255, 0.4)"
-                  >
-                    <Link
-                      href="/signup"
-                      className="px-4 lg:px-6 py-1.5 lg:py-2 rounded-full bg-accent-primary text-white text-xs lg:text-sm font-medium hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg block whitespace-nowrap"
-                    >
-                      Sign Up
-                    </Link>
-                  </RippleEffect>
-                </motion.div>
+                </RippleEffect>
               </>
             ) : (
               // Logged in - show user menu
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.4,
-                  delay: 1.0 + headerLinks.length * 0.1,
-                  ease: 'easeOut',
-                }}
-                className="relative"
-              >
+              <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center gap-1 lg:gap-2 px-2 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-medium text-gray-700 hover:text-black transition-colors rounded-lg hover:bg-gray-50"
@@ -390,7 +323,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                     </div>
                   </>
                 )}
-              </motion.div>
+              </div>
             )}
           </div>
 
