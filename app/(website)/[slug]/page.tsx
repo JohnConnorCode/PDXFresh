@@ -7,6 +7,7 @@ import { pageQuery, pagesQuery } from '@/lib/sanity.queries';
 import { Section } from '@/components/Section';
 import { RichText } from '@/components/RichText';
 import { urlFor } from '@/lib/image';
+import { SectionRenderer } from '@/components/page-builder/SectionRenderer';
 
 export const revalidate = 60;
 
@@ -16,8 +17,23 @@ interface PageProps {
   };
 }
 
+const pageBuilderQuery = `*[_type == "pageBuilder" && slug.current == $slug && isPublished == true][0]{
+  title,
+  slug,
+  sections,
+  seo,
+  _type
+}`;
+
 async function getPage(slug: string) {
   try {
+    // First check for pageBuilder pages
+    const pageBuilderPage = await client.fetch(pageBuilderQuery, { slug });
+    if (pageBuilderPage) {
+      return pageBuilderPage;
+    }
+
+    // Fallback to old page schema
     return await client.fetch(pageQuery, { slug });
   } catch (error) {
     logger.error('Error fetching page:', error);
@@ -77,6 +93,12 @@ export default async function Page({ params }: PageProps) {
     );
   }
 
+  // Render Page Builder pages
+  if (page._type === 'pageBuilder') {
+    return <SectionRenderer sections={page.sections} />;
+  }
+
+  // Render old page schema pages
   return (
     <>
       {/* Hero Section */}

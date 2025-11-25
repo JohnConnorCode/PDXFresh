@@ -26,6 +26,17 @@ import userDiscount from './userDiscount';
 import upsellOffer from './upsellOffer';
 import referralReward from './referralReward';
 
+// Page Builder
+import pageBuilder from './pageBuilder';
+import heroSection from './sections/heroSection';
+import contentSection from './sections/contentSection';
+import ctaSection from './sections/ctaSection';
+import featureGrid from './sections/featureGrid';
+import imageGallery from './sections/imageGallery';
+import statsSection from './sections/statsSection';
+import testimonialsSection from './sections/testimonialsSection';
+import newsletterSection from './sections/newsletterSection';
+
 export const schemaTypes = [
   blockContent,
   siteSettings,
@@ -54,4 +65,14 @@ export const schemaTypes = [
   userDiscount,
   upsellOffer,
   referralReward,
+  // Page Builder
+  pageBuilder,
+  heroSection,
+  contentSection,
+  ctaSection,
+  featureGrid,
+  imageGallery,
+  statsSection,
+  testimonialsSection,
+  newsletterSection,
 ];
