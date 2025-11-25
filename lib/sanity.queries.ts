@@ -214,17 +214,18 @@ export const blendQuery = groq`*[_type == "blend" && slug.current == $slug][0]{
   seo
 }`;
 
-export const postsQuery = groq`*[_type == "post"] | order(publishedAt desc) {
+export const postsQuery = groq`*[_type == "post" && isPublished == true] | order(publishedAt desc) {
   _id,
   title,
   slug { current },
   excerpt,
   "coverImage": coverImage ${imageFragment},
   publishedAt,
-  author
+  author,
+  category
 }`;
 
-export const postQuery = groq`*[_type == "post" && slug.current == $slug][0]{
+export const postQuery = groq`*[_type == "post" && slug.current == $slug && isPublished == true][0]{
   _id,
   title,
   slug { current },
@@ -232,6 +233,7 @@ export const postQuery = groq`*[_type == "post" && slug.current == $slug][0]{
   "coverImage": coverImage ${imageFragment},
   publishedAt,
   author,
+  category,
   seo
 }`;
 
