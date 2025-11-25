@@ -6,6 +6,22 @@ export default defineType({
   type: 'document',
   fields: [
     defineField({
+      name: 'heroImage',
+      title: 'Hero Background Image',
+      type: 'image',
+      description: 'Background image for the FAQ hero section',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          type: 'string',
+          title: 'Alternative text',
+        }),
+      ],
+    }),
+    defineField({
       name: 'heading',
       title: 'Page Heading',
       type: 'string',

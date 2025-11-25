@@ -315,6 +315,10 @@ export const blendsPageQuery = groq`*[_type == "blendsPage"][0]{
 export const faqPageQuery = groq`*[_type == "faqPage"][0]{
   heading,
   subheading,
+  "heroImage": heroImage {
+    "url": asset->url,
+    "alt": alt
+  },
   seo
 }`;
 

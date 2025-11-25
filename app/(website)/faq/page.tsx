@@ -43,13 +43,19 @@ export default async function FAQPage() {
   const featuredFAQs = faqs.filter((faq: any) => faq.isFeatured);
   const regularFAQs = faqs.filter((faq: any) => !faq.isFeatured);
 
+  // Hero image from Sanity with fallback
+  const heroImageUrl = faqPage?.heroImage?.url || 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=1600&h=900&fit=crop';
+
   return (
     <>
       {/* Hero Section */}
       <Section className="py-24 relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=1600&h=900&fit=crop')] bg-cover bg-center scale-110 animate-ken-burns" />
+          <div
+            className="absolute inset-0 bg-cover bg-center scale-110 animate-ken-burns"
+            style={{ backgroundImage: `url('${heroImageUrl}')` }}
+          />
           <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/80 via-accent-green/70 to-accent-yellow/60" />
         </div>
 
