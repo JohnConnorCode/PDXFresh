@@ -78,9 +78,12 @@ export function HeroSlider({ slides }: HeroSliderProps) {
     }
   };
 
-  // Helper function to generate animation classes - content visible immediately
-  const getAnimationClasses = (_delayClass: string) => {
-    return 'translate-y-0 opacity-100';
+  // Helper function to generate animation classes with sequential delays
+  const getAnimationClasses = (delayClass: string, isActive: boolean) => {
+    if (!isActive) {
+      return 'translate-y-8 opacity-0';
+    }
+    return `translate-y-0 opacity-100 transition-all duration-700 ease-out ${delayClass}`;
   };
 
   const goToSlide = (index: number) => {
@@ -159,23 +162,19 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                 <div className="max-w-4xl">
                   {/* Heading */}
                   <h1
-                    className={`font-heading text-5xl sm:text-6xl md:text-6xl lg:text-[6.5rem] font-bold text-white mb-4 sm:mb-6 md:mb-6 leading-[1.1] ${
-                      isActive ? getAnimationClasses('delay-100') : getAnimationClasses('')
-                    }`}
+                    className={`font-heading text-5xl sm:text-6xl md:text-6xl lg:text-[6.5rem] font-bold text-white mb-4 sm:mb-6 md:mb-6 leading-[1.1] ${getAnimationClasses('delay-100', isActive)}`}
                   >
                     {slide.heading}
                   </h1>
                   {/* Subheading */}
                   <p
-                    className={`text-lg sm:text-xl md:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8 md:mb-10 leading-relaxed max-w-3xl ${
-                      isActive ? getAnimationClasses('delay-300') : getAnimationClasses('')
-                    }`}
+                    className={`text-lg sm:text-xl md:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8 md:mb-10 leading-relaxed max-w-3xl ${getAnimationClasses('delay-300', isActive)}`}
                   >
                     {slide.subheading}
                   </p>
                   {/* CTA */}
                   {slide.ctaText && slide.ctaLink && (
-                    <div className={isActive ? getAnimationClasses('delay-500') : getAnimationClasses('')}>
+                    <div className={getAnimationClasses('delay-500', isActive)}>
                       <Link
                         href={slide.ctaLink}
                         className="inline-block px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 bg-accent-primary text-white text-sm sm:text-base md:text-lg font-semibold rounded-full hover:bg-accent-primary/90 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-accent-primary/50"
