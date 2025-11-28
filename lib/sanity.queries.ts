@@ -471,3 +471,113 @@ export const upsellOffersQuery = groq`*[_type == "upsellOffer" && isActive == tr
   limitedTimeOffer,
   expiresAt
 }`;
+
+/**
+ * Get the active referral reward with highest priority
+ * Used for displaying referral program terms on landing pages
+ */
+export const activeReferralRewardQuery = groq`*[_type == "referralReward" && isActive == true] | order(priority asc)[0] {
+  _id,
+  title,
+  slug,
+  shortDescription,
+  description,
+  rewardType,
+  stripeCouponId,
+  discountPercentage,
+  discountAmount,
+  tierUpgrade,
+  creditAmount,
+  recipientType,
+  triggerEvent,
+  minimumPurchaseAmount,
+  maxRedemptions,
+  expirationDays,
+  landingPageHeadline,
+  "landingPageImage": landingPageImage ${imageFragment},
+  priority
+}`;
+
+/**
+ * Get all active referral rewards
+ */
+export const referralRewardsQuery = groq`*[_type == "referralReward" && isActive == true] | order(priority asc) {
+  _id,
+  title,
+  slug,
+  shortDescription,
+  rewardType,
+  discountPercentage,
+  discountAmount,
+  tierUpgrade,
+  creditAmount,
+  recipientType,
+  triggerEvent,
+  expirationDays,
+  "landingPageImage": landingPageImage ${imageFragment}
+}`;
+
+/**
+ * Get partnership perks, optionally filtered by tier
+ */
+export const partnershipPerksQuery = groq`*[_type == "partnershipPerk" && isActive == true] | order(featured desc, uiOrder asc) {
+  _id,
+  title,
+  slug,
+  description,
+  shortDescription,
+  requiredTier,
+  category,
+  icon,
+  "image": image ${imageFragment},
+  ctaLabel,
+  ctaUrl,
+  expiresAt,
+  featured,
+  uiOrder,
+  discountCode,
+  stripeCouponId
+}`;
+
+/**
+ * Get user discounts that are currently active
+ */
+export const userDiscountsQuery = groq`*[_type == "userDiscount" && isActive == true && startsAt <= now() && (expiresAt == null || expiresAt > now())] | order(featured desc, startsAt desc) {
+  _id,
+  title,
+  displayTitle,
+  slug,
+  description,
+  shortDescription,
+  discountCode,
+  stripeCouponId,
+  discountType,
+  discountValue,
+  source,
+  eligibility,
+  requiredTier,
+  startsAt,
+  expiresAt,
+  maxRedemptions,
+  appliesTo,
+  featured,
+  bannerStyle,
+  icon,
+  "image": image ${imageFragment},
+  ctaLabel
+}`;
+
+/**
+ * Get featured discounts for promotional banners
+ */
+export const featuredDiscountsQuery = groq`*[_type == "userDiscount" && isActive == true && featured == true && startsAt <= now() && (expiresAt == null || expiresAt > now())][0..2] | order(startsAt desc) {
+  _id,
+  displayTitle,
+  shortDescription,
+  discountCode,
+  discountType,
+  discountValue,
+  icon,
+  bannerStyle,
+  ctaLabel
+}`;

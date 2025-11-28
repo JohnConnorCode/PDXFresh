@@ -14,6 +14,8 @@ export interface FeatureFlags {
   // Upsells & Cross-sells
   upsells_enabled: boolean;
   upsells_show_on_thank_you: boolean;
+  upsells_show_on_account: boolean;
+  upsells_show_on_billing: boolean;
 
   // Tier Upgrades
   tier_upgrades_enabled: boolean;
@@ -48,6 +50,8 @@ const DEFAULT_FLAGS: FeatureFlags = {
   // Upsells & Cross-sells
   upsells_enabled: true,
   upsells_show_on_thank_you: true,
+  upsells_show_on_account: true,
+  upsells_show_on_billing: true,
 
   // Tier Upgrades
   tier_upgrades_enabled: true,

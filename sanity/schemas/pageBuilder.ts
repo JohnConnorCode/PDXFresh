@@ -34,6 +34,12 @@ export default defineType({
         { type: 'statsSection' },
         { type: 'testimonialsSection' },
         { type: 'newsletterSection' },
+        // New sections
+        { type: 'faqSection' },
+        { type: 'pricingSection' },
+        { type: 'videoSection' },
+        { type: 'logoCloudSection' },
+        { type: 'comparisonSection' },
       ],
       validation: (Rule) => Rule.required().min(1),
     }),

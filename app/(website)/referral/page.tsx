@@ -1,14 +1,66 @@
+import { logger } from '@/lib/logger';
 import { Section } from '@/components/Section';
 import Link from 'next/link';
 import { FadeIn, StaggerContainer } from '@/components/animations';
 import { RippleEffect } from '@/components/RippleEffect';
+import { client } from '@/lib/sanity.client';
+import { activeReferralRewardQuery } from '@/lib/sanity.queries';
+import { getFeatureValue } from '@/lib/feature-flags';
 
-export const metadata = {
-  title: 'Ambassador Program | Long Life',
-  description: 'Become a Long Life Ambassador. Earn rewards by sharing premium cold-pressed juices with your community!',
-};
+export const revalidate = 60;
 
-export default function ReferralProgramPage() {
+interface ReferralReward {
+  _id: string;
+  title: string;
+  shortDescription: string;
+  rewardType: string;
+  discountPercentage?: number;
+  discountAmount?: number;
+  recipientType: 'referrer' | 'referee' | 'both';
+  triggerEvent: string;
+  landingPageHeadline?: string;
+}
+
+async function getReferralReward(): Promise<ReferralReward | null> {
+  try {
+    return await client.fetch(activeReferralRewardQuery);
+  } catch (error) {
+    logger.error('Error fetching referral reward:', error);
+    return null;
+  }
+}
+
+export async function generateMetadata() {
+  const reward = await getReferralReward();
+  const discountText = reward?.discountPercentage
+    ? `${reward.discountPercentage}%`
+    : reward?.discountAmount
+      ? `$${reward.discountAmount}`
+      : 'exclusive discounts';
+
+  return {
+    title: reward?.title || 'Ambassador Program | Long Life',
+    description:
+      reward?.shortDescription ||
+      `Become a Long Life Ambassador. Earn ${discountText} by sharing premium cold-pressed juices with your community!`,
+  };
+}
+
+export default async function ReferralProgramPage() {
+  const reward = await getReferralReward();
+
+  // Get reward values from Sanity or fallback to feature flags
+  const referrerDiscount = reward?.discountPercentage || getFeatureValue('referrals_reward_percentage') || 15;
+  const refereeDiscount = reward?.discountPercentage || getFeatureValue('referrals_reward_percentage') || 10;
+
+  // Determine reward display text
+  const referrerRewardText = reward?.discountAmount
+    ? `$${reward.discountAmount} credit`
+    : `${referrerDiscount}% discount credit`;
+  const refereeRewardText = reward?.discountAmount
+    ? `$${reward.discountAmount} off`
+    : `${refereeDiscount}% off`;
+
   return (
     <>
       {/* Hero Section */}
@@ -34,12 +86,12 @@ export default function ReferralProgramPage() {
           </FadeIn>
           <FadeIn direction="up" delay={0.2}>
             <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
-              Become an Ambassador
+              {reward?.landingPageHeadline || 'Become an Ambassador'}
             </h1>
           </FadeIn>
           <FadeIn direction="up" delay={0.3}>
             <p className="text-xl sm:text-2xl text-white/95 leading-relaxed max-w-3xl mx-auto drop-shadow-md mb-8">
-              Share the power of premium cold-pressed juices with your community and earn rewards for every referral.
+              {reward?.shortDescription || 'Share the power of premium cold-pressed juices with your community and earn rewards for every referral.'}
             </p>
           </FadeIn>
           <FadeIn direction="up" delay={0.4}>
@@ -157,7 +209,7 @@ export default function ReferralProgramPage() {
                   <svg className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>15% discount credit on your next order when your friend makes their first purchase</span>
+                  <span>{referrerRewardText} on your next order when your friend makes their first purchase</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +243,7 @@ export default function ReferralProgramPage() {
                   <svg className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>10% off their first order as a welcome gift</span>
+                  <span>{refereeRewardText} their first order as a welcome gift</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

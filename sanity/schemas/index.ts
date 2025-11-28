@@ -36,6 +36,12 @@ import imageGallery from './sections/imageGallery';
 import statsSection from './sections/statsSection';
 import testimonialsSection from './sections/testimonialsSection';
 import newsletterSection from './sections/newsletterSection';
+// New page builder sections
+import faqSection from './sections/faqSection';
+import pricingSection from './sections/pricingSection';
+import videoSection from './sections/videoSection';
+import logoCloudSection from './sections/logoCloudSection';
+import comparisonSection from './sections/comparisonSection';
 
 export const schemaTypes = [
   blockContent,
@@ -75,4 +81,10 @@ export const schemaTypes = [
   statsSection,
   testimonialsSection,
   newsletterSection,
+  // New page builder sections
+  faqSection,
+  pricingSection,
+  videoSection,
+  logoCloudSection,
+  comparisonSection,
 ];

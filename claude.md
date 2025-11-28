@@ -310,3 +310,208 @@ await sendEmail({
 - Database-driven templates (editable via admin UI)
 
 **Note**: Old React Email templates kept temporarily for reference in `lib/email/templates.tsx`.
+
+## Sanity Page Builder
+
+**Status**: ✅ Production-ready with 13 section types
+
+### Overview
+
+The page builder allows admins to create custom pages in Sanity Studio without code changes. Pages are composed of modular sections that can be reordered and configured.
+
+### Architecture
+
+**Sanity Schema** (`sanity/schemas/pageBuilder.ts`):
+- Document type with title, slug, sections array, SEO, and publish status
+- Each section is a reference to a section type schema
+
+**Section Registry** (`components/page-builder/section-registry.ts`):
+- Centralized mapping of section type names to React components
+- Makes adding new sections clean without modifying the renderer
+
+**Section Renderer** (`components/page-builder/SectionRenderer.tsx`):
+- Iterates through sections array
+- Looks up component from registry
+- Renders each section with its props
+
+### Available Section Types (13 total)
+
+**Original 8 sections**:
+1. `heroSection` - Full-width hero with image, heading, subheading, CTAs
+2. `contentSection` - Rich text content with optional image
+3. `ctaSection` - Call-to-action block with buttons
+4. `featureGrid` - Grid of feature cards with icons
+5. `imageGallery` - Grid/masonry/carousel image gallery
+6. `statsSection` - Statistics/metrics display
+7. `testimonialsSection` - Customer testimonials carousel/grid
+8. `newsletterSection` - Email signup form
+
+**New 5 sections**:
+9. `faqSection` - Accordion-style FAQ
+10. `pricingSection` - Pricing table/cards with plans
+11. `videoSection` - YouTube/Vimeo embeds with thumbnail
+12. `logoCloudSection` - Partner logos grid/carousel
+13. `comparisonSection` - Feature comparison table
+
+### Adding a New Section Type
+
+1. **Create Sanity schema** (`sanity/schemas/sections/mySection.ts`):
+```typescript
+import { defineField, defineType } from 'sanity';
+
+export default defineType({
+  name: 'mySection',
+  title: 'My Section',
+  type: 'object',
+  fields: [
+    defineField({ name: 'heading', type: 'string', title: 'Heading' }),
+    // ... more fields
+  ],
+  preview: {
+    select: { title: 'heading' },
+    prepare({ title }) {
+      return { title: title || 'My Section', subtitle: 'My Section' };
+    },
+  },
+});
+```
+
+2. **Register schema** (`sanity/schemas/index.ts`):
+```typescript
+import mySection from './sections/mySection';
+export const schemaTypes = [..., mySection];
+```
+
+3. **Add to pageBuilder** (`sanity/schemas/pageBuilder.ts`):
+```typescript
+sections: {
+  of: [..., { type: 'mySection' }]
+}
+```
+
+4. **Create React component** (`components/page-builder/MySection.tsx`)
+
+5. **Register component** (`components/page-builder/section-registry.ts`):
+```typescript
+import { MySectionComponent } from './MySection';
+export const sectionRegistry = {
+  ...,
+  mySection: MySectionComponent,
+};
+```
+
+### File Locations
+
+- Schemas: `sanity/schemas/sections/`
+- Components: `components/page-builder/`
+- Registry: `components/page-builder/section-registry.ts`
+- Renderer: `components/page-builder/SectionRenderer.tsx`
+- Types: `components/page-builder/types.ts`
+- Queries: `lib/sanity.queries.ts` (pageBuilderQuery)
+
+## Sanity CMS Content Integration
+
+### Active Sanity Schemas
+
+The following schemas are actively used with frontend integration:
+
+**Page Types**:
+- `homePage`, `aboutPage`, `blendsPage`, `faqPage`, `processPage`
+- `ingredientsSourcingPage`, `subscriptionsPage`, `wholesalePage`
+- `pageBuilder` (custom pages)
+
+**Content Types**:
+- `blend`, `post`, `faq`, `testimonial`, `teamMember`
+- `processStep`, `standard`, `cta`
+
+**Growth/Monetization**:
+- `referralReward` - Referral program rewards (Sanity + feature flags fallback)
+- `upsellOffer` - Post-purchase upsells (thank-you, account, billing pages)
+- `partnershipPerk` - Tier-based perks for partners
+- `userDiscount` - Promotional discounts
+
+**Settings**:
+- `siteSettings`, `navigation`, `socialProof`, `stripeSettings`
+
+### Query Patterns
+
+All Sanity queries are centralized in `lib/sanity.queries.ts`. Use these patterns:
+
+```typescript
+// Server component fetch
+import { client } from '@/lib/sanity.client';
+import { myQuery } from '@/lib/sanity.queries';
+
+const data = await client.fetch(myQuery, { param: value });
+
+// Image URLs
+import { urlFor } from '@/lib/image';
+const imageUrl = urlFor(image).width(800).url();
+```
+
+## Feature Flags
+
+**Location**: `lib/feature-flags.ts`
+
+Feature flags control growth and monetization features without code deploys.
+
+### Current Flags
+
+```typescript
+// Referral System
+referrals_enabled: true
+referrals_reward_percentage: 20
+referrals_show_leaderboard: true
+
+// Upsells & Cross-sells
+upsells_enabled: true
+upsells_show_on_thank_you: true
+upsells_show_on_account: true
+upsells_show_on_billing: true
+
+// Tier Upgrades
+tier_upgrades_enabled: true
+tier_upgrades_show_in_nav: true
+
+// Profile Completion
+profile_completion_enabled: true
+profile_completion_min_percentage: 80
+
+// Analytics
+analytics_enabled: true
+analytics_track_page_views: true
+analytics_track_events: true
+```
+
+### Usage
+
+```typescript
+import { isFeatureEnabled, getFeatureValue } from '@/lib/feature-flags';
+
+if (isFeatureEnabled('referrals_enabled')) {
+  // Show referral UI
+}
+
+const percentage = getFeatureValue('referrals_reward_percentage');
+```
+
+## Reusable Components
+
+### Upsell Components
+
+**Location**: `components/upsells/`
+
+- `UpsellCard` - Individual offer card with pricing, image, CTA
+- `UpsellGrid` - Grid of multiple offers
+- `AccountUpsellSection` - Server component for account pages
+- `AccountUpsellCompact` - Compact version for sidebars
+
+### Perk/Discount Components
+
+**Location**: `components/perks/`
+
+- `PerkCard` - Partnership perk display (default/compact variants)
+- `PerkGrid` - Grid of multiple perks
+- `DiscountCard` - Discount code with copy functionality
+- `DiscountGrid` - Grid of multiple discounts
+- `ActiveDiscountBanner` - Promotional banner for featured discount

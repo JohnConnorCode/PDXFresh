@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { saveEmailTemplateDraft, publishEmailTemplate } from '@/lib/actions/emailTemplate';
 import { EmailTemplate } from '@/lib/services/emailTemplateService';
+import { DualModeEditor } from './DualModeEditor';
 
 interface EditEmailTemplateModalProps {
   isOpen: boolean;
@@ -27,6 +28,15 @@ export function EditEmailTemplateModal({ isOpen, onClose, template, onSave }: Ed
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  // Parse schema for the DualModeEditor
+  const parsedSchema = useMemo(() => {
+    try {
+      return JSON.parse(formData.data_schema);
+    } catch {
+      return {};
+    }
+  }, [formData.data_schema]);
 
   if (!isOpen) return null;
 
@@ -220,21 +230,15 @@ export function EditEmailTemplateModal({ isOpen, onClose, template, onSave }: Ed
             />
           </div>
 
-          {/* HTML Template */}
-          <div>
-            <label htmlFor="html_template" className="block text-sm font-medium text-gray-700 mb-1">
-              HTML Template *
-            </label>
-            <textarea
-              id="html_template"
-              value={formData.html_template}
-              onChange={(e) => setFormData({ ...formData, html_template: e.target.value })}
-              required
-              rows={12}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-sm"
-              placeholder="<html>...</html>"
-            />
-          </div>
+          {/* HTML Template with Dual-Mode Editor */}
+          <DualModeEditor
+            value={formData.html_template}
+            onChange={(value) => setFormData({ ...formData, html_template: value })}
+            schema={parsedSchema}
+            label="HTML Template"
+            placeholder="<html>...</html>"
+            required
+          />
 
           {/* Data Schema */}
           <div>

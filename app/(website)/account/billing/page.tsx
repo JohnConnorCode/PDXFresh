@@ -8,6 +8,7 @@ import { Section } from '@/components/Section';
 import { FadeIn } from '@/components/animations';
 import { BillingPortalButton } from '@/components/pricing/BillingPortalButton';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { AccountUpsellSection } from '@/components/upsells/AccountUpsellSection';
 
 export const metadata: Metadata = {
   title: 'Billing & Invoices | Long Life',
@@ -25,7 +26,7 @@ export default async function BillingPage() {
   // Get user profile
   const { data: profile } = await supabase
     .from('profiles')
-    .select('email, full_name, stripe_customer_id, subscription_status, current_plan')
+    .select('email, full_name, stripe_customer_id, subscription_status, current_plan, partnership_tier')
     .eq('id', user.id)
     .single();
 
@@ -288,8 +289,18 @@ export default async function BillingPage() {
           </div>
         </FadeIn>
 
-        {/* Help Section */}
+        {/* Special Offers Section */}
         <FadeIn direction="up" delay={0.5}>
+          <AccountUpsellSection
+            userId={user.id}
+            userTier={profile.partnership_tier || 'none'}
+            page="billing"
+            currentPlan={profile.current_plan}
+          />
+        </FadeIn>
+
+        {/* Help Section */}
+        <FadeIn direction="up" delay={0.6}>
           <div className="bg-gradient-to-br from-accent-yellow/20 to-accent-green/20 rounded-2xl p-8 text-center mt-8">
             <h3 className="font-heading text-xl font-bold mb-2">
               Billing Questions?

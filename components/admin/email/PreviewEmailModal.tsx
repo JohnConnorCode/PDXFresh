@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { EmailTemplate } from '@/lib/services/emailTemplateService';
+import { substituteVariables, generateSampleData } from '@/lib/email/variable-substitution';
 
 interface PreviewEmailModalProps {
   isOpen: boolean;
@@ -9,90 +10,17 @@ interface PreviewEmailModalProps {
   template: EmailTemplate;
 }
 
-// Sample data for preview (same as test email)
-const getSampleData = (templateName: string): Record<string, any> => {
-  switch (templateName) {
-    case 'order_confirmation':
-      return {
-        orderNumber: 'PREVIEW123',
-        customerName: 'John Doe',
-        customerEmail: 'john@example.com',
-        items: [
-          { name: 'Orange Bomb', quantity: 2, price: 4999 },
-          { name: 'Green Bomb', quantity: 1, price: 4999 },
-        ],
-        subtotal: 9998,
-        total: 9998,
-        currency: 'usd',
-      };
-    case 'subscription_confirmation':
-      return {
-        customerName: 'Jane Smith',
-        customerEmail: 'jane@example.com',
-        planName: 'Weekly Wellness Plan',
-        planPrice: 7999,
-        billingInterval: 'week',
-        nextBillingDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-        currency: 'usd',
-      };
-    case 'newsletter_welcome':
-      return {
-        customerName: 'Alex Johnson',
-        customerEmail: 'alex@example.com',
-      };
-    case 'contact_form_notification':
-      return {
-        name: 'Contact User',
-        email: 'contact@example.com',
-        message: 'This is a test contact form message from the preview.',
-      };
-    default:
-      return {};
-  }
-};
-
-// Simple variable substitution (mirrors Edge Function logic)
-const substituteVariables = (template: string, data: Record<string, any>): string => {
-  let result = template;
-
-  // Handle special {{itemsTable}} for orders
-  if (template.includes('{{itemsTable}}') && data.items && Array.isArray(data.items)) {
-    const itemsHtml = `
-<table class="items-table" style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-  <thead><tr><th style="text-align: left; padding: 12px; border-bottom: 2px solid #e5e7eb;">Item</th><th style="text-align: center; padding: 12px; border-bottom: 2px solid #e5e7eb;">Quantity</th><th style="text-align: right; padding: 12px; border-bottom: 2px solid #e5e7eb;">Price</th></tr></thead>
-  <tbody>
-    ${data.items.map((item: any) => `
-    <tr>
-      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${item.name}</td>
-      <td style="text-align: center; padding: 12px; border-bottom: 1px solid #e5e7eb;">${item.quantity}</td>
-      <td style="text-align: right; padding: 12px; border-bottom: 1px solid #e5e7eb;">$${(item.price / 100).toFixed(2)}</td>
-    </tr>
-    `).join('')}
-  </tbody>
-</table>`.trim();
-    result = result.replace('{{itemsTable}}', itemsHtml);
-  }
-
-  // Replace all variables
-  for (const [key, value] of Object.entries(data)) {
-    const pattern = new RegExp(`{{${key}}}`, 'g');
-    let formattedValue = value;
-
-    // Format currency values
-    if (key === 'subtotal' || key === 'total' || key === 'planPrice') {
-      formattedValue = `$${((value as number) / 100).toFixed(2)}`;
-    }
-
-    result = result.replace(pattern, String(formattedValue));
-  }
-
-  return result;
-};
-
 export function PreviewEmailModal({ isOpen, onClose, template }: PreviewEmailModalProps) {
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
 
-  const sampleData = useMemo(() => getSampleData(template.template_name), [template.template_name]);
+  // Generate sample data from the template's schema
+  const sampleData = useMemo(() => {
+    if (template.data_schema && Object.keys(template.data_schema).length > 0) {
+      return generateSampleData(template.data_schema);
+    }
+    // Fallback for templates without schema
+    return {};
+  }, [template.data_schema]);
 
   const previewHtml = useMemo(() => {
     return substituteVariables(template.html_template, sampleData);
@@ -180,13 +108,26 @@ export function PreviewEmailModal({ isOpen, onClose, template }: PreviewEmailMod
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-6 border-t bg-gray-50">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
-          >
-            Close
-          </button>
+        <div className="p-6 border-t bg-gray-50 space-y-3">
+          {/* Sample Data Preview */}
+          {Object.keys(sampleData).length > 0 && (
+            <details className="text-xs">
+              <summary className="cursor-pointer text-gray-500 hover:text-gray-700">
+                View sample data used in preview
+              </summary>
+              <pre className="mt-2 p-3 bg-gray-100 rounded-lg overflow-auto text-gray-600 max-h-48">
+                {JSON.stringify(sampleData, null, 2)}
+              </pre>
+            </details>
+          )}
+          <div className="flex items-center justify-end gap-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>

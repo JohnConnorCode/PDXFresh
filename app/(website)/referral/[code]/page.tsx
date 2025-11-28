@@ -1,10 +1,14 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
+import Image from 'next/image';
 import { getReferralByCode } from '@/lib/referral-utils';
 import { getUserById } from '@/lib/user-utils';
 import { getFeatureValue } from '@/lib/feature-flags';
 import { trackServerEvent } from '@/lib/analytics';
+import { client } from '@/lib/sanity.client';
+import { activeReferralRewardQuery } from '@/lib/sanity.queries';
+import { urlFor } from '@/lib/image';
 
 interface ReferralPageProps {
   params: {
@@ -12,20 +16,42 @@ interface ReferralPageProps {
   };
 }
 
+interface ReferralReward {
+  _id: string;
+  title: string;
+  shortDescription: string;
+  description: string;
+  rewardType: string;
+  discountPercentage?: number;
+  discountAmount?: number;
+  creditAmount?: number;
+  recipientType: string;
+  landingPageHeadline?: string;
+  landingPageImage?: {
+    asset: { _id: string; url: string };
+    alt?: string;
+  };
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  const rewardPercentage = getFeatureValue('referrals_reward_percentage');
+  const reward = await client.fetch<ReferralReward | null>(activeReferralRewardQuery);
+
+  const rewardPercentage = reward?.discountPercentage || getFeatureValue('referrals_reward_percentage');
 
   return {
     title: `Get ${rewardPercentage}% Off | Long Life Referral`,
-    description: `You've been referred to Long Life! Get ${rewardPercentage}% off your first order.`,
+    description: reward?.shortDescription || `You've been referred to Long Life! Get ${rewardPercentage}% off your first order.`,
   };
 }
 
 export default async function ReferralLandingPage({ params }: ReferralPageProps) {
   const { code } = params;
 
-  // Get referral details
-  const referral = await getReferralByCode(code);
+  // Get referral details and Sanity content in parallel
+  const [referral, reward] = await Promise.all([
+    getReferralByCode(code),
+    client.fetch<ReferralReward | null>(activeReferralRewardQuery),
+  ]);
 
   if (!referral) {
     return <InvalidReferralPage code={code} />;
@@ -51,29 +77,56 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
     referrerId: referral.referrer_id,
   });
 
-  const rewardPercentage = getFeatureValue('referrals_reward_percentage');
+  // Use Sanity content with feature flag fallbacks
+  const rewardPercentage = reward?.discountPercentage || getFeatureValue('referrals_reward_percentage');
   const referrerName = referrer.full_name || referrer.name || 'a friend';
+  const landingHeadline = reward?.landingPageHeadline;
+  const landingDescription = reward?.shortDescription;
+  const landingImageUrl = reward?.landingPageImage?.asset ? urlFor(reward.landingPageImage).url() : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full mb-6">
-            <span className="text-4xl">🎁</span>
-          </div>
+          {landingImageUrl ? (
+            <div className="relative w-24 h-24 mx-auto mb-6 rounded-full overflow-hidden shadow-lg">
+              <Image
+                src={landingImageUrl}
+                alt={reward?.landingPageImage?.alt || 'Referral reward'}
+                fill
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full mb-6">
+              <span className="text-4xl">🎁</span>
+            </div>
+          )}
 
           <h1 className="font-heading text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            {referrerName} wants you to try
-            <br />
-            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Long Life
-            </span>
+            {landingHeadline ? (
+              <span dangerouslySetInnerHTML={{ __html: landingHeadline.replace('{{referrerName}}', referrerName) }} />
+            ) : (
+              <>
+                {referrerName} wants you to try
+                <br />
+                <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  Long Life
+                </span>
+              </>
+            )}
           </h1>
 
           <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto mb-8">
-            Get <strong>{rewardPercentage}% off</strong> your first order, and{' '}
-            {referrerName} gets <strong>{rewardPercentage}% off</strong> too!
+            {landingDescription ? (
+              landingDescription.replace('{{rewardPercentage}}', String(rewardPercentage)).replace('{{referrerName}}', referrerName)
+            ) : (
+              <>
+                Get <strong>{rewardPercentage}% off</strong> your first order, and{' '}
+                {referrerName} gets <strong>{rewardPercentage}% off</strong> too!
+              </>
+            )}
           </p>
 
           {/* CTA Buttons */}

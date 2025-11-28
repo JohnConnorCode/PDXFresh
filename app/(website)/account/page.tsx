@@ -12,6 +12,7 @@ import { getReferralStats } from '@/lib/referral-utils';
 import { ProfileCompletionCard } from '@/components/account/ProfileCompletionCard';
 import { ReferralShareCard } from '@/components/account/ReferralShareCard';
 import { EmailPreferences } from '@/components/account/EmailPreferences';
+import { AccountUpsellCompact } from '@/components/upsells/AccountUpsellSection';
 import { isFeatureEnabled } from '@/lib/feature-flags';
 
 export const metadata: Metadata = {
@@ -383,6 +384,16 @@ export default async function AccountPage() {
             {/* Email Preferences */}
             <FadeIn direction="up" delay={0.23}>
               <EmailPreferences userEmail={user.email || ''} />
+            </FadeIn>
+
+            {/* Special Offers */}
+            <FadeIn direction="up" delay={0.24}>
+              <AccountUpsellCompact
+                userId={user.id}
+                userTier={user.partnership_tier || 'none'}
+                page="account"
+                currentPlan={user.current_plan}
+              />
             </FadeIn>
 
             {/* Help */}
