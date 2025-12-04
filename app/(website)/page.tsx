@@ -10,7 +10,8 @@ import { urlFor } from '@/lib/image';
 import { FadeIn, StaggerContainer, ParallaxElement } from '@/components/animations';
 import { TestimonialCarousel } from '@/components/TestimonialCarousel';
 import { StatsSection } from '@/components/StatsSection';
-import { HeroSlider } from '@/components/HeroSlider';
+import { MoodHero } from '@/components/MoodHero';
+import { MoodGrid } from '@/components/MoodGrid';
 import { NewsletterForm } from '@/components/NewsletterForm';
 import { getFeaturedProducts } from '@/lib/supabase/queries/products';
 
@@ -47,7 +48,6 @@ export default async function Home() {
   }
 
   const {
-    heroSlides,
     valueProps,
     featuredBlendsHeading,
     featuredBlendsSubheading,
@@ -68,43 +68,11 @@ export default async function Home() {
     socialProof
   } = homePage;
 
-  // Default slides if none are set in Sanity
-  const defaultSlides = [
-    {
-      heading: 'Peak Performance Starts Here',
-      subheading: 'Cold-pressed, small-batch juices crafted for serious athletes and health-conscious humans.',
-      ctaText: 'Shop Blends',
-      ctaLink: '/blends',
-      desktopImage: { asset: { url: '/slider-desktop-1.png' } },
-      mobileImage: { asset: { url: '/slider-mobile-1.png' } },
-    },
-    {
-      heading: 'Real Ingredients. Real Results.',
-      subheading: 'No concentrates. No shortcuts. Just whole fruits, roots, and greens pressed fresh weekly.',
-      ctaText: 'Our Process',
-      ctaLink: '/how-we-make-it',
-      desktopImage: { asset: { url: '/slider-desktop-2.png' } },
-      mobileImage: { asset: { url: '/slider-mobile-2.png' } },
-    },
-    {
-      heading: 'Small-Batch Integrity',
-      subheading: 'Limited runs. First come, first served. Made in Indiana with ingredients you can trace.',
-      ctaText: 'Learn More',
-      ctaLink: '/about',
-      desktopImage: { asset: { url: '/slider-desktop-3.png' } },
-      mobileImage: { asset: { url: '/slider-mobile-3.png' } },
-    },
-  ];
-
-  // Use Sanity heroSlides if available AND they have valid images, otherwise fall back to defaults
-  const hasValidSanitySlides = heroSlides && heroSlides.length > 0 &&
-    heroSlides.some((slide: any) => slide.desktopImage || slide.mobileImage || slide.image);
-  const slides = hasValidSanitySlides ? heroSlides : defaultSlides;
-
   return (
     <>
-      {/* Hero Slider */}
-      <HeroSlider slides={slides} />
+      {/* Static Hero + Mood Grid */}
+      <MoodHero />
+      <MoodGrid />
 
       {/* Value Props */}
       {valueProps && valueProps.length > 0 && (
