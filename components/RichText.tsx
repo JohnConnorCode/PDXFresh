@@ -135,6 +135,40 @@ function getVideoId(url: string): { platform: 'youtube' | 'vimeo' | null; id: st
 
 // Portable Text components (for Sanity content)
 const PortableTextComponents = {
+  block: {
+    h1: ({ children }: any) => (
+      <h1 className="font-heading text-4xl font-bold mb-6 mt-10 first:mt-0 leading-tight">{children}</h1>
+    ),
+    h2: ({ children }: any) => (
+      <h2 className="font-heading text-3xl font-bold mb-5 mt-10 first:mt-0 leading-tight">{children}</h2>
+    ),
+    h3: ({ children }: any) => (
+      <h3 className="font-heading text-2xl font-semibold mb-4 mt-8 first:mt-0 leading-tight">{children}</h3>
+    ),
+    h4: ({ children }: any) => (
+      <h4 className="font-heading text-xl font-semibold mb-3 mt-6 first:mt-0">{children}</h4>
+    ),
+    normal: ({ children }: any) => (
+      <p className="mb-5 text-gray-700 leading-relaxed text-lg">{children}</p>
+    ),
+    blockquote: ({ children }: any) => (
+      <blockquote className="border-l-4 border-accent-primary pl-6 py-2 my-6 italic text-gray-600 text-lg">
+        {children}
+      </blockquote>
+    ),
+  },
+  list: {
+    bullet: ({ children }: any) => (
+      <ul className="list-disc list-outside ml-6 mb-5 space-y-2 text-gray-700">{children}</ul>
+    ),
+    number: ({ children }: any) => (
+      <ol className="list-decimal list-outside ml-6 mb-5 space-y-2 text-gray-700">{children}</ol>
+    ),
+  },
+  listItem: {
+    bullet: ({ children }: any) => <li className="text-lg leading-relaxed">{children}</li>,
+    number: ({ children }: any) => <li className="text-lg leading-relaxed">{children}</li>,
+  },
   types: {
     image: ({ value }: any) => {
       const { width, height } = getImageDimensions(value);

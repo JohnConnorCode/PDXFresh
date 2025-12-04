@@ -24,21 +24,49 @@ export async function generateMetadata(): Promise<Metadata> {
   const aboutPage = await getAboutPage();
 
   return {
-    title: aboutPage?.seo?.metaTitle || 'About | Long Life',
-    description: aboutPage?.seo?.metaDescription || 'Return to nature in a world of machines. Learn about our mission to bring people back to real nourishment and clear minds.',
+    title: aboutPage?.seo?.metaTitle || 'About Us | Long Life',
+    description: aboutPage?.seo?.metaDescription || 'Long Life was created to transform how people fuel their day with mood-driven drinks. Reset. Cleanse. Rise. Balance. Making wellness effortless, anytime, anywhere.',
   };
 }
+
+// Default content for the about page
+const defaultContent = {
+  heroHeading: 'The Long Life Future',
+  heroSubheading: 'Long Life was created to transform how people fuel their day. We believe beverages should do more than taste good—they should match the way you feel and the direction you want to go.',
+  introText: "That's why we're building a new generation of vending machines centered around mood-driven drinks. Instead of guessing what your body needs, you choose your mood and Long Life delivers the blend designed for that outcome:",
+  moods: ['Reset', 'Cleanse', 'Rise', 'Balance'],
+  missionHeading: 'Our Mission',
+  missionText: 'To make wellness effortless.\nAnytime. Anywhere.',
+  visionHeading: 'Our Vision',
+  visionText: "We're working toward a world where healthy options aren't rare—they're the default. A world where grabbing a drink means choosing how you want to feel.",
+  closingText: 'Long Life is building the bridge between convenience and well-being.',
+  contactEmail: 'mikemontoya@montoyacapital.org',
+};
 
 export default async function AboutPage() {
   const aboutPage = await getAboutPage();
 
-  if (!aboutPage) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Unable to load about page. Please try again later.</p>
-      </div>
-    );
-  }
+  // Merge CMS content with defaults
+  const content = {
+    heroHeading: aboutPage?.heroHeading || defaultContent.heroHeading,
+    heroSubheading: aboutPage?.heroSubheading || defaultContent.heroSubheading,
+    introText: aboutPage?.introText || defaultContent.introText,
+    whyHeading: aboutPage?.whyHeading,
+    whyContent: aboutPage?.whyContent,
+    howHeading: aboutPage?.howHeading,
+    howContent: aboutPage?.howContent,
+    promiseHeading: aboutPage?.promiseHeading,
+    promises: aboutPage?.promises,
+    visionHeading: aboutPage?.visionHeading || defaultContent.visionHeading,
+    visionContent: aboutPage?.visionContent,
+    teamHeading: aboutPage?.teamHeading,
+    teamMembers: aboutPage?.teamMembers,
+    valuesHeading: aboutPage?.valuesHeading,
+    values: aboutPage?.values,
+    ctaHeading: aboutPage?.ctaHeading,
+    ctaText: aboutPage?.ctaText,
+    disclaimer: aboutPage?.disclaimer,
+  };
 
   const {
     heroHeading,
@@ -59,7 +87,8 @@ export default async function AboutPage() {
     ctaHeading,
     ctaText,
     disclaimer,
-  } = aboutPage;
+  } = content;
+
   return (
     <>
       {/* Hero */}
@@ -95,95 +124,143 @@ export default async function AboutPage() {
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <FadeIn direction="up" delay={0.2}>
+            <p className="text-sm uppercase tracking-widest text-gray-600 mb-4 font-semibold">About Us</p>
             <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold mb-8 leading-tight">
-              {heroHeading || 'Return to nature in a world of machines.'}
+              {heroHeading}
             </h1>
           </FadeIn>
           <FadeIn direction="up" delay={0.4}>
             <p className="text-xl sm:text-2xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
-              {heroSubheading || 'Modern life is efficient but empty. Long Life exists to bring people back to real nourishment and clear minds.'}
+              {heroSubheading}
             </p>
           </FadeIn>
         </div>
       </Section>
 
-      {/* Story */}
+      {/* Mood-Driven Drinks Section */}
       <Section className="bg-white">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <FadeIn direction="up">
-            <div className="prose prose-lg max-w-none">
-              {introText && (
-                <p className="text-xl text-gray-700 leading-relaxed mb-8">
-                  {introText}
-                </p>
-              )}
-
-              {whyHeading && (
-                <h2 className="font-heading text-4xl font-bold mb-6 mt-16 leading-tight-90">
-                  {whyHeading}
-                </h2>
-              )}
-
-              {whyContent && (
-                <div className="mb-8 text-lg">
-                  <RichText value={whyContent} />
-                </div>
-              )}
-
-              {howHeading && (
-                <h2 className="font-heading text-4xl font-bold mb-6 mt-16 leading-tight-90">
-                  {howHeading}
-                </h2>
-              )}
-
-              {howContent && (
-                <div className="mb-8 text-lg">
-                  <RichText value={howContent} />
-                </div>
-              )}
-
-              {promiseHeading && (
-                <h2 className="font-heading text-4xl font-bold mb-8 mt-16 leading-tight-90">
-                  {promiseHeading}
-                </h2>
-              )}
-
-              {promises && promises.length > 0 && (
-                <div className="bg-gradient-to-br from-accent-yellow/10 to-accent-green/10 p-10 rounded-2xl my-8 border-2 border-accent-yellow/30">
-                  <ul className="space-y-6 text-lg">
-                    {promises.map((promise: any, idx: number) => (
-                      <li key={idx} className="flex items-start gap-4">
-                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-accent-primary flex items-center justify-center text-white font-bold">✓</span>
-                        <span className="pt-1">
-                          <strong className="text-xl font-heading">{promise.title}</strong>
-                          <br />
-                          <span className="text-gray-700">{promise.description}</span>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+            <div className="text-center mb-12">
+              <p className="text-xl sm:text-2xl text-gray-700 leading-relaxed mb-10">
+                {introText}
+              </p>
+              {/* Mood Pills */}
+              <div className="flex flex-wrap justify-center gap-4 mb-12">
+                {defaultContent.moods.map((mood, idx) => (
+                  <span
+                    key={idx}
+                    className="px-8 py-3 bg-gradient-to-r from-accent-yellow/20 to-accent-green/20 rounded-full text-xl font-heading font-bold text-gray-800 border-2 border-accent-yellow/30"
+                  >
+                    {mood}
+                  </span>
+                ))}
+              </div>
             </div>
           </FadeIn>
         </div>
       </Section>
 
-      {/* Vision */}
-      {(visionHeading || visionContent) && (
-        <Section className="bg-gradient-to-br from-accent-primary/5 via-accent-green/5 to-transparent">
-          <div className="max-w-4xl mx-auto">
-            <FadeIn direction="up" className="text-center">
-              {visionHeading && (
-                <h2 className="font-heading text-4xl sm:text-5xl font-bold mb-8 leading-tight-90">
-                  {visionHeading}
-                </h2>
-              )}
-              {visionContent && (
-                <div className="prose prose-lg prose-headings:font-heading prose-headings:font-bold prose-p:text-gray-700 prose-p:text-xl prose-p:leading-relaxed max-w-none">
-                  <RichText value={visionContent} />
-                </div>
-              )}
+      {/* Mission Section */}
+      <Section className="bg-gradient-to-br from-accent-primary/5 via-accent-green/5 to-transparent">
+        <div className="max-w-4xl mx-auto text-center">
+          <FadeIn direction="up">
+            <h2 className="font-heading text-4xl sm:text-5xl font-bold mb-8 leading-tight-90">
+              {defaultContent.missionHeading}
+            </h2>
+            <p className="text-2xl sm:text-3xl text-gray-800 leading-relaxed font-medium whitespace-pre-line">
+              {defaultContent.missionText}
+            </p>
+          </FadeIn>
+        </div>
+      </Section>
+
+      {/* Vision Section */}
+      <Section className="bg-white">
+        <div className="max-w-4xl mx-auto">
+          <FadeIn direction="up" className="text-center">
+            <h2 className="font-heading text-4xl sm:text-5xl font-bold mb-8 leading-tight-90">
+              {visionHeading}
+            </h2>
+            {visionContent ? (
+              <div className="prose prose-lg prose-headings:font-heading prose-headings:font-bold prose-p:text-gray-700 prose-p:text-xl prose-p:leading-relaxed max-w-none">
+                <RichText value={visionContent} />
+              </div>
+            ) : (
+              <p className="text-xl sm:text-2xl text-gray-700 leading-relaxed">
+                {defaultContent.visionText}
+              </p>
+            )}
+          </FadeIn>
+        </div>
+      </Section>
+
+      {/* Bridge Statement */}
+      <Section className="bg-gradient-to-br from-accent-yellow/20 via-accent-green/10 to-accent-cream/30 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-72 h-72 bg-accent-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent-yellow/10 rounded-full blur-3xl" />
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+          <FadeIn direction="up">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-gray-800 leading-relaxed">
+              {defaultContent.closingText}
+            </p>
+          </FadeIn>
+        </div>
+      </Section>
+
+      {/* Legacy CMS Content - Why/How/Promises */}
+      {(whyHeading || whyContent || howHeading || howContent || promiseHeading || (promises && promises.length > 0)) && (
+        <Section className="bg-white">
+          <div className="max-w-3xl mx-auto">
+            <FadeIn direction="up">
+              <div className="prose prose-lg max-w-none">
+                {whyHeading && (
+                  <h2 className="font-heading text-4xl font-bold mb-6 mt-16 leading-tight-90">
+                    {whyHeading}
+                  </h2>
+                )}
+
+                {whyContent && (
+                  <div className="mb-8 text-lg">
+                    <RichText value={whyContent} />
+                  </div>
+                )}
+
+                {howHeading && (
+                  <h2 className="font-heading text-4xl font-bold mb-6 mt-16 leading-tight-90">
+                    {howHeading}
+                  </h2>
+                )}
+
+                {howContent && (
+                  <div className="mb-8 text-lg">
+                    <RichText value={howContent} />
+                  </div>
+                )}
+
+                {promiseHeading && (
+                  <h2 className="font-heading text-4xl font-bold mb-8 mt-16 leading-tight-90">
+                    {promiseHeading}
+                  </h2>
+                )}
+
+                {promises && promises.length > 0 && (
+                  <div className="bg-gradient-to-br from-accent-yellow/10 to-accent-green/10 p-10 rounded-2xl my-8 border-2 border-accent-yellow/30">
+                    <ul className="space-y-6 text-lg">
+                      {promises.map((promise: any, idx: number) => (
+                        <li key={idx} className="flex items-start gap-4">
+                          <span className="flex-shrink-0 w-8 h-8 rounded-full bg-accent-primary flex items-center justify-center text-white font-bold">✓</span>
+                          <span className="pt-1">
+                            <strong className="text-xl font-heading">{promise.title}</strong>
+                            <br />
+                            <span className="text-gray-700">{promise.description}</span>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </FadeIn>
           </div>
         </Section>
@@ -271,41 +348,53 @@ export default async function AboutPage() {
       )}
 
       {/* CTA */}
-      {(ctaHeading || ctaText) && (
-        <Section className="bg-gradient-to-b from-white to-accent-cream/30 relative overflow-hidden">
-          {/* Organic background accent */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-accent-yellow/20 to-accent-green/20 rounded-full blur-3xl" />
+      <Section className="bg-gradient-to-b from-white to-accent-cream/30 relative overflow-hidden">
+        {/* Organic background accent */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-accent-yellow/20 to-accent-green/20 rounded-full blur-3xl" />
 
-          <div className="relative z-10 max-w-3xl mx-auto text-center">
-            <FadeIn direction="up" delay={0.1}>
-              {ctaHeading && (
-                <h2 className="font-heading text-4xl sm:text-5xl font-bold mb-6 leading-tight">
-                  {ctaHeading}
-                </h2>
-              )}
-              {ctaText && (
-                <p className="text-xl text-gray-700 leading-relaxed mb-10 max-w-2xl mx-auto">
-                  {ctaText}
-                </p>
-              )}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Link
-                  href="/blends"
-                  className="w-full sm:w-auto px-8 py-4 bg-accent-primary text-white rounded-full font-semibold text-lg hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  Shop Weekly Batches
-                </Link>
-                <Link
-                  href="/#newsletter"
-                  className="w-full sm:w-auto px-8 py-4 border-2 border-accent-primary text-accent-primary rounded-full font-semibold text-lg hover:bg-accent-primary hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
-                >
-                  Join the List
-                </Link>
-              </div>
-            </FadeIn>
-          </div>
-        </Section>
-      )}
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
+          <FadeIn direction="up" delay={0.1}>
+            <h2 className="font-heading text-4xl sm:text-5xl font-bold mb-6 leading-tight">
+              {ctaHeading || 'Ready to feel the difference?'}
+            </h2>
+            <p className="text-xl text-gray-700 leading-relaxed mb-10 max-w-2xl mx-auto">
+              {ctaText || 'Discover the blend that matches your mood and fuel your day the way nature intended.'}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link
+                href="/blends"
+                className="w-full sm:w-auto px-8 py-4 bg-accent-primary text-white rounded-full font-semibold text-lg hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Explore Our Blends
+              </Link>
+              <Link
+                href="/#newsletter"
+                className="w-full sm:w-auto px-8 py-4 border-2 border-accent-primary text-accent-primary rounded-full font-semibold text-lg hover:bg-accent-primary hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                Join the List
+              </Link>
+            </div>
+          </FadeIn>
+        </div>
+      </Section>
+
+      {/* Contact */}
+      <Section className="bg-white">
+        <div className="max-w-2xl mx-auto text-center">
+          <FadeIn direction="up">
+            <h3 className="font-heading text-2xl font-bold mb-4">Questions?</h3>
+            <p className="text-lg text-gray-600 mb-4">
+              We&apos;d love to hear from you.
+            </p>
+            <a
+              href={`mailto:${defaultContent.contactEmail}`}
+              className="text-accent-primary hover:underline font-medium text-lg"
+            >
+              {defaultContent.contactEmail}
+            </a>
+          </FadeIn>
+        </div>
+      </Section>
 
       {/* Responsible Language */}
       {disclaimer && (
