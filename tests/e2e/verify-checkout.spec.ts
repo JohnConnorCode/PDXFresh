@@ -21,10 +21,28 @@ test.describe('Checkout Verification', () => {
 
     const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    const STRIPE_KEY = process.env.STRIPE_SECRET_KEY_TEST || process.env.STRIPE_SECRET_KEY;
 
-    if (!SUPABASE_URL || !SUPABASE_KEY || !STRIPE_KEY) {
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
       throw new Error('Missing required environment variables');
+    }
+
+    // Get Stripe mode from database to use correct key
+    const modeResponse = await fetch(`${SUPABASE_URL}/rest/v1/stripe_settings?select=mode&limit=1`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+      },
+    });
+    const modeData = await modeResponse.json();
+    const stripeMode = modeData[0]?.mode || 'test';
+    console.log(`   Stripe mode from database: ${stripeMode.toUpperCase()}`);
+
+    const STRIPE_KEY = stripeMode === 'production'
+      ? process.env.STRIPE_SECRET_KEY
+      : process.env.STRIPE_SECRET_KEY_TEST;
+
+    if (!STRIPE_KEY) {
+      throw new Error(`Missing STRIPE_SECRET_KEY${stripeMode === 'test' ? '_TEST' : ''} environment variable`);
     }
 
     // Fetch all product variants
