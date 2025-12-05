@@ -30,9 +30,10 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
   const cartItemCount = useCartStore((state) => state.getItemCount());
 
   const blends = [
-    { name: 'Green Bomb', slug: 'green-bomb' },
-    { name: 'Red Bomb', slug: 'red-bomb' },
-    { name: 'Yellow Bomb', slug: 'yellow-bomb' },
+    { name: 'Red Bomb', slug: 'red-bomb', color: '#ef4444' },
+    { name: 'Green Bomb', slug: 'green-bomb', color: '#22c55e' },
+    { name: 'Yellow Bomb', slug: 'yellow-bomb', color: '#eab308' },
+    { name: 'Blue Bomb', slug: 'blue-bomb', color: '#3b82f6' },
   ];
 
   // Close mobile menu on route change
@@ -116,24 +117,14 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
     >
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
         <div className="flex items-center justify-between h-14 lg:h-16 gap-2">
-          {/* Logo - Progressive text hiding */}
+          {/* Logo - Full animated logo on all screen sizes */}
           <Link href="/" className="flex-shrink-0 relative z-50">
-            <div className="hidden lg:block">
-              <AnimatedLogo
-                size="md"
-                variant="header"
-                logoUrl={siteSettings?.logo?.asset?.url}
-                showText={true}
-              />
-            </div>
-            <div className="lg:hidden">
-              <AnimatedLogo
-                size="md"
-                variant="header"
-                logoUrl={siteSettings?.logo?.asset?.url}
-                showText={false}
-              />
-            </div>
+            <AnimatedLogo
+              size="md"
+              variant="header"
+              logoUrl={siteSettings?.logo?.asset?.url}
+              showText={true}
+            />
           </Link>
 
           {/* Desktop Navigation - Progressive gap reduction */}
@@ -177,8 +168,12 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                     <Link
                       key={blend.slug}
                       href={`/blends/${blend.slug}`}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-accent-primary transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-accent-primary transition-colors"
                     >
+                      <span
+                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: blend.color }}
+                      />
                       {blend.name}
                     </Link>
                   ))}
@@ -370,58 +365,98 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
 
           {/* Mobile Menu Panel */}
           <nav className="md:hidden fixed top-14 lg:top-16 left-0 right-0 bottom-0 bg-white z-40 overflow-y-auto">
-            <StaggerContainer staggerDelay={0.1} className="px-4 py-6 space-y-1">
-              {headerLinks.map((link: any, index: number) => {
-                const href = link.externalUrl || (link.reference?.slug?.current ? `/${link.reference.slug.current}` : '#');
-                const isActive = pathname === href || pathname.startsWith(href + '/');
+            <StaggerContainer staggerDelay={0.08} className="px-4 py-5 space-y-1">
+              {/* Blends Section */}
+              <div className="mb-4">
+                <Link
+                  href="/blends"
+                  className={clsx(
+                    'block px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-300',
+                    pathname === '/blends'
+                      ? 'bg-gradient-to-r from-accent-yellow/20 to-accent-green/20 text-accent-primary'
+                      : 'text-gray-900 hover:bg-gray-50'
+                  )}
+                >
+                  Shop Blends
+                </Link>
+                <div className="grid grid-cols-2 gap-2 mt-2 px-2">
+                  {blends.map((blend) => (
+                    <Link
+                      key={blend.slug}
+                      href={`/blends/${blend.slug}`}
+                      className={clsx(
+                        'flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 border',
+                        pathname === `/blends/${blend.slug}`
+                          ? 'border-gray-300 bg-gray-50'
+                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                      )}
+                    >
+                      <span
+                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: blend.color }}
+                      />
+                      <span className="text-gray-700">{blend.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
 
-                return (
-                  <Link
-                    key={link.title || index}
-                    href={href}
-                    target={link.newTab ? '_blank' : undefined}
-                    rel={link.newTab ? 'noopener noreferrer' : undefined}
-                    className={clsx(
-                      'block px-4 py-3 text-lg font-medium rounded-lg transition-all duration-300',
-                      isActive
-                        ? 'bg-gradient-to-r from-accent-yellow/20 to-accent-green/20 text-accent-primary'
-                        : 'text-gray-700 hover:bg-gray-50 hover:translate-x-1'
-                    )}
-                  >
-                    {link.title}
-                  </Link>
-                );
-              })}
+              <div className="h-px bg-gray-100 my-3" />
 
-              {/* Ambassadors Link (hardcoded) */}
+              {/* Other Navigation Links */}
+              {headerLinks
+                .filter((link: any) => !['blends', 'ingredients'].includes(link.title?.toLowerCase()))
+                .map((link: any, index: number) => {
+                  const href = link.externalUrl || (link.reference?.slug?.current ? `/${link.reference.slug.current}` : '#');
+                  const isActive = pathname === href || pathname.startsWith(href + '/');
+
+                  return (
+                    <Link
+                      key={link.title || index}
+                      href={href}
+                      target={link.newTab ? '_blank' : undefined}
+                      rel={link.newTab ? 'noopener noreferrer' : undefined}
+                      className={clsx(
+                        'block px-4 py-3 text-base font-medium rounded-lg transition-all duration-300',
+                        isActive
+                          ? 'bg-gradient-to-r from-accent-yellow/20 to-accent-green/20 text-accent-primary'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      )}
+                    >
+                      {link.title}
+                    </Link>
+                  );
+                })}
+
+              {/* Ambassadors Link */}
               <Link
                 href="/referral"
                 className={clsx(
-                  'block px-4 py-3 text-lg font-medium rounded-lg transition-all duration-300',
+                  'block px-4 py-3 text-base font-medium rounded-lg transition-all duration-300',
                   pathname === '/referral'
                     ? 'bg-gradient-to-r from-accent-yellow/20 to-accent-green/20 text-accent-primary'
-                    : 'text-gray-700 hover:bg-gray-50 hover:translate-x-1'
+                    : 'text-gray-700 hover:bg-gray-50'
                 )}
               >
                 Ambassadors
               </Link>
 
-              {/* Mobile Cart Link - Only show if cart has items */}
+              {/* Mobile Cart Link */}
               {cartItemCount > 0 && (
                 <Link
                   href="/cart"
                   className={clsx(
-                    'flex items-center justify-between px-4 py-3 text-lg font-medium rounded-lg transition-all duration-300',
+                    'flex items-center justify-between px-4 py-3 text-base font-medium rounded-lg transition-all duration-300',
                     pathname === '/cart'
                       ? 'bg-gradient-to-r from-accent-yellow/20 to-accent-green/20 text-accent-primary'
-                      : 'text-gray-700 hover:bg-gray-50 hover:translate-x-1'
+                      : 'text-gray-700 hover:bg-gray-50'
                   )}
                 >
                   <span className="flex items-center gap-2">
                     <ShoppingCart className="w-5 h-5" />
                     Cart
                   </span>
-                  <span className="bg-accent-primary text-white text-sm font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                  <span className="bg-accent-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                     {cartItemCount}
                   </span>
                 </Link>
