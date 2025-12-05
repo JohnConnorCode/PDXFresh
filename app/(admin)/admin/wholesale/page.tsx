@@ -179,6 +179,46 @@ export default async function WholesalePage() {
         </p>
       </div>
 
+      {/* Status Guide */}
+      <details className="bg-gray-50 rounded-xl border border-gray-200 mb-6">
+        <summary className="px-4 py-3 cursor-pointer text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+          View Status Pipeline & Guide
+        </summary>
+        <div className="px-4 pb-4 pt-2 border-t border-gray-200">
+          <div className="grid md:grid-cols-2 gap-6 text-sm">
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-2">Pipeline Stages</h4>
+              <div className="space-y-2 text-gray-600">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 rounded">new</span>
+                  <span>— Fresh inquiry, needs review</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-800 rounded">contacted</span>
+                  <span>— Initial outreach sent</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded">qualified</span>
+                  <span>— Good fit, negotiating terms</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 rounded">closed</span>
+                  <span>— Deal done or declined</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-2">Tips</h4>
+              <ul className="space-y-1 text-gray-600 list-disc list-inside">
+                <li>Click the status badge to change pipeline stage</li>
+                <li>Export CSV for your CRM or spreadsheet</li>
+                <li>Expected volume helps prioritize high-value leads</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </details>
+
       <Suspense fallback={<LoadingSkeleton variant="stat" lines={5} />}>
         <WholesaleStats />
       </Suspense>

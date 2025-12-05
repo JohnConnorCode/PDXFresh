@@ -37,6 +37,29 @@ export default async function InventoryPage() {
         </p>
       </div>
 
+      {/* How It Works */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6">
+        <h3 className="font-semibold text-blue-900 mb-3">How Inventory Tracking Works</h3>
+        <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
+          <div>
+            <p className="font-medium mb-2">Stock Levels:</p>
+            <ul className="space-y-1 list-disc list-inside text-blue-700">
+              <li><strong>In Stock</strong> — Available quantity for each variant</li>
+              <li><strong>Low Stock</strong> — Below threshold, consider reordering</li>
+              <li><strong>Out of Stock</strong> — 0 units, blocks checkout</li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-medium mb-2">Automatic Updates:</p>
+            <ul className="space-y-1 list-disc list-inside text-blue-700">
+              <li>Stock decreases when orders are placed</li>
+              <li>Stock restores if order is cancelled/refunded</li>
+              <li>Set low stock alerts to get notified</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       <InventoryManager />
     </div>
   );

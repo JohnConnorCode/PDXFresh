@@ -70,28 +70,69 @@ export default async function ReferralsPage() {
 
       {/* Stats */}
       <FadeIn direction="up" delay={0.1}>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm text-gray-600">Total Referrals</div>
             <div className="text-3xl font-bold text-gray-900 mt-1">{totalReferrals}</div>
+            <p className="text-xs text-gray-500 mt-2">Unique sign-ups via referral links</p>
           </div>
           <div className="bg-white rounded-lg shadow p-6 border-2 border-green-200">
             <div className="text-sm text-gray-600">Completed</div>
             <div className="text-3xl font-bold text-green-600 mt-1">{completedPurchases}</div>
+            <p className="text-xs text-gray-500 mt-2">Referred users who made a purchase</p>
           </div>
           <div className="bg-white rounded-lg shadow p-6 border-2 border-yellow-200">
             <div className="text-sm text-gray-600">Pending Rewards</div>
             <div className="text-3xl font-bold text-yellow-600 mt-1">{pendingRewards}</div>
+            <p className="text-xs text-gray-500 mt-2">Rewards waiting to be issued</p>
           </div>
           <div className="bg-white rounded-lg shadow p-6 border-2 border-blue-200">
             <div className="text-sm text-gray-600">Rewards Issued</div>
             <div className="text-3xl font-bold text-blue-600 mt-1">{issuedRewards}</div>
+            <p className="text-xs text-gray-500 mt-2">Successfully paid out to referrers</p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm text-gray-600">Conversion Rate</div>
             <div className="text-3xl font-bold text-gray-900 mt-1">{conversionRate}%</div>
+            <p className="text-xs text-gray-500 mt-2">Referrals → Purchases</p>
           </div>
         </div>
+      </FadeIn>
+
+      {/* How Referrals Work */}
+      <FadeIn direction="up" delay={0.12}>
+        <details className="bg-gray-50 rounded-xl border border-gray-200 mb-8">
+          <summary className="px-4 py-3 cursor-pointer text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+            View Referral Flow & Status Guide
+          </summary>
+          <div className="px-4 pb-4 pt-2 border-t border-gray-200">
+            <div className="grid md:grid-cols-2 gap-6 text-sm">
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-2">How It Works</h4>
+                <ol className="space-y-1 text-gray-600 list-decimal list-inside">
+                  <li>Existing customer shares their unique referral link</li>
+                  <li>New customer signs up using that link</li>
+                  <li>Referral is tracked (shows in &quot;Total Referrals&quot;)</li>
+                  <li>When referred user makes a purchase → &quot;Completed&quot;</li>
+                  <li>Reward marked pending → Admin issues reward</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-2">Reward Status</h4>
+                <div className="space-y-2 text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
+                    <span><strong>Pending</strong> — Purchase complete, reward not yet issued</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span><strong>Issued</strong> — Reward sent to referrer</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
       </FadeIn>
 
       {/* Leaderboard */}
