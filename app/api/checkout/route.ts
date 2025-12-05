@@ -250,13 +250,25 @@ export async function POST(req: NextRequest) {
             );
           }
 
+          // Build valid image URL for Stripe (must be absolute URL starting with https://)
+          let imageUrl: string | null = null;
+          if (product.image_url) {
+            if (product.image_url.startsWith('http')) {
+              imageUrl = product.image_url.trim();
+            } else if (product.image_url.startsWith('/')) {
+              // Relative URL - prepend site URL (trim to remove any accidental newlines)
+              const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://drinklonglife.com').trim();
+              imageUrl = `${siteUrl}${product.image_url.trim()}`;
+            }
+          }
+
           validatedLineItems.push({
             price_data: {
               currency: 'usd',
               unit_amount: unitAmount,
               product_data: {
                 name: `${product.name} - ${variant.label}`,
-                images: product.image_url ? [product.image_url] : [],
+                images: imageUrl ? [imageUrl] : [],
               },
             },
             quantity: item.quantity,
