@@ -172,7 +172,33 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
           <div>
             <h4 className="font-semibold text-sm mb-4">Legal</h4>
             <ul className="space-y-2">
-              {legalLinks.map((link: any) => (
+              {/* Always show Privacy Policy and Terms links */}
+              <li>
+                <Link
+                  href="/privacy"
+                  className="group text-sm text-muted hover:text-black transition-colors relative inline-block"
+                >
+                  Privacy Policy
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent-primary group-hover:w-full transition-all duration-300" />
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="group text-sm text-muted hover:text-black transition-colors relative inline-block"
+                >
+                  Terms & Conditions
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent-primary group-hover:w-full transition-all duration-300" />
+                </Link>
+              </li>
+              {/* Additional legal links from CMS */}
+              {legalLinks
+                .filter((link: any) => {
+                  const href = link.reference?.slug?.current || link.externalUrl || '';
+                  // Skip if it's privacy or terms (already shown above)
+                  return !href.includes('privacy') && !href.includes('terms');
+                })
+                .map((link: any) => (
                 <li key={link.title}>
                   <Link
                     href={
