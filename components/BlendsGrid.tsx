@@ -7,9 +7,11 @@ import { FadeIn } from './animations';
 interface BlendsGridProps {
   blends: any[];
   showFilters?: boolean;
+  maxColumns?: 2 | 3;
+  maxItems?: number;
 }
 
-export function BlendsGrid({ blends, showFilters = true }: BlendsGridProps) {
+export function BlendsGrid({ blends, showFilters = true, maxColumns = 3, maxItems }: BlendsGridProps) {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
 
   // Extract all unique functions from all blends
@@ -25,13 +27,18 @@ export function BlendsGrid({ blends, showFilters = true }: BlendsGridProps) {
 
   // Filter blends based on selected function
   const filteredBlends = useMemo(() => {
-    if (selectedFilter === 'all') {
-      return blends;
+    let result = blends;
+    if (selectedFilter !== 'all') {
+      result = blends.filter((blend) =>
+        blend.function_list?.includes(selectedFilter)
+      );
     }
-    return blends.filter((blend) =>
-      blend.function_list?.includes(selectedFilter)
-    );
-  }, [blends, selectedFilter]);
+    // Apply maxItems limit if specified
+    if (maxItems && result.length > maxItems) {
+      result = result.slice(0, maxItems);
+    }
+    return result;
+  }, [blends, selectedFilter, maxItems]);
 
   return (
     <>
@@ -76,7 +83,11 @@ export function BlendsGrid({ blends, showFilters = true }: BlendsGridProps) {
 
       {/* Blends Grid */}
       {filteredBlends.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className={`grid gap-8 ${
+          maxColumns === 2
+            ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto'
+            : 'md:grid-cols-2 lg:grid-cols-3'
+        }`}>
           {filteredBlends.map((blend: any) => (
             <BlendCard key={blend.id} blend={blend} />
           ))}

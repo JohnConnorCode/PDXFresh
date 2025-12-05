@@ -150,7 +150,7 @@ export default async function Home() {
                 {featuredBlendsSubheading || 'Sold in weekly drops. Reserve early.'}
               </p>
             </FadeIn>
-            <BlendsGrid blends={featuredBlends} showFilters={false} />
+            <BlendsGrid blends={featuredBlends} showFilters={false} maxColumns={2} maxItems={4} />
             <div className="text-center mt-12">
               {featuredBlendsSizingText && (
                 <p className="text-muted mb-4">
