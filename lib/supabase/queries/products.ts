@@ -72,6 +72,9 @@ export interface ProductVariant {
   billing_type?: string;
   recurring_interval?: string;
   recurring_interval_count?: number;
+  stock_quantity?: number | null;
+  track_inventory?: boolean;
+  low_stock_threshold?: number;
 }
 
 // =====================================================
@@ -251,7 +254,10 @@ export async function getProductBySlug(
         sku,
         billing_type,
         recurring_interval,
-        recurring_interval_count
+        recurring_interval_count,
+        stock_quantity,
+        track_inventory,
+        low_stock_threshold
       )
     `
     )
@@ -310,7 +316,10 @@ export async function getActiveStripeProducts(): Promise<ProductWithIngredients[
         price_usd,
         billing_type,
         recurring_interval,
-        recurring_interval_count
+        recurring_interval_count,
+        stock_quantity,
+        track_inventory,
+        low_stock_threshold
       )
     `
     )

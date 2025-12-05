@@ -63,7 +63,7 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
         ? await stripe.products.retrieve(price.product)
         : price?.product;
 
-      await sendEmail({
+      const emailResult = await sendEmail({
         to: (session.customer_email || session.customer_details?.email)!,
         template: 'subscription_confirmation',
         data: {
@@ -77,6 +77,9 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
         },
         userId,
       });
+      if (!emailResult.success) {
+        logger.error('Failed to send subscription confirmation email:', { error: emailResult.error, to: session.customer_email });
+      }
     }
 
     // Complete referral if this is the first subscription
@@ -180,7 +183,7 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
         price: item.amount_total || 0,
       }));
 
-      await sendEmail({
+      const orderEmailResult = await sendEmail({
         to: customerEmail,
         template: 'order_confirmation',
         data: {
@@ -194,6 +197,11 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
         },
         userId,
       });
+      if (!orderEmailResult.success) {
+        logger.error('Failed to send order confirmation email:', { error: orderEmailResult.error, to: customerEmail, orderId: orderData.id });
+      } else {
+        logger.info(`Order confirmation email sent to ${customerEmail}`);
+      }
 
       // Check if this is the user's first order and send welcome email
       if (userId) {
@@ -211,7 +219,7 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
             .eq('id', userId)
             .single();
 
-          await sendEmail({
+          const welcomeEmailResult = await sendEmail({
             to: customerEmail,
             template: 'welcome_new_customer',
             data: {
@@ -222,7 +230,11 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
             userId,
           });
 
-          logger.info(`Welcome email sent to new customer ${customerEmail}`);
+          if (!welcomeEmailResult.success) {
+            logger.error('Failed to send welcome email:', { error: welcomeEmailResult.error, to: customerEmail });
+          } else {
+            logger.info(`Welcome email sent to new customer ${customerEmail}`);
+          }
         }
 
         // Complete referral if this is the first purchase
@@ -346,7 +358,7 @@ export async function handleSubscriptionDeleted(subscription: Stripe.Subscriptio
       // Get subscription period end using type-safe helper
       const periods = getSubscriptionPeriods(subscription);
 
-      await sendEmail({
+      const cancelEmailResult = await sendEmail({
         to: customerEmail,
         template: 'subscription_canceled',
         data: {
@@ -357,6 +369,9 @@ export async function handleSubscriptionDeleted(subscription: Stripe.Subscriptio
         },
         userId: subData.user_id,
       });
+      if (!cancelEmailResult.success) {
+        logger.error('Failed to send subscription canceled email:', { error: cancelEmailResult.error, to: customerEmail });
+      }
     }
   }
 }
@@ -416,7 +431,7 @@ export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
       .eq('stripe_customer_id', invoice.customer)
       .single();
 
-    await sendEmail({
+    const paymentFailedEmailResult = await sendEmail({
       to: customerEmail,
       template: 'payment_failed',
       data: {
@@ -430,7 +445,11 @@ export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
       userId: profile?.id,
     });
 
-    logger.info(`Payment failed notification sent to ${customerEmail}`);
+    if (!paymentFailedEmailResult.success) {
+      logger.error('Failed to send payment failed notification:', { error: paymentFailedEmailResult.error, to: customerEmail });
+    } else {
+      logger.info(`Payment failed notification sent to ${customerEmail}`);
+    }
   }
 }
 
@@ -551,7 +570,7 @@ export async function handleChargeRefunded(charge: Stripe.Charge) {
   // Send refund confirmation email
   if (order.customer_email) {
     const refundAmount = (charge.amount_refunded / 100).toFixed(2);
-    await sendEmail({
+    const refundEmailResult = await sendEmail({
       to: order.customer_email,
       template: 'refund_confirmation',
       data: {
@@ -564,6 +583,9 @@ export async function handleChargeRefunded(charge: Stripe.Charge) {
       },
       userId: order.user_id,
     });
+    if (!refundEmailResult.success) {
+      logger.error('Failed to send refund confirmation email:', { error: refundEmailResult.error, to: order.customer_email, orderId: order.id });
+    }
   }
 }
 

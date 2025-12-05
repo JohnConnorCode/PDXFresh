@@ -482,9 +482,10 @@ export function ProductForm({ product, ingredients, variants, allIngredients }: 
 
       {/* Settings */}
       <section className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4">Settings</h2>
+        <h2 className="text-xl font-bold mb-2">Settings</h2>
+        <p className="text-sm text-gray-600 mb-4">Control visibility and Stripe sync behavior</p>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
             <label className="block font-medium mb-1">
               Display Order <span className="text-red-500">*</span>
@@ -496,27 +497,52 @@ export function ProductForm({ product, ingredients, variants, allIngredients }: 
               className="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             />
             <p className="text-sm text-gray-500 mt-1">
-              Lower numbers appear first on the blends page (1 = Green Bomb, 2 = Red Bomb, 3 = Yellow Bomb)
+              Lower numbers appear first on the blends page (1 = first, 2 = second, etc.)
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <input type="checkbox" {...register('is_active')} className="w-4 h-4" />
-            <label className="font-medium">Active (visible on website)</label>
-          </div>
+          {/* Visibility Settings with Clear Explanations */}
+          <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+            <h3 className="font-medium text-gray-900 text-sm">Visibility Settings</h3>
 
-          <div className="flex items-center gap-2">
-            <input type="checkbox" {...register('publish')} className="w-4 h-4" />
-            <label className="font-medium">Published</label>
-          </div>
-
-          <div className="border-t pt-4 mt-4">
-            <div className="flex items-start gap-2">
-              <input type="checkbox" {...register('auto_sync')} className="w-4 h-4 mt-1" />
+            <div className="flex items-start gap-3">
+              <input type="checkbox" {...register('is_active')} className="w-4 h-4 mt-0.5" />
               <div>
-                <label className="font-medium">Auto-sync to Stripe after saving</label>
-                <p className="text-sm text-gray-500 mt-1">
-                  Automatically creates/updates Stripe product and prices when you save
+                <label className="font-medium text-gray-900">Active</label>
+                <p className="text-sm text-gray-500">
+                  When ON: Product appears on the website and can be purchased.<br/>
+                  When OFF: Product is hidden from customers (useful for out-of-stock items).
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <input type="checkbox" {...register('publish')} className="w-4 h-4 mt-0.5" />
+              <div>
+                <label className="font-medium text-gray-900">Published</label>
+                <p className="text-sm text-gray-500">
+                  When ON: Product is live and ready for customers.<br/>
+                  When OFF: Product is in draft mode (only visible in admin).
+                </p>
+              </div>
+            </div>
+
+            <div className="text-xs text-gray-500 bg-white p-3 rounded border border-gray-200">
+              <strong>Tip:</strong> A product needs BOTH "Active" AND "Published" to be visible to customers on the website.
+            </div>
+          </div>
+
+          {/* Stripe Sync Settings */}
+          <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+            <div className="flex items-start gap-3">
+              <input type="checkbox" {...register('auto_sync')} className="w-4 h-4 mt-0.5" />
+              <div>
+                <label className="font-medium text-purple-900">Auto-sync to Stripe after saving</label>
+                <p className="text-sm text-purple-700 mt-1">
+                  Automatically creates/updates this product and all its prices in Stripe when you save.
+                </p>
+                <p className="text-xs text-purple-600 mt-2">
+                  <strong>Requires:</strong> At least one variant with a Price (USD) set.
                 </p>
               </div>
             </div>

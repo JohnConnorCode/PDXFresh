@@ -81,10 +81,10 @@ export default function CheckoutCancelPage() {
         <FadeIn direction="up" delay={0.5}>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/pricing"
+              href="/cart"
               className="px-8 py-4 bg-accent-primary text-white rounded-full font-semibold text-lg hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              Try Again
+              Return to Cart
             </Link>
             <Link
               href="/"
@@ -99,7 +99,7 @@ export default function CheckoutCancelPage() {
           <p className="mt-8 text-sm text-gray-500">
             Need assistance?{' '}
             <a
-              href="mailto:support@longlife.com"
+              href="mailto:support@drinklonglife.com"
               className="text-accent-primary hover:underline font-semibold"
             >
               Contact Support

@@ -14,6 +14,23 @@ interface Variant {
   billing_type?: string;
   recurring_interval?: string;
   recurring_interval_count?: number;
+  stock_quantity?: number | null;
+  track_inventory?: boolean;
+  low_stock_threshold?: number;
+}
+
+function getStockStatus(variant: Variant): { label: string; color: string; canPurchase: boolean } {
+  if (!variant.track_inventory || variant.stock_quantity === null) {
+    return { label: 'In Stock', color: 'text-green-600', canPurchase: true };
+  }
+  if (variant.stock_quantity === 0) {
+    return { label: 'Out of Stock', color: 'text-red-600', canPurchase: false };
+  }
+  const threshold = variant.low_stock_threshold || 5;
+  if (variant.stock_quantity !== null && variant.stock_quantity !== undefined && variant.stock_quantity <= threshold) {
+    return { label: `Only ${variant.stock_quantity} left`, color: 'text-amber-600', canPurchase: true };
+  }
+  return { label: 'In Stock', color: 'text-green-600', canPurchase: true };
 }
 
 interface VariantSelectorProps {
@@ -77,6 +94,7 @@ export function VariantSelector({
         {activeVariants.map((variant) => {
           const isPopular = variant.is_default;
           const isSubscription = variant.billing_type === 'recurring';
+          const stockStatus = getStockStatus(variant);
 
           return (
             <div
@@ -85,11 +103,18 @@ export function VariantSelector({
                 isPopular
                   ? 'border-4 border-accent-primary shadow-2xl scale-105'
                   : 'border-2 border-gray-200 shadow-lg hover:border-accent-primary hover:shadow-2xl'
-              }`}
+              } ${!stockStatus.canPurchase ? 'opacity-75' : ''}`}
             >
               {isPopular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent-primary text-white rounded-full text-sm font-bold shadow-lg">
                   Most Popular
+                </div>
+              )}
+
+              {/* Out of Stock Badge */}
+              {!stockStatus.canPurchase && (
+                <div className="absolute -top-4 right-4 px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">
+                  Sold Out
                 </div>
               )}
 
@@ -100,11 +125,15 @@ export function VariantSelector({
                 {isSubscription && (
                   <p className="text-sm text-gray-500 font-medium">Delivered Monthly</p>
                 )}
+                {/* Stock Status */}
+                <p className={`text-xs font-semibold mt-1 ${stockStatus.color}`}>
+                  {stockStatus.label}
+                </p>
               </div>
 
               {variant.price_usd && (
                 <div className="my-6">
-                  <span className="text-5xl font-bold text-accent-primary">
+                  <span className={`text-5xl font-bold ${stockStatus.canPurchase ? 'text-accent-primary' : 'text-gray-400'}`}>
                     ${variant.price_usd}
                   </span>
                   {isSubscription && (
@@ -121,7 +150,7 @@ export function VariantSelector({
                 </div>
               )}
 
-              {variant.stripe_price_id && variant.price_usd && (
+              {variant.stripe_price_id && variant.price_usd && stockStatus.canPurchase && (
                 <AddToCartButton
                   priceId={variant.stripe_price_id}
                   productName={`${productName} - ${variant.label}`}
@@ -132,6 +161,19 @@ export function VariantSelector({
                   sizeKey={variant.size_key}
                   variantLabel={variant.label}
                 />
+              )}
+
+              {/* Out of Stock Message */}
+              {!stockStatus.canPurchase && (
+                <div className="mt-4">
+                  <button
+                    disabled
+                    className="w-full px-6 py-3 bg-gray-200 text-gray-500 rounded-full font-semibold cursor-not-allowed"
+                  >
+                    Out of Stock
+                  </button>
+                  <p className="text-xs text-gray-500 mt-2">Check back soon!</p>
+                </div>
               )}
             </div>
           );

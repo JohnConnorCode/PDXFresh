@@ -103,7 +103,12 @@ export function VariantsManager({ productId: _productId, variants, onVariantsCha
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Product Variants</h3>
+        <div>
+          <h3 className="text-lg font-semibold">Product Variants</h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Each variant represents a purchasable size/option (e.g., Gallon, Half Gallon)
+          </p>
+        </div>
         <button
           type="button"
           onClick={addVariant}
@@ -113,9 +118,21 @@ export function VariantsManager({ productId: _productId, variants, onVariantsCha
         </button>
       </div>
 
+      {/* Info Box */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
+        <p className="font-medium text-blue-900 mb-2">How variants work:</p>
+        <ul className="text-blue-800 space-y-1 list-disc list-inside">
+          <li><strong>Price (USD)</strong> is required for Stripe sync to work</li>
+          <li><strong>Stripe Price ID</strong> is auto-generated when you sync - leave blank for new variants</li>
+          <li><strong>Default</strong> variant is pre-selected on the product page</li>
+          <li><strong>Active</strong> variants are available for purchase</li>
+        </ul>
+      </div>
+
       {localVariants.length === 0 ? (
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-          <p className="text-gray-500 mb-4">No variants yet</p>
+          <p className="text-gray-500 mb-2">No variants yet</p>
+          <p className="text-sm text-gray-400 mb-4">Add at least one variant to enable checkout</p>
           <button
             type="button"
             onClick={addVariant}
@@ -197,34 +214,39 @@ export function VariantsManager({ productId: _productId, variants, onVariantsCha
 
                   <div>
                     <label className="block text-sm font-medium mb-1">
-                      Stripe Price ID <span className="text-red-500">*</span>
+                      Price (USD) <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={variant.price_usd || ''}
+                        onChange={(e) => updateVariant(index, 'price_usd', e.target.value ? parseFloat(e.target.value) : null)}
+                        className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        placeholder="49.99"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">Required for Stripe sync</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Stripe Price ID <span className="text-gray-400 text-xs">(auto-generated)</span>
                     </label>
                     <input
                       type="text"
                       value={variant.stripe_price_id}
                       onChange={(e) => updateVariant(index, 'stripe_price_id', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono text-sm"
-                      placeholder="price_xxxxx"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono text-sm bg-gray-50"
+                      placeholder="Auto-filled after sync"
+                      readOnly={!!variant.stripe_price_id}
                     />
-                    {variant.stripe_price_id && !variant.stripe_price_id.startsWith('price_') && (
-                      <p className="text-red-600 text-xs mt-1">
-                        Must start with "price_"
-                      </p>
+                    {variant.stripe_price_id ? (
+                      <p className="text-green-600 text-xs mt-1">✓ Synced with Stripe</p>
+                    ) : (
+                      <p className="text-xs text-gray-500 mt-1">Will be created when you sync to Stripe</p>
                     )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Price (USD) <span className="text-gray-400 text-xs">(optional, for display)</span>
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={variant.price_usd || ''}
-                      onChange={(e) => updateVariant(index, 'price_usd', e.target.value ? parseFloat(e.target.value) : null)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                      placeholder="99.00"
-                    />
                   </div>
 
                   <div>
@@ -240,25 +262,31 @@ export function VariantsManager({ productId: _productId, variants, onVariantsCha
                     />
                   </div>
 
-                  <div className="flex items-center gap-6 pt-6">
-                    <label className="flex items-center gap-2 cursor-pointer">
+                  <div className="flex flex-col gap-3 pt-2">
+                    <label className="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-50 transition-colors">
                       <input
                         type="checkbox"
                         checked={variant.is_default}
                         onChange={(e) => updateVariant(index, 'is_default', e.target.checked)}
-                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="w-4 h-4 mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm font-medium">Default</span>
+                      <div>
+                        <span className="text-sm font-medium block">Default variant</span>
+                        <span className="text-xs text-gray-500">Pre-selected on product page</span>
+                      </div>
                     </label>
 
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-start gap-2 cursor-pointer p-2 rounded hover:bg-gray-50 transition-colors">
                       <input
                         type="checkbox"
                         checked={variant.is_active}
                         onChange={(e) => updateVariant(index, 'is_active', e.target.checked)}
-                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="w-4 h-4 mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm font-medium">Active</span>
+                      <div>
+                        <span className="text-sm font-medium block">Active</span>
+                        <span className="text-xs text-gray-500">Available for purchase</span>
+                      </div>
                     </label>
                   </div>
                 </div>

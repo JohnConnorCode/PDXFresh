@@ -257,15 +257,28 @@ function CheckoutSuccessContent() {
         </FadeIn>
 
         <FadeIn direction="up" delay={0.6}>
-          <p className="mt-8 text-sm text-gray-500">
-            Need help? Contact us at{' '}
-            <a
-              href="mailto:support@longlife.com"
-              className="text-accent-primary hover:underline font-semibold"
-            >
-              support@longlife.com
-            </a>
-          </p>
+          <div className="mt-8 space-y-3 text-sm text-gray-500">
+            {orderDetails && (
+              <p>
+                <Link
+                  href={`/order-lookup?email=${encodeURIComponent(orderDetails.email)}&order=${orderDetails.orderNumber}`}
+                  className="text-accent-primary hover:underline font-semibold"
+                >
+                  Bookmark order lookup
+                </Link>
+                {' '}to check your order status anytime
+              </p>
+            )}
+            <p>
+              Need help? Contact us at{' '}
+              <a
+                href="mailto:support@drinklonglife.com"
+                className="text-accent-primary hover:underline font-semibold"
+              >
+                support@drinklonglife.com
+              </a>
+            </p>
+          </div>
         </FadeIn>
       </div>
     </Section>

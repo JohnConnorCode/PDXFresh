@@ -23,11 +23,124 @@ interface Template {
   data_schema: Record<string, any>;
 }
 
+// Standard email partials - DRY approach for consistent styling
+const STANDARD_STYLES = `
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+  }
+  .email-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .header {
+    text-align: center;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+  }
+  .logo {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .tagline {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+  .content {
+    padding: 30px;
+  }
+  h1 {
+    color: #1f2937;
+    margin-top: 0;
+  }
+  .button {
+    display: inline-block;
+    background: #22c55e;
+    color: white !important;
+    padding: 14px 28px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    margin: 20px 0;
+  }
+  .footer {
+    text-align: center;
+    padding: 20px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .footer a {
+    color: #22c55e;
+    text-decoration: none;
+  }
+  .info-box {
+    background: #f3f4f6;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+  .highlight-box {
+    background: #ecfdf5;
+    border-left: 4px solid #22c55e;
+    padding: 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+  }
+  .items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  .items-table th, .items-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .items-table th {
+    background: #f9fafb;
+    font-weight: 600;
+  }
+`;
+
+const STANDARD_HEADER = `
+<div class="header">
+  <div class="logo">Long Life</div>
+  <div class="tagline">Cold-Pressed Wellness</div>
+</div>
+`;
+
+const STANDARD_FOOTER = `
+<div class="footer">
+  <p>Questions? Contact us at <a href="mailto:support@drinklonglife.com">support@drinklonglife.com</a></p>
+  <p>Long Life, Inc.</p>
+  <p style="margin-top: 15px; font-size: 11px;">
+    <a href="{{unsubscribeUrl}}">Unsubscribe</a> ·
+    <a href="{{preferencesUrl}}">Email Preferences</a>
+  </p>
+</div>
+`;
+
 /**
  * Substitute {{variables}} in template with actual data
  */
 function substituteVariables(template: string, data: Record<string, any>): string {
   let result = template;
+
+  // First, inject standard partials (DRY - defined once, used everywhere)
+  result = result.replace(/{{standardStyles}}/g, STANDARD_STYLES);
+  result = result.replace(/{{standardHeader}}/g, STANDARD_HEADER);
+  result = result.replace(/{{standardFooter}}/g, STANDARD_FOOTER);
 
   // Handle special {{itemsTable}} variable for order confirmations
   if (template.includes('{{itemsTable}}') && data.items && Array.isArray(data.items)) {
