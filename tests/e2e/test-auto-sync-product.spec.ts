@@ -29,7 +29,6 @@ test.describe('Auto-Sync Product to Stripe', () => {
     viewport: { width: 1920, height: 1080 },
   });
 
-  let productId: string;
   let stripeProductId: string;
 
   test('should login as admin', async ({ page }) => {

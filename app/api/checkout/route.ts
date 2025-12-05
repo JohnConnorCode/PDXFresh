@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
+import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server';
 import { createCheckoutSession, createCartCheckoutSession, getOrCreateCustomer } from '@/lib/stripe';
 import { getStripeClient } from '@/lib/stripe/config';
 import { rateLimit } from '@/lib/rate-limit';
@@ -19,9 +19,8 @@ interface CheckoutRequestBody {
   // Cart-based checkout
   items?: CartItemRequest[];
 
-  // Discount codes - prefer promotionCodeId for proper restriction handling
-  promotionCodeId?: string; // Stripe promotion code ID (promo_xxx) - has restrictions
-  couponCode?: string;      // Fallback: raw coupon ID - no restrictions
+  // Database-only discount code
+  discountCode?: string;
 
   // URLs
   successPath?: string;
@@ -65,8 +64,7 @@ export async function POST(req: NextRequest) {
       priceId,
       mode,
       items,
-      promotionCodeId,
-      couponCode,
+      discountCode,
       successPath,
       cancelPath,
       successUrl: providedSuccessUrl,
@@ -126,7 +124,20 @@ export async function POST(req: NextRequest) {
     // CART-BASED CHECKOUT (multiple items)
     if (items && items.length > 0) {
       // CRITICAL SECURITY: Validate all prices server-side to prevent price manipulation
-      const validatedLineItems = [];
+      const validatedLineItems: Array<{
+        price?: string;
+        price_data?: {
+          currency: string;
+          unit_amount: number;
+          product_data: {
+            name: string;
+            images: string[];
+          };
+        };
+        quantity: number;
+        variantId: string;
+        isSubscription: boolean;
+      }> = [];
       let checkoutMode: 'payment' | 'subscription' = 'payment';
       const billingTypes = new Set<string>();
 
@@ -255,13 +266,108 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      // DATABASE-ONLY DISCOUNTS: Look up and validate discount code
+      let discountInfo: {
+        discountId: string;
+        discountType: 'percent' | 'amount';
+        discountPercent?: number;
+        discountAmountCents?: number;
+        code: string;
+      } | null = null;
+
+      if (discountCode && checkoutMode === 'payment') {
+        // Only apply discounts to one-time purchases (subscriptions use Stripe pricing)
+        const serviceSupabase = createServiceRoleClient();
+
+        const { data: discount, error: discountError } = await serviceSupabase
+          .from('discounts')
+          .select('*')
+          .ilike('code', discountCode.trim().toUpperCase())
+          .eq('is_active', true)
+          .single();
+
+        if (discountError || !discount) {
+          return NextResponse.json(
+            { error: 'Invalid discount code' },
+            { status: 400 }
+          );
+        }
+
+        // Validate discount restrictions
+
+        // Check start date (code not yet active)
+        if (discount.starts_at && new Date(discount.starts_at) > new Date()) {
+          return NextResponse.json(
+            { error: 'This discount code is not yet active' },
+            { status: 400 }
+          );
+        }
+
+        // Check expiration date
+        if (discount.expires_at && new Date(discount.expires_at) < new Date()) {
+          return NextResponse.json(
+            { error: 'This discount code has expired' },
+            { status: 400 }
+          );
+        }
+
+        if (discount.max_redemptions !== null && discount.times_redeemed >= discount.max_redemptions) {
+          return NextResponse.json(
+            { error: 'This discount code has reached its maximum uses' },
+            { status: 400 }
+          );
+        }
+
+        // Check first_time_only restriction
+        if (discount.first_time_only) {
+          // For authenticated users, check if they have any completed orders
+          if (user) {
+            const { count } = await serviceSupabase
+              .from('orders')
+              .select('id', { count: 'exact', head: true })
+              .eq('user_id', user.id)
+              .eq('status', 'completed');
+
+            if (count && count > 0) {
+              return NextResponse.json(
+                { error: 'This discount code is for first-time customers only' },
+                { status: 400 }
+              );
+            }
+          }
+          // For guest checkout, we can't easily check - allow it but log
+          // In production, you might want to check by email
+        }
+
+        // Calculate subtotal for minimum amount check
+        const subtotalCents = validatedLineItems.reduce((sum, item: any) => {
+          return sum + (item.price_data?.unit_amount || 0) * item.quantity;
+        }, 0);
+
+        if (discount.min_amount_cents > 0 && subtotalCents < discount.min_amount_cents) {
+          const minDollars = (discount.min_amount_cents / 100).toFixed(2);
+          return NextResponse.json(
+            { error: `Minimum order of $${minDollars} required for this code` },
+            { status: 400 }
+          );
+        }
+
+        discountInfo = {
+          discountId: discount.id,
+          discountType: discount.discount_type,
+          discountPercent: discount.discount_percent ? Number(discount.discount_percent) : undefined,
+          discountAmountCents: discount.discount_amount_cents ?? undefined,
+          code: discount.code,
+        };
+      }
+
       // CRITICAL: Generate idempotency key to prevent double charges
       // Key is based on: user/IP + cart contents + 1-minute time window
       // This prevents duplicate checkout sessions if user clicks button twice
       const timeWindow = Math.floor(Date.now() / 60000); // 1-minute windows
       const cartFingerprint = JSON.stringify({
-        items: validatedLineItems.map(item => ({ price: item.price, qty: item.quantity })).sort(),
-        coupon: couponCode || null,
+        items: validatedLineItems.map(item => ({ price: (item as any).price, qty: item.quantity })).sort(),
+        discount: discountCode || null,
         time: timeWindow,
       });
       const idempotencyKey = crypto
@@ -339,23 +445,71 @@ export async function POST(req: NextRequest) {
 
       // Strip internal fields before passing to Stripe
       // HYBRID: Handle both price (subscriptions) and price_data (one-time)
+      // DISCOUNTS: Apply discount to one-time items by reducing unit_amount
+      let totalDiscountCents = 0;
       const stripeLineItems = validatedLineItems.map((item: any) => {
         if (item.isSubscription) {
-          // Subscription: Use Stripe price ID
+          // Subscription: Use Stripe price ID (no discount applied)
           return {
             price: item.price,
             quantity: item.quantity,
           };
         } else {
-          // One-time: Use dynamic price_data
+          // One-time: Use dynamic price_data with discount applied
+          let finalUnitAmount = item.price_data.unit_amount;
+
+          if (discountInfo) {
+            let itemDiscount = 0;
+            if (discountInfo.discountType === 'percent' && discountInfo.discountPercent) {
+              // Percentage discount - apply to each item
+              itemDiscount = Math.round(finalUnitAmount * (discountInfo.discountPercent / 100));
+            } else if (discountInfo.discountType === 'amount' && discountInfo.discountAmountCents) {
+              // Fixed amount discount - distribute across items proportionally
+              const subtotalCents = validatedLineItems.reduce((sum, i: any) =>
+                sum + (i.price_data?.unit_amount || 0) * i.quantity, 0);
+              // Guard against division by zero
+              if (subtotalCents > 0) {
+                const itemShare = (item.price_data.unit_amount * item.quantity) / subtotalCents;
+                itemDiscount = Math.round(discountInfo.discountAmountCents * itemShare / item.quantity);
+              }
+            }
+
+            // Apply discount but ensure price doesn't go below $0.50 (Stripe minimum)
+            finalUnitAmount = Math.max(50, finalUnitAmount - itemDiscount);
+            totalDiscountCents += itemDiscount * item.quantity;
+          }
+
           return {
-            price_data: item.price_data,
+            price_data: {
+              ...item.price_data,
+              unit_amount: finalUnitAmount,
+              product_data: discountInfo
+                ? {
+                    ...item.price_data.product_data,
+                    name: `${item.price_data.product_data.name}${discountInfo ? ` (${discountInfo.code} applied)` : ''}`,
+                  }
+                : item.price_data.product_data,
+            },
             quantity: item.quantity,
           };
         }
       });
 
+      // Build metadata with discount info for tracking
+      const sessionMetadata: Record<string, string> = {
+        ...metadata,
+        reservationTrackingId,
+      };
+
+      if (discountInfo) {
+        sessionMetadata.discountId = discountInfo.discountId;
+        sessionMetadata.discountCode = discountInfo.code;
+        sessionMetadata.discountAmount = totalDiscountCents.toString();
+        sessionMetadata.discountType = discountInfo.discountType;
+      }
+
       // Create Stripe checkout session (inventory is now reserved)
+      // NO Stripe discounts - we've already applied them to the prices
       const checkoutSession = await createCartCheckoutSession(
         {
           lineItems: stripeLineItems,
@@ -363,22 +517,32 @@ export async function POST(req: NextRequest) {
           successUrl: finalSuccessUrl,
           cancelUrl: finalCancelUrl,
           customerId,
-          metadata: {
-            ...metadata,
-            reservationTrackingId, // Store for later mapping
-          },
-          promotionCodeId, // Preferred: applies with restrictions (first-time, min amount, etc.)
-          couponCode,      // Fallback: raw coupon (no restrictions)
+          metadata: sessionMetadata,
           idempotencyKey,
         },
         stripeClient
       );
 
+      // NOTE: Discount redemption count is incremented in the Stripe webhook
+      // when checkout.session.completed fires, NOT here. This prevents
+      // inflated counts from abandoned checkouts.
+
       // Update reservations with actual Stripe session ID
-      await supabase
+      // CRITICAL: Handle this error to avoid orphaned reservations
+      const { error: updateError } = await supabase
         .from('inventory_reservations')
         .update({ checkout_session_id: checkoutSession.id })
         .eq('checkout_session_id', reservationTrackingId);
+
+      if (updateError) {
+        logger.error('Failed to update reservation session ID', {
+          error: updateError,
+          tempId: reservationTrackingId,
+          stripeSessionId: checkoutSession.id,
+        });
+        // Don't fail the checkout - reservations will still expire after 15 minutes
+        // But log it for monitoring
+      }
 
       logger.info('✅ Checkout session created with inventory reserved', {
         sessionId: checkoutSession.id,

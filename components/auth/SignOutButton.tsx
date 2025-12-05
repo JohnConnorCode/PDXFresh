@@ -7,11 +7,13 @@ import { createClient } from '@/lib/supabase/browser';
 interface SignOutButtonProps {
   className?: string;
   children?: React.ReactNode;
+  icon?: React.ReactNode;
 }
 
 export function SignOutButton({
   className = '',
   children = 'Sign Out',
+  icon,
 }: SignOutButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -47,6 +49,7 @@ export function SignOutButton({
       disabled={loading}
       className={`${className} ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
+      {icon}
       {loading ? 'Signing out...' : children}
     </button>
   );

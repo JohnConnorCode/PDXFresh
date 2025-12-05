@@ -182,9 +182,8 @@ export async function createCheckoutSession(
  * Create a Stripe Checkout Session for cart with multiple items
  * Optionally pass a Stripe client for dynamic key support.
  *
- * Discount handling:
- * - promotionCodeId: Stripe promotion code ID (promo_xxx) - applies with restrictions
- * - couponCode: Raw coupon ID - fallback, no restrictions
+ * DISCOUNTS: Now handled via database - discounts are applied to line item
+ * prices BEFORE creating the session. No Stripe coupon/promotion code needed.
  */
 export async function createCartCheckoutSession(
   {
@@ -195,8 +194,6 @@ export async function createCartCheckoutSession(
     customerId,
     customerEmail,
     metadata = {},
-    promotionCodeId,
-    couponCode,
     idempotencyKey,
   }: {
     // HYBRID PRICING: Support both price (subscriptions) and price_data (one-time)
@@ -207,8 +204,6 @@ export async function createCartCheckoutSession(
     customerId?: string;
     customerEmail?: string;
     metadata?: Record<string, string>;
-    promotionCodeId?: string; // Preferred: Stripe promotion code ID (promo_xxx)
-    couponCode?: string;      // Fallback: raw coupon ID
     idempotencyKey?: string;
   },
   stripeClient?: Stripe
@@ -234,14 +229,8 @@ export async function createCartCheckoutSession(
     sessionParams.customer_creation = 'always';
   }
 
-  // Add discount - prefer promotion code (has restrictions) over raw coupon
-  if (promotionCodeId) {
-    // Promotion code: applies first-time, min amount, and other restrictions
-    sessionParams.discounts = [{ promotion_code: promotionCodeId }];
-  } else if (couponCode) {
-    // Fallback: raw coupon (no customer restrictions)
-    sessionParams.discounts = [{ coupon: couponCode }];
-  }
+  // NOTE: Discounts are now applied to line item prices directly (database-only discounts)
+  // No Stripe promotion codes or coupons used
 
   // Add subscription-specific settings
   if (mode === 'subscription') {

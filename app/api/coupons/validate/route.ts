@@ -137,12 +137,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<CouponRespons
 
     // Check first_time_only restriction
     if (discount.first_time_only && user) {
-      // Check if user has previous orders
+      // Check if user has previous completed orders
       const { count: orderCount } = await serviceSupabase
         .from('orders')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id)
-        .eq('status', 'paid');
+        .eq('status', 'completed');
 
       if (orderCount && orderCount > 0) {
         return NextResponse.json(

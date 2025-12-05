@@ -21,19 +21,18 @@ export interface CartItem {
 }
 
 /**
- * Coupon interface
+ * Discount interface (database-only, no Stripe dependency)
  */
-export interface Coupon {
+export interface Discount {
   code: string;
-  promotionCodeId?: string; // Stripe promotion code ID (promo_xxx) - for applying at checkout
-  couponId: string;         // Underlying Stripe coupon ID
+  discountId: string;       // Database discount ID
   discountType: 'percent' | 'amount';
   discountPercent?: number;
-  discountAmount?: number; // in cents
+  discountAmount?: number;  // in cents
   valid: boolean;
   restrictions?: {
-    firstTimeOnly?: boolean;
     minimumAmount?: number;
+    expiresAt?: string;
   };
 }
 
@@ -42,7 +41,7 @@ export interface Coupon {
  */
 interface CartState {
   items: CartItem[];
-  coupon?: Coupon;
+  discount?: Discount;
   isLoading: boolean;
   error?: string;
 }
@@ -54,12 +53,12 @@ interface CartActions {
   addItem: (item: Omit<CartItem, 'id'>) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
-  applyCoupon: (code: string) => Promise<void>;
-  removeCoupon: () => void;
+  applyDiscount: (code: string) => Promise<void>;
+  removeDiscount: () => void;
   clearCart: () => void;
   clearError: () => void;
   getSubtotal: () => number;
-  getDiscount: () => number;
+  getDiscountAmount: () => number;
   getTotal: () => number;
   getItemCount: () => number;
 }
@@ -100,7 +99,7 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       // Initial state
       items: [],
-      coupon: undefined,
+      discount: undefined,
       isLoading: false,
       error: undefined,
 
@@ -212,15 +211,15 @@ export const useCartStore = create<CartStore>()(
         });
       },
 
-      // Apply coupon code
-      applyCoupon: async (code) => {
+      // Apply discount code (database-only, no Stripe)
+      applyDiscount: async (code) => {
         set({ isLoading: true, error: undefined });
 
         try {
           // Get current subtotal for min amount validation
           const subtotal = get().getSubtotal();
 
-          // Call API to validate coupon
+          // Call API to validate discount
           const response = await fetch('/api/coupons/validate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -233,11 +232,10 @@ export const useCartStore = create<CartStore>()(
             throw new Error(data.error || 'Invalid discount code');
           }
 
-          // Map API response to Coupon interface
-          const coupon: Coupon = {
+          // Map API response to Discount interface
+          const discount: Discount = {
             code: data.code,
-            promotionCodeId: data.promotionCodeId,
-            couponId: data.couponId,
+            discountId: data.discountId,
             discountType: data.discountType,
             discountPercent: data.discountPercent,
             discountAmount: data.discountAmount,
@@ -245,7 +243,7 @@ export const useCartStore = create<CartStore>()(
             restrictions: data.restrictions,
           };
 
-          set({ coupon, isLoading: false });
+          set({ discount, isLoading: false });
         } catch (error) {
           const errorMsg = error instanceof Error ? error.message : 'Failed to apply code';
           set({
@@ -261,16 +259,16 @@ export const useCartStore = create<CartStore>()(
         }
       },
 
-      // Remove coupon
-      removeCoupon: () => {
-        set({ coupon: undefined, error: undefined });
+      // Remove discount
+      removeDiscount: () => {
+        set({ discount: undefined, error: undefined });
       },
 
       // Clear entire cart
       clearCart: () => {
         set({
           items: [],
-          coupon: undefined,
+          discount: undefined,
           error: undefined,
         });
       },
@@ -289,18 +287,18 @@ export const useCartStore = create<CartStore>()(
       },
 
       // Get discount amount
-      getDiscount: () => {
-        const { coupon } = get();
-        if (!coupon || !coupon.valid) return 0;
+      getDiscountAmount: () => {
+        const { discount } = get();
+        if (!discount || !discount.valid) return 0;
 
         const subtotal = get().getSubtotal();
 
-        if (coupon.discountPercent) {
-          return Math.round((subtotal * coupon.discountPercent) / 100);
+        if (discount.discountPercent) {
+          return Math.round((subtotal * discount.discountPercent) / 100);
         }
 
-        if (coupon.discountAmount) {
-          return Math.min(coupon.discountAmount, subtotal);
+        if (discount.discountAmount) {
+          return Math.min(discount.discountAmount, subtotal);
         }
 
         return 0;
@@ -309,8 +307,8 @@ export const useCartStore = create<CartStore>()(
       // Get total (after discount)
       getTotal: () => {
         const subtotal = get().getSubtotal();
-        const discount = get().getDiscount();
-        return Math.max(0, subtotal - discount);
+        const discountAmount = get().getDiscountAmount();
+        return Math.max(0, subtotal - discountAmount);
       },
 
       // Get total item count
@@ -321,13 +319,13 @@ export const useCartStore = create<CartStore>()(
     {
       name: 'cart-storage', // localStorage key
       storage: createJSONStorage(() => localStorage),
-      version: 2, // Increment to clear old cart data
+      version: 3, // Increment to clear old cart data (v3: discount instead of coupon)
       migrate: (persistedState: any, version: number) => {
         // Clear cart if version is old or if items have invalid priceIds
-        if (version < 2) {
+        if (version < 3) {
           return {
             items: [],
-            coupon: undefined,
+            discount: undefined,
           };
         }
 
@@ -342,10 +340,10 @@ export const useCartStore = create<CartStore>()(
 
         return persistedState;
       },
-      // Only persist items and coupon, not loading/error states
+      // Only persist items and discount, not loading/error states
       partialize: (state) => ({
         items: state.items,
-        coupon: state.coupon,
+        discount: state.discount,
       }),
     }
   )

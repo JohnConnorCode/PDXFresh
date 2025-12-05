@@ -53,7 +53,9 @@ export function StaggerContainer({
       className={className}
     >
       {Children.map(children, (child) => (
-        <motion.div variants={item}>{child}</motion.div>
+        <motion.div variants={item} className="h-full">
+          {child}
+        </motion.div>
       ))}
     </motion.div>
   );

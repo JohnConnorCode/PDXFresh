@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { createServerClient } from '@/lib/supabase/server';
+import { KLAVIYO_CONFIG } from '@/lib/klaviyo';
+import { sendEmail } from '@/lib/email/send-template';
 
-const KLAVIYO_API_KEY = process.env.KLAVIYO_PRIVATE_API_KEY;
-const KLAVIYO_LIST_ID = process.env.KLAVIYO_LIST_ID || 'VFxqc9';
-const KLAVIYO_API_VERSION = '2024-10-15';
+const KLAVIYO_API_KEY = KLAVIYO_CONFIG.apiKey;
+const KLAVIYO_LIST_ID = KLAVIYO_CONFIG.listId;
+const KLAVIYO_API_VERSION = KLAVIYO_CONFIG.apiVersion;
 
 export async function POST(req: NextRequest) {
   // Check if user is authenticated
@@ -120,6 +122,35 @@ export async function POST(req: NextRequest) {
         throw new Error('Failed to subscribe to Klaviyo list');
       }
     }
+
+    // Store Klaviyo profile ID in Supabase for bidirectional sync
+    if (user && finalProfileId) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          klaviyo_profile_id: finalProfileId,
+          klaviyo_subscribed: true,
+          klaviyo_subscribed_at: new Date().toISOString(),
+        })
+        .eq('id', user.id);
+
+      if (profileError) {
+        logger.warn('Failed to save Klaviyo profile ID to Supabase:', profileError);
+      }
+    }
+
+    // Send newsletter welcome email
+    await sendEmail({
+      to: email,
+      template: 'newsletter_welcome',
+      data: {
+        customerName: firstName || email.split('@')[0],
+        email,
+      },
+      userId: user?.id,
+    });
+
+    logger.info(`Newsletter welcome email sent to ${email}`);
 
     return NextResponse.json({
       success: true,

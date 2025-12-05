@@ -23,18 +23,20 @@ interface ThankYouPageProps {
 
 export default async function ThankYouPage({ searchParams }: ThankYouPageProps) {
   const user = await getActiveUser();
-
-  if (!user) {
-    redirect('/login?redirectTo=/thank-you');
-  }
-
   const sessionId = searchParams.session_id;
   const plan = searchParams.plan;
+
+  // Guest checkout: Allow access if they have a valid session_id
+  // Authenticated users: Always have access
+  if (!user && !sessionId) {
+    // No user AND no session = suspicious, redirect to login
+    redirect('/login?redirectTo=/thank-you');
+  }
 
   // Track purchase completion
   if (sessionId) {
     await trackServerEvent('purchase_completed', {
-      userId: user.id,
+      userId: user?.id || 'guest',
       sessionId,
       plan: plan || 'unknown',
     });
@@ -45,9 +47,8 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
   const upsellsEnabled = isFeatureEnabled('upsells_enabled');
   const showOnThankYou = isFeatureEnabled('upsells_show_on_thank_you');
 
-  if (upsellsEnabled && showOnThankYou) {
-    // Fetch upsell offers from Sanity
-    // For now, using mock data
+  if (upsellsEnabled && showOnThankYou && user) {
+    // Fetch upsell offers from Sanity (only for authenticated users)
     upsellOffers = await getUpsellOffers(user.partnership_tier || 'none', plan);
   }
 
@@ -99,10 +100,12 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
                   </span>
                 </div>
               )}
-              <div className="flex justify-between">
-                <span className="text-gray-600">Email:</span>
-                <span className="text-gray-900">{user.email}</span>
-              </div>
+              {user?.email && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Email:</span>
+                  <span className="text-gray-900">{user.email}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -122,8 +125,8 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
             </Link>
           </div>
 
-          {/* Referral Prompt */}
-          {user.referral_code && isFeatureEnabled('referrals_enabled') && (
+          {/* Referral Prompt - Only for authenticated users */}
+          {user?.referral_code && isFeatureEnabled('referrals_enabled') && (
             <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-lg p-6 mb-12">
               <h3 className="font-semibold text-lg mb-2">
                 🎁 Share the Love, Get Rewarded
@@ -151,8 +154,8 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
           )}
         </div>
 
-        {/* Upsell Offers */}
-        {upsellOffers.length > 0 && (
+        {/* Upsell Offers - Only for authenticated users with offers */}
+        {user && upsellOffers.length > 0 && (
           <div className="mb-12">
             <h2 className="font-heading text-2xl font-bold text-gray-900 text-center mb-6">
               Complete Your Experience

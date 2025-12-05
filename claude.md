@@ -211,27 +211,27 @@ const config: Config = defineConfig({
 
 ### Credentials Locations
 
-All Supabase credentials are stored in **Vercel Environment Variables** (Production):
+All Supabase credentials are stored in **Vercel Environment Variables** (Production) and `.env.local` (Development):
 
 | Variable | Description |
 |----------|-------------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL: `https://qjgenpwbaquqrvyrfsdo.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anon key for client-side access |
 | `SUPABASE_SERVICE_ROLE_KEY` | Admin service role key (server-side only) |
-| `SUPABASE_DB_PASSWORD` | Direct database password: `DrinkLongLife1!` |
-| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key |
-| `SUPABASE_SECRET_KEY` | Supabase secret key |
+| `SUPABASE_DB_PASSWORD` | Direct database password (NEVER commit this) |
+
+**SECURITY**: Never hardcode credentials in scripts or documentation. Always use environment variables.
 
 ### Database Connection
 
 **Pooler URL** (for migrations and direct SQL):
 ```
-postgresql://postgres.qjgenpwbaquqrvyrfsdo:[PASSWORD]@aws-1-us-east-1.pooler.supabase.com:5432/postgres
+postgresql://postgres.qjgenpwbaquqrvyrfsdo:$SUPABASE_DB_PASSWORD@aws-1-us-east-1.pooler.supabase.com:5432/postgres
 ```
 
 **Push Migrations**:
 ```bash
-SUPABASE_DB_PASSWORD="DrinkLongLife1!" npx supabase db push --db-url "postgresql://postgres.qjgenpwbaquqrvyrfsdo:DrinkLongLife1!@aws-1-us-east-1.pooler.supabase.com:5432/postgres"
+npx supabase db push --db-url "postgresql://postgres.qjgenpwbaquqrvyrfsdo:$SUPABASE_DB_PASSWORD@aws-1-us-east-1.pooler.supabase.com:5432/postgres"
 ```
 
 ### Project Reference

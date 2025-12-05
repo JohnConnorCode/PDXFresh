@@ -10,13 +10,13 @@ import { ShoppingBag, ArrowLeft, AlertCircle } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
 export default function CartPage() {
-  const { items, getSubtotal, getDiscount, getTotal, clearCart, removeItem } = useCartStore();
+  const { items, getSubtotal, getDiscountAmount, getTotal, clearCart, removeItem } = useCartStore();
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const subtotal = getSubtotal();
-  const discount = getDiscount();
+  const discountAmount = getDiscountAmount();
   const total = getTotal();
 
   // Clear checkout errors on mount and when cart changes
@@ -84,12 +84,10 @@ export default function CartPage() {
         throw new Error(validateError.error || 'Some items in your cart are no longer available');
       }
 
-      // Get discount code if applied
-      const { coupon } = useCartStore.getState();
-      // Prefer promotionCodeId (has restrictions) over raw couponId
-      const promotionCodeId = coupon?.valid ? coupon.promotionCodeId : undefined;
-      const couponCode = coupon?.valid && !promotionCodeId ? coupon.couponId : undefined;
-      logger.debug('Discount:', { promotionCodeId, couponCode });
+      // Get discount code if applied (database-only, no Stripe dependency)
+      const { discount } = useCartStore.getState();
+      const discountCode = discount?.valid ? discount.code : undefined;
+      logger.debug('Discount:', { discountCode });
 
       // Call checkout API
       logger.debug('Calling /api/checkout...');
@@ -98,8 +96,7 @@ export default function CartPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: checkoutItems,
-          promotionCodeId,
-          couponCode,
+          discountCode,
         }),
       });
 
@@ -196,10 +193,10 @@ export default function CartPage() {
                   <span>Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
-                {discount > 0 && (
+                {discountAmount > 0 && (
                   <div className="flex justify-between text-green-600 font-semibold">
                     <span>Discount</span>
-                    <span>-{formatPrice(discount)}</span>
+                    <span>-{formatPrice(discountAmount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-gray-600">

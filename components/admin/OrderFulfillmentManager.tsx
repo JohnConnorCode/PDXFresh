@@ -147,19 +147,26 @@ export function OrderFulfillmentManager() {
     setSuccess(null);
 
     try {
-      // Call update_order_fulfillment_status RPC function
-      const { error } = await supabase.rpc('update_order_fulfillment_status', {
-        p_order_id: selectedOrder.id,
-        p_new_status: newStatus,
-        p_notes: notes || null,
-        p_tracking_number: trackingNumber || null,
-        p_tracking_url: trackingUrl || null,
-        p_carrier: carrier || null,
+      // Call the fulfillment API endpoint which sends emails
+      const response = await fetch(`/api/admin/orders/${selectedOrder.id}/fulfillment`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: newStatus,
+          trackingNumber: trackingNumber || undefined,
+          trackingUrl: trackingUrl || undefined,
+          carrier: carrier || undefined,
+          notes: notes || undefined,
+        }),
       });
 
-      if (error) throw error;
+      const result = await response.json();
 
-      setSuccess(`Order status updated to ${newStatus}`);
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to update order');
+      }
+
+      setSuccess(result.message || `Order status updated to ${newStatus}`);
       loadOrders();
       loadStatusHistory(selectedOrder.id);
 

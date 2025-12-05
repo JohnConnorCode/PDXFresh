@@ -28,9 +28,12 @@ export type AnalyticsEvent =
   | 'checkout_completed'
   | 'checkout_abandoned'
   | 'purchase_completed'
+  | 'order_refunded'
+  | 'payment_failed'
 
   // Referral events
   | 'referral_link_shared'
+  | 'referral_link_clicked'
   | 'referral_signup'
   | 'referral_purchase_completed'
   | 'referral_reward_issued'

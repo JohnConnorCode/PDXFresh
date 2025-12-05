@@ -6,36 +6,36 @@ import { Tag, X } from 'lucide-react';
 
 export function CouponInput() {
   const [code, setCode] = useState('');
-  const { coupon, isLoading, error, applyCoupon, removeCoupon } = useCartStore();
+  const { discount, isLoading, error, applyDiscount, removeDiscount } = useCartStore();
 
   const handleApply = async () => {
     if (!code.trim()) return;
-    await applyCoupon(code.trim().toUpperCase());
+    await applyDiscount(code.trim().toUpperCase());
   };
 
   const handleRemove = () => {
-    removeCoupon();
+    removeDiscount();
     setCode('');
   };
 
-  if (coupon?.valid) {
+  if (discount?.valid) {
     return (
       <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
         <div className="flex items-center gap-2">
           <Tag className="w-5 h-5 text-green-600" />
           <div>
-            <p className="font-semibold text-green-900">Coupon Applied: {coupon.code}</p>
+            <p className="font-semibold text-green-900">Code Applied: {discount.code}</p>
             <p className="text-sm text-green-700">
-              {coupon.discountPercent
-                ? `${coupon.discountPercent}% off`
-                : `$${(coupon.discountAmount! / 100).toFixed(2)} off`}
+              {discount.discountPercent
+                ? `${discount.discountPercent}% off`
+                : `$${(discount.discountAmount! / 100).toFixed(2)} off`}
             </p>
           </div>
         </div>
         <button
           onClick={handleRemove}
           className="p-2 hover:bg-green-100 rounded-full transition-colors"
-          aria-label="Remove coupon"
+          aria-label="Remove discount"
         >
           <X className="w-5 h-5 text-green-600" />
         </button>
@@ -51,7 +51,7 @@ export function CouponInput() {
           value={code}
           onChange={(e) => setCode(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleApply()}
-          placeholder="Enter coupon code"
+          placeholder="Enter discount code"
           className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-transparent"
           disabled={isLoading}
         />

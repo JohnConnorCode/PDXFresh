@@ -7,6 +7,7 @@ import { completeReferral } from '@/lib/referral-utils';
 import { trackServerEvent } from '@/lib/analytics';
 import { logger } from '@/lib/logger';
 import { sendEmail } from '@/lib/email/send-template';
+import { trackPurchaseEvent, trackSubscriptionEvent } from '@/lib/klaviyo';
 import {
   InvoiceWithSubscription,
   getShippingDetails,
@@ -128,6 +129,18 @@ export async function POST(req: NextRequest) {
         break;
       }
 
+      case 'charge.refunded': {
+        const charge = event.data.object as Stripe.Charge;
+        await handleChargeRefunded(charge);
+        break;
+      }
+
+      case 'payment_intent.payment_failed': {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        await handlePaymentIntentFailed(paymentIntent);
+        break;
+      }
+
       default:
         // Unhandled event type
         break;
@@ -226,6 +239,12 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   if (mode === 'payment' && payment_intent) {
     const paymentIntentId = typeof payment_intent === 'string' ? payment_intent : payment_intent.id;
 
+    // Extract discount info from metadata
+    const discountCode = metadata?.discountCode || null;
+    const discountId = metadata?.discountId || null;
+    const discountAmount = metadata?.discountAmount ? parseInt(metadata.discountAmount, 10) : 0;
+    const discountType = metadata?.discountType || null;
+
     // Create order record for E2E test verification (upsert to prevent duplicates)
     const { data: orderData, error: orderError } = await supabase
       .from('orders')
@@ -243,6 +262,11 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         user_id: userId || null,
         metadata: session.metadata || {},
         fulfillment_status: 'pending', // Default fulfillment status
+        // Discount info
+        discount_code: discountCode,
+        discount_id: discountId,
+        discount_amount: discountAmount,
+        discount_type: discountType,
         // Capture shipping information from Stripe
         shipping_name: getShippingDetails(session)?.name || session.customer_details?.name,
         shipping_address_line1: getShippingDetails(session)?.address?.line1,
@@ -280,7 +304,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
             if (variant) {
               // Call decrease_inventory function
-              const { error: inventoryError } = await supabase.rpc('decrease_inventory', {
+              const { data: inventoryResult, error: inventoryError } = await supabase.rpc('decrease_inventory', {
                 p_variant_id: variant.id,
                 p_quantity: item.quantity || 1,
                 p_order_id: orderData?.id || null,
@@ -288,8 +312,30 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
               });
 
               if (inventoryError) {
-                logger.error(`Error decreasing inventory for variant ${variant.id}:`, inventoryError);
+                // CRITICAL: Log detailed error for admin monitoring
+                logger.error(`❌ INVENTORY ERROR: Failed to decrease inventory`, {
+                  variantId: variant.id,
+                  priceId: price.id,
+                  quantity: item.quantity || 1,
+                  orderId: orderData?.id,
+                  sessionId: session.id,
+                  error: inventoryError,
+                });
+              } else if (inventoryResult && !inventoryResult.success) {
+                // Inventory decrease returned failure (e.g., insufficient stock)
+                logger.warn(`⚠️ INVENTORY WARNING: Decrease returned failure`, {
+                  variantId: variant.id,
+                  result: inventoryResult,
+                  orderId: orderData?.id,
+                });
               }
+            } else {
+              // CRITICAL: Variant not found - product sync issue
+              logger.error(`❌ PRODUCT SYNC ERROR: Variant not found for price`, {
+                priceId: price.id,
+                sessionId: session.id,
+                orderId: orderData?.id,
+              });
             }
           }
         }
@@ -309,6 +355,9 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                 price: item.amount_total || 0,
               })),
               subtotal: session.amount_subtotal || 0,
+              // Discount info for the email
+              discountCode: discountCode || undefined,
+              discountAmount: discountAmount || undefined,
               total: session.amount_total || 0,
               currency: session.currency || 'usd',
             },
@@ -320,6 +369,37 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         await supabase.rpc('release_reservation', {
           p_session_id: session.id
         });
+
+        // KLAVIYO: Track purchase event for email marketing
+        const customerEmail = session.customer_email || session.customer_details?.email;
+        if (customerEmail) {
+          // Check if this is first purchase for this user
+          let isFirstPurchase = true;
+          if (userId) {
+            const { count } = await supabase
+              .from('orders')
+              .select('id', { count: 'exact', head: true })
+              .eq('user_id', userId)
+              .eq('status', 'completed');
+            isFirstPurchase = (count || 0) <= 1; // 1 = just this order
+          }
+
+          await trackPurchaseEvent({
+            email: customerEmail,
+            orderId: session.id,
+            orderTotal: session.amount_total || 0,
+            currency: session.currency || 'usd',
+            items: lineItems.data.map(item => ({
+              name: item.description || 'Product',
+              quantity: item.quantity || 1,
+              price: item.amount_total || 0,
+            })),
+            discountCode: discountCode || undefined,
+            discountAmount: discountAmount || undefined,
+            isFirstPurchase,
+            isSubscription: false,
+          });
+        }
       }
     }
 
@@ -332,8 +412,20 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     }
   }
 
-  // Track promotion code redemption if a discount was applied
+  // Track promotion code redemption if a discount was applied (Stripe coupons)
   await trackPromotionRedemption(session, userId, mode === 'subscription' ? 'subscription' : 'one-time');
+
+  // CRITICAL: Track database discount redemption
+  // This increments the times_redeemed counter for database-only discounts
+  if (metadata?.discountId) {
+    try {
+      await supabase.rpc('redeem_discount', { p_discount_id: metadata.discountId });
+      logger.info(`Redeemed database discount: ${metadata.discountCode} (${metadata.discountId})`);
+    } catch (discountError) {
+      // Don't fail the webhook if discount tracking fails
+      logger.error('Error redeeming database discount:', discountError);
+    }
+  }
 }
 
 /**
@@ -469,6 +561,35 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
       updated_at: new Date().toISOString(),
     })
     .eq('id', profile.id);
+
+  // KLAVIYO: Track subscription event for email marketing
+  // Only track on new subscriptions (status = active and created event)
+  if (status === 'active') {
+    try {
+      // Get customer email from Stripe
+      const stripeCustomer = await stripe.customers.retrieve(customer);
+      if (stripeCustomer && !stripeCustomer.deleted && stripeCustomer.email) {
+        // Get product name for the plan
+        const product = typeof price.product === 'string'
+          ? await stripe.products.retrieve(price.product)
+          : price.product;
+        const planName = (product && 'name' in product) ? product.name : currentPlanLabel || 'Subscription';
+        const interval = price.recurring?.interval || 'month';
+        const amount = price.unit_amount || 0;
+
+        await trackSubscriptionEvent(
+          stripeCustomer.email,
+          id,
+          planName,
+          amount,
+          interval
+        );
+      }
+    } catch (klaviyoError) {
+      // Don't fail webhook if Klaviyo tracking fails
+      logger.warn('Failed to track subscription in Klaviyo:', klaviyoError);
+    }
+  }
 }
 
 /**
@@ -606,6 +727,110 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
     currency,
     status: 'succeeded',
     stripePaymentIntentId: id,
+  });
+}
+
+/**
+ * Handle charge refunded event
+ * Updates order status to 'refunded' and optionally restores inventory
+ */
+async function handleChargeRefunded(charge: Stripe.Charge) {
+  const supabase = createServiceRoleClient();
+  const paymentIntentId = typeof charge.payment_intent === 'string'
+    ? charge.payment_intent
+    : charge.payment_intent?.id;
+
+  if (!paymentIntentId) {
+    logger.warn('Charge refunded without payment_intent:', charge.id);
+    return;
+  }
+
+  // Find the order by payment_intent_id
+  const { data: order, error: orderError } = await supabase
+    .from('orders')
+    .select('id, status, stripe_session_id')
+    .eq('payment_intent_id', paymentIntentId)
+    .single();
+
+  if (orderError || !order) {
+    logger.warn('Order not found for refunded charge:', {
+      chargeId: charge.id,
+      paymentIntentId,
+    });
+    return;
+  }
+
+  // Determine refund status (full or partial)
+  const isFullRefund = charge.refunded && charge.amount_refunded >= charge.amount;
+  const newStatus = isFullRefund ? 'refunded' : 'partially_refunded';
+
+  // Update order status
+  const { error: updateError } = await supabase
+    .from('orders')
+    .update({
+      status: newStatus,
+      refund_amount: charge.amount_refunded,
+      refunded_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', order.id);
+
+  if (updateError) {
+    logger.error('Failed to update order status for refund:', {
+      orderId: order.id,
+      error: updateError,
+    });
+    return;
+  }
+
+  logger.info(`Order ${order.id} marked as ${newStatus}`, {
+    chargeId: charge.id,
+    refundAmount: charge.amount_refunded,
+  });
+
+  // Track refund event
+  await trackServerEvent('order_refunded', {
+    orderId: order.id,
+    chargeId: charge.id,
+    amount: charge.amount_refunded,
+    isFullRefund,
+  });
+}
+
+/**
+ * Handle payment intent failed event
+ * Records failed payment attempts for monitoring
+ */
+async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
+  const { id, metadata, last_payment_error, amount, currency } = paymentIntent;
+
+  logger.warn('Payment failed:', {
+    paymentIntentId: id,
+    errorCode: last_payment_error?.code,
+    errorMessage: last_payment_error?.message,
+  });
+
+  // Record failed purchase attempt (if userId is available)
+  if (metadata?.userId) {
+    await createPurchase({
+      userId: metadata.userId,
+      stripePriceId: metadata?.priceId || '',
+      stripeProductId: metadata?.productId || '',
+      sizeKey: metadata?.size_key,
+      amount,
+      currency: currency || 'usd',
+      status: 'failed',
+      stripePaymentIntentId: id,
+    });
+  }
+
+  // Track failed payment event
+  await trackServerEvent('payment_failed', {
+    userId: metadata?.userId,
+    paymentIntentId: id,
+    errorCode: last_payment_error?.code,
+    errorMessage: last_payment_error?.message,
+    amount,
   });
 }
 

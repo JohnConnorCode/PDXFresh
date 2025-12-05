@@ -151,6 +151,67 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
         currency: session.currency || 'usd',
       });
     }
+
+    // Send order confirmation email
+    const customerEmail = session.customer_email || session.customer_details?.email;
+    if (customerEmail && orderData) {
+      // Get line items for the email
+      const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
+      const items = lineItems.data.map(item => ({
+        name: item.description || 'Product',
+        quantity: item.quantity || 1,
+        price: item.amount_total || 0,
+      }));
+
+      await sendEmail({
+        to: customerEmail,
+        template: 'order_confirmation',
+        data: {
+          orderNumber: orderData.id.slice(0, 8).toUpperCase(),
+          customerName: session.customer_details?.name || 'there',
+          customerEmail,
+          items,
+          subtotal: session.amount_subtotal || 0,
+          total: session.amount_total || 0,
+          currency: session.currency || 'usd',
+        },
+        userId,
+      });
+
+      // Check if this is the user's first order and send welcome email
+      if (userId) {
+        const { count } = await supabase
+          .from('orders')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId);
+
+        // Send welcome email only on first purchase
+        if (count === 1) {
+          // Get referral code for the welcome email
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('referral_code')
+            .eq('id', userId)
+            .single();
+
+          await sendEmail({
+            to: customerEmail,
+            template: 'welcome_new_customer',
+            data: {
+              customerName: session.customer_details?.name || 'there',
+              referralCode: profile?.referral_code || '',
+              referralUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://drinklonglife.com'}/referral/${profile?.referral_code || ''}`,
+            },
+            userId,
+          });
+
+          logger.info(`Welcome email sent to new customer ${customerEmail}`);
+        }
+
+        // Complete referral if this is the first purchase
+        await completeReferral(userId);
+      }
+    }
   }
 }
 
@@ -235,6 +296,13 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
 export async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const supabase = createServiceRoleClient();
 
+  // Get subscription details before updating
+  const { data: subData } = await supabase
+    .from('subscriptions')
+    .select('user_id, profiles:user_id(email, full_name, name)')
+    .eq('stripe_subscription_id', subscription.id)
+    .single();
+
   await supabase
     .from('subscriptions')
     .update({
@@ -242,6 +310,38 @@ export async function handleSubscriptionDeleted(subscription: Stripe.Subscriptio
       canceled_at: new Date(subscription.canceled_at! * 1000).toISOString(),
     })
     .eq('stripe_subscription_id', subscription.id);
+
+  // Send subscription canceled email
+  if (subData?.profiles) {
+    const profile = subData.profiles as any;
+    const customerEmail = profile.email;
+    const customerName = profile.full_name || profile.name || 'there';
+
+    if (customerEmail) {
+      // Get product name from Stripe
+      const price = subscription.items.data[0]?.price;
+      const product = price?.product
+        ? (typeof price.product === 'string'
+          ? await stripe.products.retrieve(price.product)
+          : price.product)
+        : null;
+
+      // Get subscription period end using type-safe helper
+      const periods = getSubscriptionPeriods(subscription);
+
+      await sendEmail({
+        to: customerEmail,
+        template: 'subscription_canceled',
+        data: {
+          customerName,
+          planName: (product && 'name' in product) ? product.name : 'Subscription',
+          cancelDate: new Date().toLocaleDateString(),
+          accessUntil: new Date(periods.currentPeriodEnd * 1000).toLocaleDateString(),
+        },
+        userId: subData.user_id,
+      });
+    }
+  }
 }
 
 /**
@@ -274,10 +374,47 @@ export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   const subscriptionId = typeof subscription === 'string' ? subscription : subscription.id;
   const supabase = createServiceRoleClient();
 
+  // Update subscription status
   await supabase
     .from('subscriptions')
     .update({ status: 'past_due' })
     .eq('stripe_subscription_id', subscriptionId);
+
+  // Send payment failed email to customer
+  const customerEmail = invoice.customer_email;
+  if (customerEmail) {
+    // Get subscription details for email
+    const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const price = stripeSubscription.items.data[0]?.price;
+    const product = price?.product
+      ? (typeof price.product === 'string'
+        ? await stripe.products.retrieve(price.product)
+        : price.product)
+      : null;
+
+    // Find user for tracking
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id, full_name, name')
+      .eq('stripe_customer_id', invoice.customer)
+      .single();
+
+    await sendEmail({
+      to: customerEmail,
+      template: 'payment_failed',
+      data: {
+        customerName: profile?.full_name || profile?.name || 'there',
+        planName: (product && 'name' in product) ? product.name : 'Subscription',
+        amount: (invoice.amount_due / 100).toFixed(2),
+        currency: invoice.currency?.toUpperCase() || 'USD',
+        retryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString(), // 3 days from now
+        updatePaymentUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://drinklonglife.com'}/account/billing`,
+      },
+      userId: profile?.id,
+    });
+
+    logger.info(`Payment failed notification sent to ${customerEmail}`);
+  }
 }
 
 /**
@@ -368,6 +505,52 @@ async function handleTierUpgrade(userId: string, newTier: string) {
 }
 
 /**
+ * Handle charge refunded
+ */
+export async function handleChargeRefunded(charge: Stripe.Charge) {
+  const supabase = createServiceRoleClient();
+
+  // Find the order by payment intent
+  const { data: order } = await supabase
+    .from('orders')
+    .select('id, customer_email, amount_total, user_id')
+    .eq('stripe_payment_intent_id', charge.payment_intent)
+    .single();
+
+  if (!order) {
+    logger.warn(`No order found for refunded charge ${charge.id}`);
+    return;
+  }
+
+  // Update order status
+  await supabase
+    .from('orders')
+    .update({
+      payment_status: charge.amount_refunded === charge.amount ? 'refunded' : 'partial_refund',
+      fulfillment_status: 'refunded',
+    })
+    .eq('id', order.id);
+
+  // Send refund confirmation email
+  if (order.customer_email) {
+    const refundAmount = (charge.amount_refunded / 100).toFixed(2);
+    await sendEmail({
+      to: order.customer_email,
+      template: 'refund_confirmation',
+      data: {
+        orderNumber: order.id.slice(0, 8).toUpperCase(),
+        customerName: 'there', // We don't have the name here
+        refundAmount,
+        currency: charge.currency,
+        reason: charge.refunds?.data[0]?.reason || 'Customer request',
+        refundDate: new Date().toLocaleDateString(),
+      },
+      userId: order.user_id,
+    });
+  }
+}
+
+/**
  * Process a webhook event by type
  * Used by retry mechanism to replay failed webhooks
  */
@@ -401,6 +584,11 @@ export async function processWebhookEvent(eventType: string, eventData: any): Pr
 
     case 'payment_intent.succeeded': {
       await handlePaymentIntentSucceeded(eventData as Stripe.PaymentIntent);
+      break;
+    }
+
+    case 'charge.refunded': {
+      await handleChargeRefunded(eventData as Stripe.Charge);
       break;
     }
 

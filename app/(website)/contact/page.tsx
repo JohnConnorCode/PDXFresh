@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import { Section } from '@/components/Section';
 import { FadeIn, StaggerContainer } from '@/components/animations';
+import { ContactForm } from '@/components/ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact Us | Long Life',
@@ -125,103 +126,7 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <FadeIn direction="up">
-            <div className="max-w-2xl mx-auto bg-gradient-to-br from-accent-cream/30 to-white rounded-2xl p-8 md:p-12 border-2 border-gray-100 shadow-lg">
-              <h2 className="font-heading text-3xl font-bold mb-6 text-gray-900 text-center">
-                Send Us a Message
-              </h2>
-              <form className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-accent-primary focus:outline-none transition-colors"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-accent-primary focus:outline-none transition-colors"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-accent-primary focus:outline-none transition-colors"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Phone Number (Optional)
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-accent-primary focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Subject
-                  </label>
-                  <select
-                    id="subject"
-                    name="subject"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-accent-primary focus:outline-none transition-colors"
-                    required
-                  >
-                    <option value="">Select a topic...</option>
-                    <option value="general">General Inquiry</option>
-                    <option value="subscription">Subscription Question</option>
-                    <option value="wholesale">Wholesale Partnership</option>
-                    <option value="product">Product Information</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={6}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-accent-primary focus:outline-none transition-colors resize-none"
-                    required
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full px-8 py-4 bg-gradient-to-r from-accent-primary to-accent-green text-white rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-                >
-                  Send Message
-                </button>
-              </form>
-            </div>
+            <ContactForm />
           </FadeIn>
         </div>
       </Section>

@@ -1,14 +1,10 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import Image from 'next/image';
 import { getReferralByCode } from '@/lib/referral-utils';
 import { getUserById } from '@/lib/user-utils';
-import { getFeatureValue } from '@/lib/feature-flags';
 import { trackServerEvent } from '@/lib/analytics';
-import { client } from '@/lib/sanity.client';
-import { activeReferralRewardQuery } from '@/lib/sanity.queries';
-import { urlFor } from '@/lib/image';
+import { FadeIn } from '@/components/animations';
 
 interface ReferralPageProps {
   params: {
@@ -16,42 +12,22 @@ interface ReferralPageProps {
   };
 }
 
-interface ReferralReward {
-  _id: string;
-  title: string;
-  shortDescription: string;
-  description: string;
-  rewardType: string;
-  discountPercentage?: number;
-  discountAmount?: number;
-  creditAmount?: number;
-  recipientType: string;
-  landingPageHeadline?: string;
-  landingPageImage?: {
-    asset: { _id: string; url: string };
-    alt?: string;
-  };
-}
-
-export async function generateMetadata(): Promise<Metadata> {
-  const reward = await client.fetch<ReferralReward | null>(activeReferralRewardQuery);
-
-  const rewardPercentage = reward?.discountPercentage || getFeatureValue('referrals_reward_percentage');
+export async function generateMetadata({ params }: ReferralPageProps): Promise<Metadata> {
+  const referral = await getReferralByCode(params.code);
+  const referrer = referral ? await getUserById(referral.referrer_id) : null;
+  const referrerName = referrer?.full_name || referrer?.name || 'a friend';
 
   return {
-    title: `Get ${rewardPercentage}% Off | Long Life Referral`,
-    description: reward?.shortDescription || `You've been referred to Long Life! Get ${rewardPercentage}% off your first order.`,
+    title: `${referrerName} invited you | Get 10% Off | Long Life`,
+    description: `You've been invited to try Long Life cold-pressed juices! Get 10% off your first order.`,
   };
 }
 
 export default async function ReferralLandingPage({ params }: ReferralPageProps) {
   const { code } = params;
 
-  // Get referral details and Sanity content in parallel
-  const [referral, reward] = await Promise.all([
-    getReferralByCode(code),
-    client.fetch<ReferralReward | null>(activeReferralRewardQuery),
-  ]);
+  // Get referral details
+  const referral = await getReferralByCode(code);
 
   if (!referral) {
     return <InvalidReferralPage code={code} />;
@@ -72,178 +48,252 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
   });
 
   // Track referral page view
-  await trackServerEvent('referral_link_shared', {
+  await trackServerEvent('referral_link_clicked', {
     referralCode: code,
     referrerId: referral.referrer_id,
   });
 
-  // Use Sanity content with feature flag fallbacks
-  const rewardPercentage = reward?.discountPercentage || getFeatureValue('referrals_reward_percentage');
-  const referrerName = referrer.full_name || referrer.name || 'a friend';
-  const landingHeadline = reward?.landingPageHeadline;
-  const landingDescription = reward?.shortDescription;
-  const landingImageUrl = reward?.landingPageImage?.asset ? urlFor(reward.landingPageImage).url() : null;
+  const referrerName = referrer.full_name || referrer.name || 'A friend';
+  const firstName = referrerName.split(' ')[0];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 py-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          {landingImageUrl ? (
-            <div className="relative w-24 h-24 mx-auto mb-6 rounded-full overflow-hidden shadow-lg">
-              <Image
-                src={landingImageUrl}
-                alt={reward?.landingPageImage?.alt || 'Referral reward'}
-                fill
-                className="object-cover"
-              />
+    <>
+      {/* Hero Section */}
+      <section className="relative min-h-[70vh] flex items-center bg-black overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black" />
+
+        {/* Ambient orbs */}
+        <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-accent-green/20 via-transparent to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-gradient-to-tl from-accent-yellow/15 via-transparent to-transparent rounded-full blur-3xl" />
+
+        {/* Grid pattern */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+
+        <div className="relative z-10 max-w-4xl mx-auto px-5 sm:px-6 text-center py-16">
+          <FadeIn direction="up" delay={0.1}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-green/20 backdrop-blur-sm rounded-full mb-6 border border-accent-green/30">
+              <div className="w-2 h-2 rounded-full bg-accent-green animate-pulse" />
+              <span className="text-sm font-medium text-accent-green">PERSONAL INVITATION</span>
             </div>
-          ) : (
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full mb-6">
-              <span className="text-4xl">🎁</span>
+          </FadeIn>
+
+          <FadeIn direction="up" delay={0.2}>
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-white leading-tight">
+              {firstName} thinks you&apos;ll
+              <br />
+              <span className="bg-gradient-to-r from-accent-green via-accent-yellow to-accent-primary bg-clip-text text-transparent">
+                love Long Life
+              </span>
+            </h1>
+          </FadeIn>
+
+          <FadeIn direction="up" delay={0.3}>
+            <p className="text-xl text-white/60 max-w-2xl mx-auto mb-8">
+              Get <span className="text-accent-green font-semibold">10% off</span> your first order of premium cold-pressed juices.
+              Real ingredients, real benefits, delivered fresh.
+            </p>
+          </FadeIn>
+
+          <FadeIn direction="up" delay={0.4}>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+              <Link
+                href={`/signup?ref=${code}`}
+                className="group px-8 py-4 bg-accent-green text-black font-bold text-lg rounded-full hover:bg-accent-green/90 transition-all shadow-lg shadow-accent-green/30 hover:shadow-xl hover:scale-105 flex items-center gap-2"
+              >
+                Claim Your 10% Off
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+              <Link
+                href="/blends"
+                className="px-8 py-4 text-white/70 font-semibold text-lg hover:text-white transition-colors"
+              >
+                Browse Products
+              </Link>
             </div>
-          )}
+          </FadeIn>
 
-          <h1 className="font-heading text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            {landingHeadline ? (
-              <span dangerouslySetInnerHTML={{ __html: landingHeadline.replace('{{referrerName}}', referrerName) }} />
-            ) : (
-              <>
-                {referrerName} wants you to try
-                <br />
-                <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  Long Life
-                </span>
-              </>
-            )}
-          </h1>
-
-          <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto mb-8">
-            {landingDescription ? (
-              landingDescription.replace('{{rewardPercentage}}', String(rewardPercentage)).replace('{{referrerName}}', referrerName)
-            ) : (
-              <>
-                Get <strong>{rewardPercentage}% off</strong> your first order, and{' '}
-                {referrerName} gets <strong>{rewardPercentage}% off</strong> too!
-              </>
-            )}
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Link
-              href={`/signup?ref=${code}`}
-              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
-            >
-              Claim Your {rewardPercentage}% Discount
-            </Link>
-            <Link
-              href="/subscriptions"
-              className="px-8 py-4 bg-white text-gray-900 border-2 border-gray-300 rounded-lg font-semibold text-lg hover:border-gray-400 transition-colors"
-            >
-              View Products
-            </Link>
-          </div>
-
-          {/* Social Proof */}
-          <p className="text-sm text-gray-500">
-            Join 10,000+ customers who trust Long Life
-          </p>
+          <FadeIn direction="up" delay={0.5}>
+            <p className="text-sm text-white/40">
+              Referral code: <code className="text-white/60 font-mono">{code.toUpperCase()}</code>
+            </p>
+          </FadeIn>
         </div>
+      </section>
 
-        {/* How It Works */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
-          <h2 className="font-heading text-2xl font-bold text-gray-900 text-center mb-8">
-            How It Works
-          </h2>
+      {/* Social Proof */}
+      <section className="bg-gradient-to-r from-accent-green via-accent-yellow to-accent-primary py-4">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6">
+          <div className="flex flex-wrap justify-center items-center gap-8 text-black/80 text-sm font-medium">
+            <span>10,000+ Happy Customers</span>
+            <span className="hidden sm:inline">|</span>
+            <span>100% Organic</span>
+            <span className="hidden sm:inline">|</span>
+            <span>Free Shipping $50+</span>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-5 sm:px-6">
+          <FadeIn direction="up">
+            <div className="text-center mb-12">
+              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                Redeem Your Discount in 3 Steps
+              </h2>
+              <p className="text-gray-600">Simple, fast, and your discount is applied automatically.</p>
+            </div>
+          </FadeIn>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">1️⃣</span>
+            <FadeIn direction="up" delay={0.1}>
+              <div className="text-center">
+                <div className="w-14 h-14 bg-gradient-to-br from-accent-green to-accent-green/70 rounded-xl flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl shadow-lg shadow-accent-green/30">
+                  1
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Create Account</h3>
+                <p className="text-gray-600 text-sm">
+                  Sign up using {firstName}&apos;s referral link (your discount is automatically tracked)
+                </p>
               </div>
-              <h3 className="font-semibold text-lg mb-2">Sign Up</h3>
-              <p className="text-gray-600 text-sm">
-                Create your free account using {referrerName}'s referral link
-              </p>
-            </div>
+            </FadeIn>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">2️⃣</span>
+            <FadeIn direction="up" delay={0.2}>
+              <div className="text-center">
+                <div className="w-14 h-14 bg-gradient-to-br from-accent-yellow to-accent-yellow/70 rounded-xl flex items-center justify-center mx-auto mb-4 text-black font-bold text-xl shadow-lg shadow-accent-yellow/30">
+                  2
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Choose Your Blends</h3>
+                <p className="text-gray-600 text-sm">
+                  Browse our cold-pressed juice collection and add your favorites to cart
+                </p>
               </div>
-              <h3 className="font-semibold text-lg mb-2">Shop & Save</h3>
-              <p className="text-gray-600 text-sm">
-                Choose your products and get {rewardPercentage}% off your first
-                order automatically
-              </p>
-            </div>
+            </FadeIn>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">3️⃣</span>
+            <FadeIn direction="up" delay={0.3}>
+              <div className="text-center">
+                <div className="w-14 h-14 bg-gradient-to-br from-accent-primary to-accent-primary/70 rounded-xl flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl shadow-lg shadow-accent-primary/30">
+                  3
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Save 10%</h3>
+                <p className="text-gray-600 text-sm">
+                  Your discount is applied automatically at checkout. No code needed!
+                </p>
               </div>
-              <h3 className="font-semibold text-lg mb-2">Both Win!</h3>
-              <p className="text-gray-600 text-sm">
-                You save {rewardPercentage}%, and {referrerName} gets{' '}
-                {rewardPercentage}% off their next order too!
-              </p>
-            </div>
+            </FadeIn>
           </div>
         </div>
+      </section>
 
-        {/* Why Long Life */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="bg-gradient-to-br from-purple-100 to-purple-50 rounded-lg p-6">
-            <h3 className="font-semibold text-lg mb-3">🌿 Premium Ingredients</h3>
-            <p className="text-gray-700 text-sm">
-              Sourced from organic farms, scientifically formulated for maximum
-              longevity benefits.
-            </p>
-          </div>
+      {/* Why Long Life */}
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-5xl mx-auto px-5 sm:px-6">
+          <FadeIn direction="up">
+            <div className="text-center mb-12">
+              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                Why {firstName} Loves Long Life
+              </h2>
+            </div>
+          </FadeIn>
 
-          <div className="bg-gradient-to-br from-blue-100 to-blue-50 rounded-lg p-6">
-            <h3 className="font-semibold text-lg mb-3">🔬 Science-Backed</h3>
-            <p className="text-gray-700 text-sm">
-              Every blend is developed with the latest longevity research in mind.
-            </p>
-          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <FadeIn direction="up" delay={0.1}>
+              <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                <div className="w-12 h-12 bg-accent-green/10 rounded-xl flex items-center justify-center mb-4">
+                  <svg className="w-6 h-6 text-accent-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">100% Organic Ingredients</h3>
+                <p className="text-gray-600 text-sm">
+                  Every ingredient is certified organic. No preservatives, no additives, just pure nutrition.
+                </p>
+              </div>
+            </FadeIn>
 
-          <div className="bg-gradient-to-br from-green-100 to-green-50 rounded-lg p-6">
-            <h3 className="font-semibold text-lg mb-3">🚚 Fast Shipping</h3>
-            <p className="text-gray-700 text-sm">
-              Free shipping on all orders over $50. Most orders arrive in 2-3 days.
-            </p>
-          </div>
+            <FadeIn direction="up" delay={0.2}>
+              <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                <div className="w-12 h-12 bg-accent-yellow/10 rounded-xl flex items-center justify-center mb-4">
+                  <svg className="w-6 h-6 text-accent-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Cold-Pressed Fresh</h3>
+                <p className="text-gray-600 text-sm">
+                  Made fresh, never heated. Our hydraulic press preserves maximum nutrients and enzymes.
+                </p>
+              </div>
+            </FadeIn>
 
-          <div className="bg-gradient-to-br from-yellow-100 to-yellow-50 rounded-lg p-6">
-            <h3 className="font-semibold text-lg mb-3">💯 Satisfaction Guaranteed</h3>
-            <p className="text-gray-700 text-sm">
-              30-day money-back guarantee. Love it or get a full refund.
-            </p>
+            <FadeIn direction="up" delay={0.3}>
+              <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                <div className="w-12 h-12 bg-accent-primary/10 rounded-xl flex items-center justify-center mb-4">
+                  <svg className="w-6 h-6 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Fast, Free Shipping</h3>
+                <p className="text-gray-600 text-sm">
+                  Free shipping on orders over $50. Delivered cold in 2-3 business days.
+                </p>
+              </div>
+            </FadeIn>
+
+            <FadeIn direction="up" delay={0.4}>
+              <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">100% Satisfaction Guarantee</h3>
+                <p className="text-gray-600 text-sm">
+                  Not loving it? Get a full refund within 30 days. No questions asked.
+                </p>
+              </div>
+            </FadeIn>
           </div>
         </div>
+      </section>
 
-        {/* Final CTA */}
-        <div className="text-center bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-8 text-white">
-          <h2 className="font-heading text-3xl font-bold mb-4">
-            Ready to Get Started?
-          </h2>
-          <p className="text-lg mb-6 opacity-90">
-            Don't miss out on your exclusive {rewardPercentage}% discount!
-          </p>
-          <Link
-            href={`/signup?ref=${code}`}
-            className="inline-block px-8 py-4 bg-white text-purple-600 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors shadow-lg"
-          >
-            Claim My Discount Now →
-          </Link>
-          <p className="text-sm mt-4 opacity-75">
-            Referral code: <strong>{code.toUpperCase()}</strong>
-          </p>
+      {/* Final CTA */}
+      <section className="py-20 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-accent-green/10 via-transparent to-accent-yellow/10" />
+
+        <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-6 text-center">
+          <FadeIn direction="up">
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white">
+              Ready to feel
+              <br />
+              <span className="bg-gradient-to-r from-accent-green to-accent-yellow bg-clip-text text-transparent">
+                amazing?
+              </span>
+            </h2>
+          </FadeIn>
+
+          <FadeIn direction="up" delay={0.2}>
+            <p className="text-xl text-white/60 mb-8">
+              Use {firstName}&apos;s invitation and save 10% on your first order.
+            </p>
+          </FadeIn>
+
+          <FadeIn direction="up" delay={0.3}>
+            <Link
+              href={`/signup?ref=${code}`}
+              className="group inline-flex items-center gap-3 px-10 py-5 bg-accent-green text-black font-bold text-lg rounded-full hover:bg-accent-green/90 transition-all shadow-lg shadow-accent-green/30 hover:shadow-xl hover:scale-105"
+            >
+              Get My 10% Discount
+              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </FadeIn>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }
 
@@ -252,33 +302,34 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
  */
 function InvalidReferralPage({ code }: { code: string }) {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-16 px-4">
+    <div className="min-h-screen bg-black flex items-center justify-center py-16 px-4">
       <div className="max-w-md text-center">
-        <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <span className="text-4xl">❌</span>
+        <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
         </div>
 
-        <h1 className="font-heading text-3xl font-bold text-gray-900 mb-4">
-          Invalid Referral Code
+        <h1 className="font-heading text-3xl font-bold text-white mb-4">
+          Invalid Referral Link
         </h1>
 
-        <p className="text-gray-600 mb-8">
-          The referral code <strong>{code.toUpperCase()}</strong> is not valid or
-          has expired.
+        <p className="text-white/60 mb-8">
+          The referral code <code className="text-white/80 font-mono bg-white/10 px-2 py-1 rounded">{code.toUpperCase()}</code> is not valid or has expired.
         </p>
 
         <div className="space-y-3">
           <Link
-            href="/subscriptions"
-            className="block px-6 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+            href="/blends"
+            className="block px-6 py-3 bg-accent-green text-black rounded-full font-semibold hover:bg-accent-green/90 transition-colors"
           >
             Browse Products
           </Link>
           <Link
             href="/signup"
-            className="block px-6 py-3 bg-white text-gray-900 border-2 border-gray-300 rounded-lg font-semibold hover:border-gray-400 transition-colors"
+            className="block px-6 py-3 bg-white/10 text-white border border-white/20 rounded-full font-semibold hover:bg-white/20 transition-colors"
           >
-            Sign Up
+            Create Account
           </Link>
         </div>
       </div>

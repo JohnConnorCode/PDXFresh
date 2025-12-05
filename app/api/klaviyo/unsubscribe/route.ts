@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { createServerClient } from '@/lib/supabase/server';
+import { KLAVIYO_CONFIG } from '@/lib/klaviyo';
 
-const KLAVIYO_API_KEY = process.env.KLAVIYO_PRIVATE_API_KEY;
-const KLAVIYO_LIST_ID = process.env.KLAVIYO_LIST_ID || 'VFxqc9';
-const KLAVIYO_API_VERSION = '2024-10-15';
+const KLAVIYO_API_KEY = KLAVIYO_CONFIG.apiKey;
+const KLAVIYO_LIST_ID = KLAVIYO_CONFIG.listId;
+const KLAVIYO_API_VERSION = KLAVIYO_CONFIG.apiVersion;
 
 export async function POST(req: NextRequest) {
   // Check if user is authenticated

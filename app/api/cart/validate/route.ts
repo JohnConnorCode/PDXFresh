@@ -175,8 +175,15 @@ export async function POST(req: NextRequest) {
         }
 
         // INVENTORY CHECK: For both types
+        // CRITICAL: Use get_available_stock() to account for active reservations
         if (variant.track_inventory) {
-          if (variant.stock_quantity === null) {
+          // Get available stock (stock_quantity - active reservations)
+          const { data: availableStock, error: stockError } = await supabase.rpc(
+            'get_available_stock',
+            { p_variant_id: variant.id }
+          );
+
+          if (stockError || availableStock === null) {
             errors.push({
               priceId: item.priceId,
               error: 'Stock information unavailable',
@@ -184,13 +191,13 @@ export async function POST(req: NextRequest) {
             continue;
           }
 
-          if (variant.stock_quantity < item.quantity) {
+          if (availableStock < item.quantity) {
             errors.push({
               priceId: item.priceId,
-              error: variant.stock_quantity === 0
+              error: availableStock === 0
                 ? 'Out of stock'
-                : `Only ${variant.stock_quantity} available`,
-              available: variant.stock_quantity,
+                : `Only ${availableStock} available`,
+              available: availableStock,
             });
             continue;
           }

@@ -239,8 +239,71 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         </Suspense>
       </FadeIn>
 
-      {/* Filters */}
+      {/* Status Guide */}
       <FadeIn direction="up" delay={0.15}>
+        <details className="bg-gray-50 rounded-xl border border-gray-200 mb-6">
+          <summary className="px-4 py-3 cursor-pointer text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+            View Status Guide
+          </summary>
+          <div className="px-4 pb-4 pt-2 border-t border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Order Status</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 rounded">pending</span>
+                    <span className="text-gray-600">— Order created, awaiting payment confirmation</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded">paid</span>
+                    <span className="text-gray-600">— Payment successful, ready to fulfill</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded">processing</span>
+                    <span className="text-gray-600">— Order being prepared for shipping</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-800 rounded">shipped</span>
+                    <span className="text-gray-600">— Order dispatched to customer</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded">delivered</span>
+                    <span className="text-gray-600">— Order received by customer</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800 rounded">cancelled</span>
+                    <span className="text-gray-600">— Order cancelled before fulfillment</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Payment Status</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 rounded">unpaid</span>
+                    <span className="text-gray-600">— Awaiting payment from customer</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded">paid</span>
+                    <span className="text-gray-600">— Full payment received via Stripe</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-orange-100 text-orange-800 rounded">refunded</span>
+                    <span className="text-gray-600">— Full refund issued to customer</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 text-xs font-medium bg-orange-100 text-orange-800 rounded">partial_refund</span>
+                    <span className="text-gray-600">— Partial refund issued</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </FadeIn>
+
+      {/* Filters */}
+      <FadeIn direction="up" delay={0.18}>
         <OrderFilters />
       </FadeIn>
 

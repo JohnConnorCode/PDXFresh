@@ -6,6 +6,8 @@
 
 import { createServerClient } from '@/lib/supabase/server';
 import { isFeatureEnabled, getFeatureValue } from '@/lib/feature-flags';
+import { sendEmail } from '@/lib/email/send-template';
+import { logger } from '@/lib/logger';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -201,7 +203,49 @@ export async function trackReferral(
     .eq('id', newUserId);
 
   if (profileError) {
-    console.error('Failed to update referred_by:', profileError);
+    logger.error('Failed to update referred_by:', profileError);
+  }
+
+  // Send notification email to the referrer
+  try {
+    // Get referrer and referee details
+    const { data: referrerProfile } = await supabase
+      .from('profiles')
+      .select('email, full_name, name')
+      .eq('id', referral.referrer_id)
+      .single();
+
+    const { data: refereeProfile } = await supabase
+      .from('profiles')
+      .select('full_name, name, email')
+      .eq('id', newUserId)
+      .single();
+
+    // Get total signups for referrer
+    const { count: totalSignups } = await supabase
+      .from('referrals')
+      .select('*', { count: 'exact', head: true })
+      .eq('referrer_id', referral.referrer_id)
+      .not('referred_user_id', 'is', null);
+
+    if (referrerProfile?.email) {
+      await sendEmail({
+        to: referrerProfile.email,
+        template: 'referral_signup_notification',
+        data: {
+          referrerName: referrerProfile.full_name || referrerProfile.name || 'Ambassador',
+          refereeName: refereeProfile?.full_name || refereeProfile?.name || refereeProfile?.email?.split('@')[0] || 'Someone',
+          referralCode: referralCode.toUpperCase(),
+          totalSignups: totalSignups || 1,
+          dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://drinklonglife.com'}/account`,
+        },
+        userId: referral.referrer_id,
+      });
+
+      logger.info(`Referral signup notification sent to ${referrerProfile.email}`);
+    }
+  } catch (emailError) {
+    logger.error('Failed to send referral signup notification:', emailError);
   }
 
   return true;
@@ -294,9 +338,49 @@ async function issueReferralRewards(
       })
       .eq('id', referralId);
 
+    // Send reward notification email to referrer
+    try {
+      // Get referrer and referee details
+      const { data: referrerProfile } = await supabase
+        .from('profiles')
+        .select('email, full_name, name')
+        .eq('id', referrerId)
+        .single();
+
+      const { data: refereeProfile } = await supabase
+        .from('profiles')
+        .select('full_name, name, email')
+        .eq('id', refereeId)
+        .single();
+
+      // Get referral stats
+      const stats = await getReferralStats(referrerId);
+
+      if (referrerProfile?.email) {
+        await sendEmail({
+          to: referrerProfile.email,
+          template: 'referral_reward_earned',
+          data: {
+            referrerName: referrerProfile.full_name || referrerProfile.name || 'Ambassador',
+            refereeName: refereeProfile?.full_name || refereeProfile?.name || refereeProfile?.email?.split('@')[0] || 'Your friend',
+            rewardPercentage,
+            discountCode: referrerCoupon.id,
+            totalReferrals: stats.totalReferrals,
+            totalEarned: stats.issuedRewards,
+            dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://drinklonglife.com'}/account`,
+          },
+          userId: referrerId,
+        });
+
+        logger.info(`Referral reward notification sent to ${referrerProfile.email}`);
+      }
+    } catch (emailError) {
+      logger.error('Failed to send referral reward notification:', emailError);
+    }
+
     return true;
   } catch (error) {
-    console.error('Failed to issue referral rewards:', error);
+    logger.error('Failed to issue referral rewards:', error);
     return false;
   }
 }

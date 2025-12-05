@@ -8,9 +8,18 @@ import pg from 'pg';
 
 const { Pool } = pg;
 
-const SUPABASE_URL = 'https://qjgenpwbaquqrvyrfsdo.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqZ2VucHdiYXF1cXJ2eXJmc2RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5OTY0ODIsImV4cCI6MjA3ODU3MjQ4Mn0.rJvxrKdSFf5yw-DdVTxbhWKf6ClVBrwQE1Fvgj6nh-o';
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqZ2VucHdiYXF1cXJ2eXJmc2RvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2Mjk5NjQ4MiwiZXhwIjoyMDc4NTcyNDgyfQ.NnjPDj-24lOqa1xXyGOLwDowko3cpSUkBsFPhYCt9iM';
+// Load from environment variables - NEVER hardcode credentials
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SUPABASE_SERVICE_KEY) {
+  console.error('❌ Missing Supabase credentials. Required environment variables:');
+  console.error('   - NEXT_PUBLIC_SUPABASE_URL or SUPABASE_URL');
+  console.error('   - NEXT_PUBLIC_SUPABASE_ANON_KEY or SUPABASE_ANON_KEY');
+  console.error('   - SUPABASE_SERVICE_ROLE_KEY');
+  process.exit(1);
+}
 
 const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 const supabaseAnon = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -349,8 +358,14 @@ async function testDatabaseIntegrity() {
   console.log('🔧 DATABASE INTEGRITY');
   console.log('='.repeat(60) + '\n');
 
+  const DB_PASSWORD = process.env.SUPABASE_DB_PASSWORD;
+  if (!DB_PASSWORD) {
+    fail('Database connection', 'Missing SUPABASE_DB_PASSWORD environment variable');
+    return;
+  }
+
   const pool = new Pool({
-    connectionString: 'postgresql://postgres.qjgenpwbaquqrvyrfsdo:DrinkLongLife1!@aws-1-us-east-1.pooler.supabase.com:5432/postgres',
+    connectionString: `postgresql://postgres.qjgenpwbaquqrvyrfsdo:${DB_PASSWORD}@aws-1-us-east-1.pooler.supabase.com:5432/postgres`,
     ssl: { rejectUnauthorized: false }
   });
 
