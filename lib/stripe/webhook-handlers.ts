@@ -126,7 +126,7 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
         amount_total: session.amount_total,
         amount_subtotal: session.amount_subtotal,
         currency: session.currency,
-        status: 'completed',
+        status: 'paid',
         payment_status: session.payment_status,
         payment_method_id: session.payment_method_types?.[0],
         user_id: userId || null,
