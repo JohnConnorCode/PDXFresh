@@ -61,7 +61,7 @@ async function syncOrders() {
       amount_total: session.amount_total,
       amount_subtotal: session.amount_subtotal,
       currency: session.currency,
-      status: 'completed',
+      status: 'paid',
       payment_status: session.payment_status,
       user_id: session.metadata?.userId || null,
       metadata: session.metadata || {},
