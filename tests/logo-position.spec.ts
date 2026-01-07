@@ -9,6 +9,6 @@ test('verify logo image position', async ({ page }) => {
     fullPage: false
   });
 
-  const logo = page.locator('img[alt="Long Life Logo"]');
+  const logo = page.locator('img[alt="Portland Fresh Logo"]');
   await expect(logo.first()).toBeVisible();
 });

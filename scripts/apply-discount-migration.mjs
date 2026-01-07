@@ -209,7 +209,7 @@ VALUES ('WELCOME10', '$10 Off First Order', '$10 off orders over $50', 'amount',
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO public.discounts (code, name, description, discount_type, discount_percent, is_active)
-VALUES ('JUICE25', '25% Off', 'Special 25% discount', 'percent', 25, true)
+VALUES ('SAUCE25', '25% Off', 'Special 25% discount', 'percent', 25, true)
 ON CONFLICT (code) DO NOTHING;
     `);
     console.log('--- END SQL ---\n');
@@ -239,7 +239,7 @@ ON CONFLICT (code) DO NOTHING;
       is_active: true,
     },
     {
-      code: 'JUICE25',
+      code: 'SAUCE25',
       name: '25% Off',
       description: 'Special 25% discount',
       discount_type: 'percent',

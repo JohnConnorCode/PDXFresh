@@ -34,7 +34,7 @@ export async function submitNewsletter(formData: FormData) {
       await resend.emails.send({
         from: EMAIL_CONFIG.from,
         to: validatedData.email,
-        subject: 'Welcome to Long Life! 🌱',
+        subject: 'Welcome to Portland Fresh! 🌱',
         react: NewsletterWelcomeEmail({ email: validatedData.email }),
       });
     } catch (emailError) {

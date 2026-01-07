@@ -21,11 +21,11 @@ console.log('⚠️  Creating LIVE MODE prices for Green Bomb and Red Bomb\n');
 
 const products = {
   'green-bomb': {
-    id: 'prod_TQCAUzauvtIiWd', // Green Bomb - Cold-Pressed Juice
+    id: 'prod_TQCAUzauvtIiWd', // Green Bomb - Cold-Pressed Sauce
     name: 'Green Bomb'
   },
   'red-bomb': {
-    id: 'prod_TQCA0Z7B5O3xZC', // Red Bomb - Cold-Pressed Juice
+    id: 'prod_TQCA0Z7B5O3xZC', // Red Bomb - Cold-Pressed Sauce
     name: 'Red Bomb'
   }
 };

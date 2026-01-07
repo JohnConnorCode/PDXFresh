@@ -251,7 +251,7 @@ function CheckoutSuccessContent() {
               href="/blends"
               className="px-8 py-4 border-2 border-accent-primary text-accent-primary rounded-full font-semibold text-lg hover:bg-accent-primary hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
             >
-              View Our Blends
+              View Our Sauces
             </Link>
           </div>
         </FadeIn>
@@ -272,10 +272,10 @@ function CheckoutSuccessContent() {
             <p>
               Need help? Contact us at{' '}
               <a
-                href="mailto:support@drinklonglife.com"
+                href="mailto:support@pdxfreshfoods.com"
                 className="text-accent-primary hover:underline font-semibold"
               >
-                support@drinklonglife.com
+                support@pdxfreshfoods.com
               </a>
             </p>
           </div>

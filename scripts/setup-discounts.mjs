@@ -92,7 +92,7 @@ async function main() {
       is_active: true,
     },
     {
-      code: 'JUICE25',
+      code: 'SAUCE25',
       name: '25% Off',
       description: 'Special 25% discount',
       discount_type: 'percent',

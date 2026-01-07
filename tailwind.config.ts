@@ -9,14 +9,15 @@ const config: Config = {
     extend: {
       colors: {
         // Brand colors (can be overridden via CSS variables from Sanity)
-        'accent-primary': 'var(--accent-primary, #0f5348)',
-        'accent-yellow': 'var(--accent-yellow, #d7f25c)',
-        'accent-green': '#8cbfa4',
-        'accent-cream': 'var(--accent-cream, #f0ecea)',
+        'accent-primary': 'var(--accent-primary, #205b4c)',
+        'accent-yellow': 'var(--accent-yellow, #f6a723)',
+        'accent-green': 'var(--accent-green, #8ac7b8)',
+        'accent-cream': 'var(--accent-cream, #fdf5e6)',
+        'accent-secondary': 'var(--accent-secondary, #f28d6d)',
       },
       fontFamily: {
-        'sans': ['var(--font-jost)', 'system-ui', 'sans-serif'],
-        'heading': ['var(--font-jost)', 'system-ui', 'sans-serif'],
+        'sans': ['var(--font-grotesk)', 'system-ui', 'sans-serif'],
+        'heading': ['var(--font-playfair)', 'Georgia', 'serif'],
       },
       lineHeight: {
         'tight': '0.9',

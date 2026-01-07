@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { getReferralByCode } from '@/lib/referral-utils';
@@ -18,8 +19,8 @@ export async function generateMetadata({ params }: ReferralPageProps): Promise<M
   const referrerName = referrer?.full_name || referrer?.name || 'a friend';
 
   return {
-    title: `${referrerName} invited you | Get 10% Off | Long Life`,
-    description: `You've been invited to try Long Life cold-pressed juices! Get 10% off your first order.`,
+    title: `${referrerName} invited you | Get 10% Off | Portland Fresh`,
+    description: `You've been invited to try Portland Fresh sauces, pestos, and salsa. Get 10% off your first order.`,
   };
 }
 
@@ -61,7 +62,18 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
       {/* Hero Section */}
       <section className="relative min-h-[70vh] flex items-center bg-black overflow-hidden">
         {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black" />
+        <div className="absolute inset-0">
+          <Image
+            src="/portland-fresh-new-5.jpg"
+            alt="Portland Fresh sauces being plated"
+            fill
+            priority
+            quality={90}
+            sizes="100vw"
+            className="object-cover opacity-60"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900/90 to-black" />
+        </div>
 
         {/* Ambient orbs */}
         <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-accent-green/20 via-transparent to-transparent rounded-full blur-3xl" />
@@ -83,15 +95,15 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
               {firstName} thinks you&apos;ll
               <br />
               <span className="bg-gradient-to-r from-accent-green via-accent-yellow to-accent-primary bg-clip-text text-transparent">
-                love Long Life
+                love Portland Fresh
               </span>
             </h1>
           </FadeIn>
 
           <FadeIn direction="up" delay={0.3}>
             <p className="text-xl text-white/60 max-w-2xl mx-auto mb-8">
-              Get <span className="text-accent-green font-semibold">10% off</span> your first order of premium cold-pressed juices.
-              Real ingredients, real benefits, delivered fresh.
+              Get <span className="text-accent-green font-semibold">10% off</span> your first order of Portland-made sauces, pestos, and salsa.
+              Real ingredients, bold flavor, delivered fresh each week.
             </p>
           </FadeIn>
 
@@ -110,7 +122,7 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
                 href="/blends"
                 className="px-8 py-4 text-white/70 font-semibold text-lg hover:text-white transition-colors"
               >
-                Browse Products
+                Browse Sauces
               </Link>
             </div>
           </FadeIn>
@@ -131,7 +143,7 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
             <span className="hidden sm:inline">|</span>
             <span>100% Organic</span>
             <span className="hidden sm:inline">|</span>
-            <span>Free Shipping $50+</span>
+            <span>Portland Pickup + Delivery</span>
           </div>
         </div>
       </section>
@@ -166,9 +178,9 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
                 <div className="w-14 h-14 bg-gradient-to-br from-accent-yellow to-accent-yellow/70 rounded-xl flex items-center justify-center mx-auto mb-4 text-black font-bold text-xl shadow-lg shadow-accent-yellow/30">
                   2
                 </div>
-                <h3 className="font-semibold text-lg mb-2 text-gray-900">Choose Your Blends</h3>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Choose Your Sauces</h3>
                 <p className="text-gray-600 text-sm">
-                  Browse our cold-pressed juice collection and add your favorites to cart
+                  Browse our Portland sauce collection and add your favorites to cart
                 </p>
               </div>
             </FadeIn>
@@ -188,13 +200,13 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
         </div>
       </section>
 
-      {/* Why Long Life */}
+      {/* Why Portland Fresh */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-5xl mx-auto px-5 sm:px-6">
           <FadeIn direction="up">
             <div className="text-center mb-12">
               <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                Why {firstName} Loves Long Life
+                Why {firstName} Loves Portland Fresh
               </h2>
             </div>
           </FadeIn>
@@ -209,7 +221,7 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
                 </div>
                 <h3 className="font-semibold text-lg mb-2 text-gray-900">100% Organic Ingredients</h3>
                 <p className="text-gray-600 text-sm">
-                  Every ingredient is certified organic. No preservatives, no additives, just pure nutrition.
+                  Olive oil, citrus, and produce sourced from Portland farms. No gums, no fillers, just real food.
                 </p>
               </div>
             </FadeIn>
@@ -221,9 +233,9 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-lg mb-2 text-gray-900">Cold-Pressed Fresh</h3>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Batch-Blended Weekly</h3>
                 <p className="text-gray-600 text-sm">
-                  Made fresh, never heated. Our hydraulic press preserves maximum nutrients and enzymes.
+                  We prep, chop, and blend twice a week so your container is never shelf-stable or pasteurized.
                 </p>
               </div>
             </FadeIn>
@@ -235,9 +247,9 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-lg mb-2 text-gray-900">Fast, Free Shipping</h3>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Pickups + Market Hubs</h3>
                 <p className="text-gray-600 text-sm">
-                  Free shipping on orders over $50. Delivered cold in 2-3 business days.
+                  Grab your order from the Buckman kitchen, meet us at New Seasons, or catch our farmers market booth—no shipping required.
                 </p>
               </div>
             </FadeIn>
@@ -249,9 +261,9 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-lg mb-2 text-gray-900">100% Satisfaction Guarantee</h3>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Flavor Guarantee</h3>
                 <p className="text-gray-600 text-sm">
-                  Not loving it? Get a full refund within 30 days. No questions asked.
+                  If a batch ever misses the mark, email us within 24 hours and we&apos;ll replace or refund it.
                 </p>
               </div>
             </FadeIn>
@@ -323,7 +335,7 @@ function InvalidReferralPage({ code }: { code: string }) {
             href="/blends"
             className="block px-6 py-3 bg-accent-green text-black rounded-full font-semibold hover:bg-accent-green/90 transition-colors"
           >
-            Browse Products
+            Browse Sauces
           </Link>
           <Link
             href="/signup"

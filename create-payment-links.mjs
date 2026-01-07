@@ -93,7 +93,7 @@ async function createPaymentLinks() {
       after_completion: {
         type: 'redirect',
         redirect: {
-          url: 'https://drinklonglife.com/checkout/success',
+          url: 'https://pdxfreshfoods.com/checkout/success',
         },
       },
     });
@@ -111,7 +111,7 @@ async function createPaymentLinks() {
       after_completion: {
         type: 'redirect',
         redirect: {
-          url: 'https://drinklonglife.com/checkout/success',
+          url: 'https://pdxfreshfoods.com/checkout/success',
         },
       },
     });

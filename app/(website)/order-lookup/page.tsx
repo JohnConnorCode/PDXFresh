@@ -251,7 +251,7 @@ function OrderLookupContent() {
             <p className="text-sm text-gray-500">
               Need help with your order?{' '}
               <a
-                href="mailto:support@drinklonglife.com"
+                href="mailto:support@pdxfreshfoods.com"
                 className="text-accent-primary hover:underline font-semibold"
               >
                 Contact Support
