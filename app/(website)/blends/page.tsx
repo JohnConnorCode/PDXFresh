@@ -4,21 +4,14 @@ import { getAllProducts } from '@/lib/supabase/queries/products';
 import { Section } from '@/components/Section';
 import { BlendsGrid } from '@/components/BlendsGrid';
 import { FadeIn } from '@/components/animations';
-import { client } from '@/lib/sanity.client';
-import { blendsPageQuery } from '@/lib/sanity.queries';
 import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 60;
 
-// Default settings as fallback
-const defaultBlendsPageSettings = {
-  heading: 'Sauce Pantry',
-  subheading: 'Pestos, salsa, chimichurri, and spreads built from Portland produce and delivered the same week.',
-  seo: {
-    metaTitle: 'Sauce Pantry | Portland Fresh',
-    metaDescription: 'Browse Portland Fresh pestos, salsa, chimichurri, and seasonal sauces. Small-batch, Portland delivery, and wholesale options.',
-  },
+export const metadata: Metadata = {
+  title: 'Sauce Pantry | Portland Fresh',
+  description: 'Browse Portland Fresh pestos, salsa, chimichurri, and seasonal sauces. Small-batch, Portland delivery, and wholesale options.',
 };
 
 async function getBlends() {
@@ -30,29 +23,8 @@ async function getBlends() {
   }
 }
 
-async function getBlendsPageSettings() {
-  try {
-    const settings = await client.fetch(blendsPageQuery);
-    return settings || defaultBlendsPageSettings;
-  } catch (error) {
-    logger.error('Error fetching blends page settings:', error);
-    return defaultBlendsPageSettings;
-  }
-}
-
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getBlendsPageSettings();
-  return {
-    title: settings.seo?.metaTitle || defaultBlendsPageSettings.seo.metaTitle,
-    description: settings.seo?.metaDescription || defaultBlendsPageSettings.seo.metaDescription,
-  };
-}
-
 export default async function BlendsPage() {
-  const [blends, blendsPageSettings] = await Promise.all([
-    getBlends(),
-    getBlendsPageSettings(),
-  ]);
+  const blends = await getBlends();
 
   return (
     <>
@@ -90,12 +62,12 @@ export default async function BlendsPage() {
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <FadeIn direction="up" delay={0.1}>
             <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight text-white">
-              {blendsPageSettings.heading || defaultBlendsPageSettings.heading}
+              Sauce Pantry
             </h1>
           </FadeIn>
           <FadeIn direction="up" delay={0.2}>
             <p className="text-xl sm:text-2xl text-white/90 leading-relaxed max-w-3xl mx-auto">
-              {blendsPageSettings.subheading || defaultBlendsPageSettings.subheading}
+              Pestos, salsa, chimichurri, and spreads built from Portland produce and delivered the same week.
             </p>
           </FadeIn>
 

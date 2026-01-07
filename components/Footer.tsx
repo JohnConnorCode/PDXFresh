@@ -12,7 +12,13 @@ interface FooterProps {
 
 export function Footer({ siteSettings, navigation }: FooterProps) {
   const legalLinks = navigation?.legalLinks || [];
-  const social = siteSettings?.social || {};
+  const social = siteSettings?.social || {
+    instagram: 'https://instagram.com/portlandfresh',
+  };
+  const contactEmail = siteSettings?.contactEmail || 'hello@portlandfresh.com';
+  const address = siteSettings?.address || 'Portland, Oregon';
+  const tagline = siteSettings?.tagline || 'Small-batch sauces, pestos, and salsa born from Portland markets.';
+  const title = siteSettings?.title || 'Portland Fresh';
 
   return (
     <footer className="bg-accent-green/20 border-t border-gray-200">
@@ -29,7 +35,7 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
               />
             </div>
             <p className="text-sm text-muted mb-6">
-              {siteSettings?.tagline || 'Small-batch sauces, pestos, and salsa born from Portland markets.'}
+              {tagline}
             </p>
             <div className="flex gap-4">
               {social.instagram && (
@@ -150,22 +156,18 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
           {/* Contact Info */}
           <div>
             <h4 className="font-semibold text-sm mb-4">Contact</h4>
-            {siteSettings?.contactEmail && (
-              <p className="text-sm text-muted mb-2">
-                <a
-                  href={`mailto:${siteSettings.contactEmail}`}
-                  className="group hover:text-black transition-colors relative inline-block"
-                >
-                  {siteSettings.contactEmail}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent-primary group-hover:w-full transition-all duration-300" />
-                </a>
-              </p>
-            )}
-            {siteSettings?.address && (
-              <p className="text-sm text-muted whitespace-pre-wrap">
-                {siteSettings.address}
-              </p>
-            )}
+            <p className="text-sm text-muted mb-2">
+              <a
+                href={`mailto:${contactEmail}`}
+                className="group hover:text-black transition-colors relative inline-block"
+              >
+                {contactEmail}
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent-primary group-hover:w-full transition-all duration-300" />
+              </a>
+            </p>
+            <p className="text-sm text-muted whitespace-pre-wrap">
+              {address}
+            </p>
           </div>
 
           {/* Legal */}
@@ -221,7 +223,7 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
         <FadeIn direction="up" delay={0.6}>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-muted">
             <p>
-              © {new Date().getFullYear()} {siteSettings?.title || 'Portland Fresh'}. All rights reserved.
+              © {new Date().getFullYear()} {title}. All rights reserved.
             </p>
           </div>
         </FadeIn>
