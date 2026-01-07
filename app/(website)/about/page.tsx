@@ -23,8 +23,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const aboutPage = await getAboutPage();
 
   return {
-    title: aboutPage?.seo?.metaTitle || 'About Us | Long Life',
-    description: aboutPage?.seo?.metaDescription || 'Long Life is building the future of wellness beverages. Choose your mood, get your blend. Reset. Cleanse. Rise. Balance.',
+    title: aboutPage?.seo?.metaTitle || 'About Us | Portland Fresh',
+    description: aboutPage?.seo?.metaDescription || 'Portland Fresh is Portland’s sauce house—handmade pestos, salsa, zhug, and chimichurri crafted weekly from organic produce.',
   };
 }
 
@@ -53,25 +53,75 @@ export default async function AboutPage() {
         <div className="relative z-10 max-w-4xl mx-auto px-5 sm:px-6 text-center">
           <FadeIn direction="up" delay={0.1}>
             <p className="text-xs sm:text-sm font-medium uppercase tracking-[0.3em] text-white/40 mb-4">
-              About Long Life
+              About Portland Fresh
             </p>
           </FadeIn>
           <FadeIn direction="up" delay={0.2}>
             <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] tracking-tight">
-              The Future of
+              Sauces rooted in
               <br />
               <span className="bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">
-                Wellness
+                Portland kitchens
               </span>
             </h1>
           </FadeIn>
           <FadeIn direction="up" delay={0.3}>
+            <p className="text-lg sm:text-xl text-white/70 leading-relaxed max-w-2xl mx-auto">
+              Stew Joseph grew up in a family of chefs, sharpened his palate alongside his dad, and after a detour in craft beer returned
+              to the table with Portland Fresh. Our sauces marry excellent flavor, healthy ingredients, and a deep connection to the city we serve.
+            </p>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.35}>
             <p className="text-lg sm:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
-              We believe beverages should do more than taste good—they should match the way you feel and the direction you want to go.
+              Food should nourish bodies, minds, and communities—and still taste incredible. That’s why we source organic produce as locally as possible,
+              rely on olive oil, lemon, lime, and raw apple cider vinegar, and build distribution that keeps our jars accessible to every neighborhood.
             </p>
           </FadeIn>
         </div>
       </section>
+
+      <Section className="bg-white">
+        <div className="max-w-5xl mx-auto space-y-8">
+          <FadeIn direction="up" className="text-center">
+            <p className="text-sm uppercase tracking-[0.3em] text-gray-400">Our origin</p>
+            <h2 className="font-heading text-4xl font-bold text-gray-900 mb-4">From family kitchens to Portland Fresh</h2>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              Long before our official opening in 2018, Stew was learning to coax flavor out of simple ingredients in his family’s kitchen.
+              The transition from craft beer to sauce-making was natural: both require patience, process, and obsession with community.
+            </p>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              Today, Portland Fresh is built around a core set of values—flavor, health, and equitable access. Smart sourcing,
+              high-efficiency production, and a strong local support network mean our dips and sauces are stocked at New Seasons, neighborhood markets,
+              and farmers markets across Portland.
+            </p>
+          </FadeIn>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                title: 'Food with purpose',
+                description:
+                  'We believe food should serve your body, your mind, and your neighborhood. Flavor and nourishment are equal priorities.',
+              },
+              {
+                title: 'Only the good stuff',
+                description:
+                  'Organic produce, olive oil, citrus, and raw apple cider vinegar—no sugar, preservatives, or fillers. Fresh every week.',
+              },
+              {
+                title: 'Community-first access',
+                description:
+                  'High-efficiency production and local partnerships keep Portland Fresh within reach of every neighborhood.',
+              },
+            ].map((value) => (
+              <FadeIn key={value.title} direction="up" className="bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm">
+                <h3 className="font-heading text-xl mb-2 text-gray-900">{value.title}</h3>
+                <p className="text-sm text-gray-600">{value.description}</p>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </Section>
 
       {/* Vending Machine Feature */}
       <section className="relative bg-gradient-to-b from-black via-gray-950 to-gray-900 py-16 sm:py-24">
@@ -81,13 +131,12 @@ export default async function AboutPage() {
             <FadeIn direction="right" delay={0.2}>
               <div className="relative aspect-[3/4] max-w-md mx-auto md:mx-0 rounded-3xl overflow-hidden shadow-2xl">
                 <Image
-                  src="/vending-machine.png"
-                  alt="Long Life Vending Machine - Choose Your Mode"
+                  src="/portland-fresh-new-10.jpg"
+                  alt="Stew Joseph preparing sauces in the Portland Fresh kitchen"
                   fill
                   className="object-cover"
                   priority
                 />
-                {/* Glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
               </div>
             </FadeIn>
@@ -102,10 +151,10 @@ export default async function AboutPage() {
                   Choose Your Mode
                 </h2>
                 <p className="text-white/70 text-lg leading-relaxed mb-6">
-                  We&apos;re building a new generation of vending machines centered around mood-driven drinks. Instead of guessing what your body needs, you choose your mood and Long Life delivers the blend designed for that outcome.
+                  We&apos;re building kitchen experiences centered around flavor-first sauces. Instead of defaulting to shelf-stable containers, you choose how you want dinner to taste and Portland Fresh delivers the sauce designed for that moment.
                 </p>
                 <p className="text-white/70 text-lg leading-relaxed">
-                  Healthy options shouldn&apos;t be rare—they should be the default. A world where grabbing a drink means choosing how you want to feel.
+                  Real condiments shouldn&apos;t be rare—they should be the default. Imagine grabbing a sauce and instantly knowing it was blended from farms you drive past every week.
                 </p>
               </div>
             </FadeIn>
@@ -119,10 +168,10 @@ export default async function AboutPage() {
           <FadeIn direction="up">
             <div className="text-center mb-12">
               <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-4">
-                Four Moods. Four Blends.
+                Four Styles. Endless Dishes.
               </h2>
               <p className="text-white/60 text-lg max-w-xl mx-auto">
-                Each engineered to unlock a different version of you.
+                Each sauce is engineered for a specific cooking moment—pasta night, taco bars, grilled veg, or brunch boards.
               </p>
             </div>
           </FadeIn>
@@ -174,7 +223,7 @@ export default async function AboutPage() {
         <div className="max-w-4xl mx-auto text-center">
           <FadeIn direction="up">
             <p className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-gray-800 leading-relaxed">
-              Long Life is building the bridge between convenience and well-being.
+              Portland Fresh is building the bridge between convenience and well-being.
             </p>
           </FadeIn>
         </div>
@@ -188,7 +237,7 @@ export default async function AboutPage() {
               <h2 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
                 The Team
               </h2>
-              <p className="text-xl text-gray-600">The humans behind Long Life</p>
+              <p className="text-xl text-gray-600">The humans behind Portland Fresh</p>
             </FadeIn>
             <StaggerContainer staggerDelay={0.2} className="grid md:grid-cols-3 gap-12">
               {teamMembers.map((member: any) => (
@@ -270,14 +319,14 @@ export default async function AboutPage() {
               Ready to feel the difference?
             </h2>
             <p className="text-xl text-gray-700 leading-relaxed mb-10 max-w-2xl mx-auto">
-              Discover the blend that matches your mood and fuel your day the way nature intended.
+              Discover the sauce that matches your menu and finish every dish the way Portland cooks intended.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
                 href="/blends"
                 className="w-full sm:w-auto px-8 py-4 bg-accent-primary text-white rounded-full font-semibold text-lg hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
-                Explore Our Blends
+                Explore Our Sauces
               </Link>
               <Link
                 href="/contact"

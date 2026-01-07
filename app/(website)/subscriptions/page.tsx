@@ -21,8 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const page = await getSubscriptionsPage();
 
   return {
-    title: page?.seo?.metaTitle || 'Subscriptions | Long Life',
-    description: page?.seo?.metaDescription || 'Subscribe to weekly or bi-weekly juice drops. Priority access to limited runs and seasonal blends.',
+    title: page?.seo?.metaTitle || 'Subscriptions | Portland Fresh',
+    description: page?.seo?.metaDescription || 'Subscribe to weekly or bi-weekly sauce drops. Priority access to limited runs and chef collabs.',
   };
 }
 
@@ -275,7 +275,7 @@ export default async function SubscriptionsPage() {
                   href="/blends"
                   className="w-full sm:w-auto px-8 py-4 bg-accent-primary text-white rounded-full font-semibold text-lg hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                  View Our Blends
+                  View Our Sauces
                 </Link>
                 <Link
                   href="/#newsletter"

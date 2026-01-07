@@ -17,7 +17,7 @@ export default defineType({
       title: 'Hero Subheading',
       type: 'text',
       rows: 3,
-      initialValue: 'Modern life is efficient but empty. Long Life exists to bring people back to real nourishment and clear minds.',
+      initialValue: 'Portland Fresh exists to bring real food back to real tables—batch-blended sauces made for the kitchens and communities we serve.',
     }),
 
     // Intro
@@ -33,7 +33,7 @@ export default defineType({
       name: 'whyHeading',
       title: 'Why We Started Heading',
       type: 'string',
-      initialValue: 'Why we started Long Life',
+      initialValue: 'Why we started Portland Fresh',
     }),
     defineField({
       name: 'whyContent',
@@ -200,7 +200,7 @@ export default defineType({
     },
     prepare({ title }) {
       return {
-        title: title || 'About Long Life',
+        title: title || 'About Portland Fresh',
       };
     },
   },

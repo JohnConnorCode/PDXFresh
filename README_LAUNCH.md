@@ -1,8 +1,8 @@
-# Long Life - Launch-Ready Documentation
+# Portland Fresh - Launch-Ready Documentation
 
 ## Project Overview
 
-Long Life is a premium superfood juice brand built with Next.js 14, Sanity CMS, and Tailwind CSS. This document provides comprehensive guidance for launching and maintaining the production site.
+Portland Fresh is a premium superfood juice brand built with Next.js 14, Sanity CMS, and Tailwind CSS. This document provides comprehensive guidance for launching and maintaining the production site.
 
 ---
 

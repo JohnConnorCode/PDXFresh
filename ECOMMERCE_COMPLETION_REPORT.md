@@ -6,7 +6,7 @@
 **Date**: November 16, 2025
 **Test Coverage**: 35/35 tests passing (100%)
 
-The Long Life e-commerce platform is now fully functional with subscriptions, admin panel, comprehensive testing, and enterprise-grade features.
+The Portland Fresh e-commerce platform is now fully functional with subscriptions, admin panel, comprehensive testing, and enterprise-grade features.
 
 ---
 
@@ -156,14 +156,14 @@ The Long Life e-commerce platform is now fully functional with subscriptions, ad
 - ✅ Order confirmation emails with itemized receipts
 - ✅ Subscription welcome emails with next billing date
 - ✅ Graceful degradation if not configured
-- ✅ HTML templates with Long Life branding
+- ✅ HTML templates with Portland Fresh branding
 - ✅ Automatic sending via webhooks
 
 **Setup Required**:
 ```bash
 # Add to .env.local
 RESEND_API_KEY=re_xxxxx
-RESEND_FROM_EMAIL=Long Life <orders@drinklonglife.com>
+RESEND_FROM_EMAIL=Portland Fresh <orders@pdxfreshfoods.com>
 ```
 
 **Status**:

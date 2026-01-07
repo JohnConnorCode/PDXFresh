@@ -5,8 +5,8 @@ import { FadeIn, StaggerContainer } from '@/components/animations';
 import { ContactForm } from '@/components/ContactForm';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Long Life',
-  description: 'Get in touch with Long Life. We\'re here to answer your questions about our cold-pressed juices, subscriptions, and more.',
+  title: 'Contact Us | Portland Fresh',
+  description: 'Get in touch with Portland Fresh. We\'re here to answer your questions about sauces, pestos, salsa subscriptions, wholesale, and more.',
 };
 
 export default function ContactPage() {
@@ -18,7 +18,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 z-0 overflow-hidden">
           {/* Desktop Image */}
           <Image
-            src="/slider-desktop-2.png"
+            src="/portland-fresh-new-7.jpg"
             alt="Contact Us"
             fill
             className="object-cover hidden md:block scale-110 animate-ken-burns"
@@ -28,7 +28,7 @@ export default function ContactPage() {
           />
           {/* Mobile Image */}
           <Image
-            src="/slider-mobile-2.png"
+            src="/portland-fresh-new-8.jpg"
             alt="Contact Us"
             fill
             className="object-cover md:hidden scale-110 animate-ken-burns"
@@ -51,7 +51,7 @@ export default function ContactPage() {
           </FadeIn>
           <FadeIn direction="up" delay={0.4}>
             <p className="text-xl text-white/90 leading-relaxed">
-              Questions about our juices, subscriptions, or wholesale? We're here to help.
+              Questions about our sauces, subscriptions, or wholesale trays? We're here to help.
             </p>
           </FadeIn>
         </div>
@@ -71,10 +71,10 @@ export default function ContactPage() {
                 </div>
                 <h3 className="font-heading text-xl font-bold mb-3 text-gray-900">Email Us</h3>
                 <a
-                  href="mailto:hello@drinklonglife.com"
+                  href="mailto:hello@pdxfreshfoods.com"
                   className="text-accent-primary hover:underline text-lg"
                 >
-                  hello@drinklonglife.com
+                  hello@pdxfreshfoods.com
                 </a>
               </div>
             </FadeIn>
@@ -149,7 +149,7 @@ export default function ContactPage() {
                   Wholesale Partnerships
                 </h3>
                 <p className="text-gray-600">
-                  Interested in carrying Long Life at your café, studio, or store?
+                  Interested in carrying Portland Fresh at your café, studio, or store?
                 </p>
               </a>
             </FadeIn>
@@ -188,7 +188,7 @@ export default function ContactPage() {
                   Our Process
                 </h3>
                 <p className="text-gray-600">
-                  Discover how we make our cold-pressed juices fresh every day.
+                  Discover how we make our sauces and pestos fresh every week.
                 </p>
               </a>
             </FadeIn>

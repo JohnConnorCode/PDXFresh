@@ -72,7 +72,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: page.seo?.metaTitle || `${page.title} | Long Life`,
+    title: page.seo?.metaTitle || `${page.title} | Portland Fresh`,
     description: page.seo?.metaDescription || page.intro,
   };
 }

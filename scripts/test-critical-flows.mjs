@@ -307,7 +307,7 @@ async function testLoginFlow() {
 
 async function runAllTests() {
   console.log('╔══════════════════════════════════════════╗');
-  console.log('║     CRITICAL FLOW TESTS - DrinkLongLife  ║');
+  console.log('║     CRITICAL FLOW TESTS - Portland Fresh  ║');
   console.log('╚══════════════════════════════════════════╝');
   console.log(`\nRunning at: ${new Date().toISOString()}\n`);
 

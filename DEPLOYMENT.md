@@ -1,6 +1,6 @@
-# Long Life — Deployment Guide
+# Portland Fresh — Deployment Guide
 
-Your **Long Life** Next.js + Sanity project is production-ready and can be deployed immediately. Follow these steps to get live.
+Your **Portland Fresh** Next.js + Sanity project is production-ready and can be deployed immediately. Follow these steps to get live.
 
 ## Quick Start: Vercel Deployment (Recommended)
 
@@ -10,7 +10,7 @@ If you haven't already:
 
 1. Go to [sanity.io/manage](https://sanity.io/manage)
 2. Create a new project:
-   - **Project name**: Long Life
+   - **Project name**: Portland Fresh
    - **Dataset**: production
    - **Visibility**: Private (you can make it public later for webhooks)
 3. Copy your **Project ID** (looks like `abc123xyz`)
@@ -21,9 +21,9 @@ If you haven't already:
 ```bash
 git init
 git add .
-git commit -m "Initial Long Life project"
+git commit -m "Initial Portland Fresh project"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/drinklonglife.git
+git remote add origin https://github.com/YOUR_USERNAME/pdxfresh.git
 git push -u origin main
 ```
 

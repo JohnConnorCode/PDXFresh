@@ -9,8 +9,8 @@ export function Logo({ className = "w-8 h-8", logoUrl }: LogoProps) {
   return (
     <div className={`relative ${className} flex items-center`}>
       <Image
-        src={logoUrl || "/long-life-logo.png"}
-        alt="Long Life Logo"
+        src={logoUrl || "/portland-fresh-logo.svg"}
+        alt="Portland Fresh Logo"
         fill
         className="object-contain"
         priority

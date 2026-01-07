@@ -1,25 +1,31 @@
 import type { Metadata } from 'next';
-import { Jost } from 'next/font/google';
+import { Playfair_Display, Space_Grotesk } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import '@/styles/globals.css';
 
-const jost = Jost({
-  variable: '--font-jost',
+const playfair = Playfair_Display({
+  variable: '--font-playfair',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['500', '600', '700'],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: '--font-grotesk',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://drinklonglife.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://pdxfreshfoods.com'),
   title: {
-    default: 'Long Life | Cold-Pressed Wellness from Regenerative Farms',
-    template: '%s | Long Life',
+    default: 'Portland Fresh | Small-Batch Sauces & Pestos',
+    template: '%s | Portland Fresh',
   },
-  description: 'Cold-pressed juice blends made from organic, regenerative ingredients. Delivered fresh weekly. Support your immunity, energy, and longevity naturally.',
-  keywords: ['cold-pressed juice', 'organic juice', 'wellness drinks', 'regenerative agriculture', 'health drinks', 'immunity boost', 'long life juice'],
-  authors: [{ name: 'Long Life' }],
-  creator: 'Long Life',
-  publisher: 'Long Life',
+  description: 'Portland Fresh crafts pestos, salsa, chimichurri, and pantry sauces from Pacific Northwest produce. Weekly batches, same-week delivery, wholesale programs, and market pop-ups across Portland.',
+  keywords: ['Portland Fresh', 'PDX pesto', 'Portland salsa', 'small batch sauces', 'chimichurri', 'Portland pantry'],
+  authors: [{ name: 'Portland Fresh' }],
+  creator: 'Portland Fresh',
+  publisher: 'Portland Fresh',
   formatDetection: {
     email: false,
     address: false,
@@ -28,22 +34,22 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://drinklonglife.com',
-    title: 'Long Life | Cold-Pressed Wellness',
-    description: 'Cold-pressed juice blends from regenerative farms. Fresh, organic, delivered weekly.',
-    siteName: 'Long Life',
+    url: 'https://pdxfreshfoods.com',
+    title: 'Portland Fresh | Sauces From Portland Kitchens',
+    description: 'Seasonal, organic ingredients blended into pesto, salsa, chimichurri, and spreads.',
+    siteName: 'Portland Fresh',
     images: [{
-      url: '/og-image.jpg',
+      url: '/portland-fresh-new-1.jpg',
       width: 1200,
       height: 630,
-      alt: 'Long Life Cold-Pressed Juice',
+      alt: 'Portland Fresh sauces prepared with Portland produce',
     }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Long Life | Cold-Pressed Wellness',
-    description: 'Cold-pressed juice blends from regenerative farms.',
-    images: ['/og-image.jpg'],
+    title: 'Portland Fresh | Sauces From Portland Kitchens',
+    description: 'Seasonal produce sauces, pestos, and salsa made for Portland tables.',
+    images: ['/portland-fresh-new-1.jpg'],
   },
   robots: {
     index: true,
@@ -64,9 +70,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={jost.variable}>
+    <html lang="en" className={`${playfair.variable} ${spaceGrotesk.variable}`}>
       <head />
-      <body className="bg-white text-black font-sans">
+      <body className="bg-[var(--bg)] text-[var(--fg)] font-sans">
         {children}
         <Analytics />
       </body>

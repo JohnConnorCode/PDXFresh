@@ -56,39 +56,39 @@ export const NewsletterWelcomeEmail: React.FC<NewsletterWelcomeEmailProps> = () 
     </head>
     <body>
       <div className="header">
-        <h1>Welcome to Long Life! 🌱</h1>
+        <h1>Welcome to Portland Fresh! 🌱</h1>
       </div>
 
       <div className="content">
-        <h2>Thanks for joining our wellness community!</h2>
-        <p>Hey there,</p>
+        <h2>Thanks for joining our kitchen table!</h2>
+        <p>Hey neighbor,</p>
         <p>
-          We're thrilled to have you on board. You're now part of a community dedicated to
-          living longer, healthier lives through cold-pressed, regenerative nutrition.
+          We're thrilled to have you on board. Portland Fresh exists to keep Portland cooking with
+          seasonal sauces, pestos, salsa, and pantry add-ons sourced within a few miles of town.
         </p>
         <p>
-          <strong>What to expect:</strong>
+          <strong>Here’s what lands in your inbox:</strong>
         </p>
         <ul>
-          <li>Weekly blend drops and exclusive offers</li>
-          <li>Health tips and wellness insights</li>
-          <li>Farm stories and ingredient spotlights</li>
-          <li>Early access to new products</li>
+          <li>Weekly menu drops + pickup/delivery windows</li>
+          <li>Behind-the-scenes prep footage from our Buckman kitchen</li>
+          <li>Spotlights on the farms, foragers, and makers we partner with</li>
+          <li>Early access to collabs and limited-run provisions</li>
         </ul>
         <p>
-          <a href="https://drinklonglife.com/blends" className="button">
-            Explore Our Blends
+          <a href="https://pdxfreshfoods.com/blends" className="button">
+            Explore Our Sauces
           </a>
         </p>
       </div>
 
       <div className="footer">
-        <p>You're receiving this because you signed up at drinklonglife.com</p>
+        <p>You're receiving this because you signed up at pdxfreshfoods.com</p>
         <p>
           <a href="{{unsubscribe_url}}">Unsubscribe</a> |
-          <a href="https://drinklonglife.com">Visit our website</a>
+          <a href="https://pdxfreshfoods.com">Visit our website</a>
         </p>
-        <p>Long Life · Cold-Pressed Wellness</p>
+        <p>Portland Fresh · Farm-Pressed Nutrition</p>
       </div>
     </body>
   </html>

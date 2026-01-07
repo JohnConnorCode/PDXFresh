@@ -16,7 +16,7 @@ const files = [
 ];
 
 files.forEach(file => {
-  const fullPath = `/Users/johnconnor/Documents/GitHub/DrinkLongLife/${file}`;
+  const fullPath = `/Users/johnconnor/Documents/GitHub/Portland Fresh/${file}`;
 
   try {
     let content = readFileSync(fullPath, 'utf8');

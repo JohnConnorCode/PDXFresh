@@ -96,7 +96,7 @@ async function getOrCreateProduct(product) {
   // Create new production product
   const newProduct = await stripe.products.create({
     name,
-    description: tagline || `${name} - Long Life Juice`,
+    description: tagline || `${name} - Portland Fresh Sauce`,
     active: true,
   });
 
