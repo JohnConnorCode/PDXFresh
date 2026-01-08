@@ -118,13 +118,12 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
     >
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
         <div className="flex items-center justify-between h-14 lg:h-16 gap-2">
-          {/* Logo - Full animated logo on all screen sizes */}
+          {/* Logo */}
           <Link href="/" className="flex-shrink-0 relative z-50">
             <AnimatedLogo
               size="md"
               variant="header"
               logoUrl={siteSettings?.logo?.asset?.url}
-              showText={true}
             />
           </Link>
 

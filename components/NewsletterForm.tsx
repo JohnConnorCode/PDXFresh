@@ -87,12 +87,12 @@ export function NewsletterForm({ listId = DEFAULT_LIST_ID, className = '' }: New
             placeholder="Enter your email"
             required
             disabled={status === 'loading'}
-            className="flex-1 px-4 py-3 sm:px-6 sm:py-4 rounded-xl border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-accent-primary bg-white shadow-md text-base sm:text-lg disabled:opacity-50 transition-all"
+            className="flex-1 px-4 py-3 sm:px-6 sm:py-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-accent-primary bg-white text-base sm:text-lg disabled:opacity-50 transition-colors"
           />
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 bg-accent-primary text-white rounded-xl font-bold hover:bg-accent-primary/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-base sm:text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 bg-accent-primary text-white rounded-lg font-bold hover:bg-accent-primary/90 transition-colors text-base sm:text-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {status === 'loading' ? 'Joining...' : 'Get the Dispatch'}
           </button>

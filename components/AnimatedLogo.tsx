@@ -1,13 +1,11 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 interface AnimatedLogoProps {
   className?: string;
   logoUrl?: string;
   size?: 'sm' | 'md' | 'lg';
-  showText?: boolean;
   variant?: 'header' | 'footer';
 }
 
@@ -15,141 +13,39 @@ export function AnimatedLogo({
   className = '',
   logoUrl,
   size = 'md',
-  showText = true,
-  variant = 'header',
+  variant: _variant = 'header',
 }: AnimatedLogoProps) {
-  // Size configurations
+  // Size configurations - proper aspect ratio for horizontal wordmark (600x316 = ~1.9:1)
   const sizeClasses = {
-    sm: 'w-8 h-8',
-    md: 'w-10 h-10',
-    lg: 'w-12 h-12',
+    sm: 'h-8',
+    md: 'h-10',
+    lg: 'h-12',
   };
 
-  const textSizeClasses = {
-    sm: 'text-lg',
-    md: 'text-2xl',
-    lg: 'text-3xl',
+  const widthMap = {
+    sm: 152,
+    md: 190,
+    lg: 228,
   };
 
-  // Animation variants for the logo image
-  const logoVariants = {
-    hidden: {
-      scale: 0,
-      opacity: 0,
-      rotate: -180,
-    },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      rotate: 0,
-      transition: {
-        type: 'spring' as const,
-        stiffness: 200,
-        damping: 20,
-        duration: 0.6,
-      },
-    },
+  const heightMap = {
+    sm: 32,
+    md: 40,
+    lg: 48,
   };
 
-  const primaryTextVariants = {
-    hidden: {
-      opacity: 0,
-      x: -20,
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: 0.3,
-        duration: 0.4,
-        ease: 'easeOut' as const,
-      },
-    },
-  };
-
-  const secondaryTextVariants = {
-    hidden: {
-      opacity: 0,
-      x: -20,
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: 0.5,
-        duration: 0.4,
-        ease: 'easeOut' as const,
-      },
-    },
-  };
-
-  const containerClasses = variant === 'header'
-    ? 'flex items-center gap-1 group'
-    : 'flex items-center gap-2';
-
-  // Default logo - use actual Portland Fresh PNG
-  const DefaultLogo = () => (
-    <Image
-      src="/LogoPNG-e1590165207190-600x316.png"
-      alt="Portland Fresh Logo"
-      fill
-      className="object-contain"
-      priority
-    />
-  );
+  const logoSrc = logoUrl || '/LogoPNG-e1590165207190-600x316.png';
 
   return (
-    <div className={`${containerClasses} ${className}`}>
-      {/* Animated Logo Image */}
-      <motion.div
-        className={`relative ${sizeClasses[size]}`}
-        initial="hidden"
-        animate="visible"
-        variants={logoVariants}
-        whileHover={{
-          scale: 1.1,
-          rotate: 12,
-          transition: { duration: 0.3 },
-        }}
-      >
-        <div className="relative w-full h-full text-accent-primary transition-all duration-300 flex items-center justify-center rounded-full overflow-hidden shadow-lg shadow-accent-primary/20">
-          {logoUrl ? (
-            <Image
-              src={logoUrl}
-              alt="Portland Fresh Logo"
-              fill
-              className="object-contain"
-              priority
-            />
-          ) : (
-            <DefaultLogo />
-          )}
-        </div>
-      </motion.div>
-
-      {/* Animated Text */}
-      {showText && (
-        <span className={`font-heading font-bold ${textSizeClasses[size]}`}>
-          <motion.span
-            className="transition-colors group-hover:text-accent-primary"
-            initial="hidden"
-            animate="visible"
-            variants={primaryTextVariants}
-            style={{ display: 'inline-block' }}
-          >
-            Portland&nbsp;
-          </motion.span>
-          <motion.span
-            className="text-accent-primary"
-            initial="hidden"
-            animate="visible"
-            variants={secondaryTextVariants}
-            style={{ display: 'inline-block' }}
-          >
-            Fresh
-          </motion.span>
-        </span>
-      )}
+    <div className={`flex items-center ${className}`}>
+      <Image
+        src={logoSrc}
+        alt="Portland Fresh"
+        width={widthMap[size]}
+        height={heightMap[size]}
+        className={`${sizeClasses[size]} w-auto object-contain`}
+        priority
+      />
     </div>
   );
 }

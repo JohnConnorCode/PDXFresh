@@ -21,7 +21,7 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
   const title = siteSettings?.title || 'Portland Fresh';
 
   return (
-    <footer className="bg-accent-green/20 border-t border-gray-200">
+    <footer className="bg-gray-50 border-t border-gray-200">
       <Section className="py-16 sm:py-24">
         <StaggerContainer staggerDelay={0.15} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {/* Brand */}
@@ -31,7 +31,6 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
                 size="sm"
                 variant="footer"
                 logoUrl={siteSettings?.logo?.asset?.url}
-                showText={true}
               />
             </div>
             <p className="text-sm text-muted mb-6">
@@ -43,11 +42,11 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
                   href={social.instagram}
                   target="_blank"
                   rel="noreferrer"
-                  className="group relative w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-600 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg border-2 border-gray-200 hover:border-accent-primary hover:bg-accent-primary"
+                  className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-600 hover:text-accent-primary transition-colors border border-gray-200"
                   aria-label="Instagram"
                 >
                   <svg
-                    className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12"
+                    className="w-5 h-5"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -60,11 +59,11 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
                   href={social.tiktok}
                   target="_blank"
                   rel="noreferrer"
-                  className="group relative w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-600 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg border-2 border-gray-200 hover:border-accent-primary hover:bg-accent-primary"
+                  className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-600 hover:text-accent-primary transition-colors border border-gray-200"
                   aria-label="TikTok"
                 >
                   <svg
-                    className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12"
+                    className="w-5 h-5"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -77,11 +76,11 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
                   href={social.youtube}
                   target="_blank"
                   rel="noreferrer"
-                  className="group relative w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-600 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg border-2 border-gray-200 hover:border-accent-primary hover:bg-accent-primary"
+                  className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-600 hover:text-accent-primary transition-colors border border-gray-200"
                   aria-label="YouTube"
                 >
                   <svg
-                    className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12"
+                    className="w-5 h-5"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >

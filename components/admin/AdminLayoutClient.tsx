@@ -20,15 +20,11 @@ export function AdminLayoutClient({
         {/* Sidebar Header */}
         <div className="h-16 flex items-center px-4 border-b border-gray-200">
           <Link href="/admin" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="bg-accent-primary/10 rounded-lg p-1.5">
-              <AnimatedLogo
-                size="sm"
-                variant="header"
-                showText={false}
-              />
-            </div>
+            <AnimatedLogo
+              size="sm"
+              variant="header"
+            />
             <div>
-              <div className="font-heading text-lg font-bold text-gray-900">Portland Fresh</div>
               <div className="text-xs text-accent-primary font-medium">Admin Console</div>
             </div>
           </Link>
@@ -42,16 +38,12 @@ export function AdminLayoutClient({
 
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-30 flex items-center justify-between px-4">
-        <Link href="/admin" className="flex items-center gap-3">
-          <div className="bg-accent-primary/10 rounded-lg p-1.5">
-            <AnimatedLogo
-              size="sm"
-              variant="header"
-              showText={false}
-            />
-          </div>
+        <Link href="/admin" className="flex items-center gap-2">
+          <AnimatedLogo
+            size="sm"
+            variant="header"
+          />
           <div>
-            <div className="font-heading text-base font-bold text-gray-900">Portland Fresh</div>
             <div className="text-xs text-accent-primary font-medium">Admin</div>
           </div>
         </Link>

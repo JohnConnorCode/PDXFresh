@@ -7,6 +7,7 @@ import { NewsletterForm } from '@/components/NewsletterForm';
 import { VideoHero } from '@/components/VideoHero';
 import { getAllProducts } from '@/lib/supabase/queries/products';
 import { logger } from '@/lib/logger';
+import { Link2, Gift, Coins } from 'lucide-react';
 
 export const revalidate = 60;
 
@@ -20,21 +21,6 @@ const heroContent = {
   fallbackImage: '/portland-fresh-new-1.jpg',
   mobileImage: '/portland-fresh-new-2.jpg',
 };
-
-const sliderHighlights = [
-  {
-    title: 'Harvest-to-Jar in 48 Hours',
-    body: 'We source basil, peppers, and aromatics from Portland growers and turn them into sauces while they are at peak flavor.',
-  },
-  {
-    title: 'Neighborhood Delivery',
-    body: 'Thursday pickups at our Buckman kitchen plus bike and electric-van delivery to SE, NE, and inner SW.',
-  },
-  {
-    title: 'Seasonal Rotations',
-    body: 'Menus change with the markets. Expect new pestos, salsa flights, and collaborations that sell out fast.',
-  },
-];
 
 const valueProps = [
   {
@@ -97,110 +83,6 @@ export default async function Home() {
         mobileImage={heroContent.mobileImage}
       />
 
-      {/* Intro Section */}
-      <Section className="-mt-12 sm:-mt-16 relative z-10 rounded-t-[2rem] sm:rounded-t-[3rem] bg-gradient-to-b from-white via-accent-cream/70 to-white shadow-xl shadow-accent-cream/50">
-        <FadeIn direction="up" className="text-center max-w-3xl mx-auto mb-10">
-          <p className="uppercase text-xs tracking-[0.4em] text-gray-500 mb-3">Rooted in the northwest</p>
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Hand-harvested. Small-batch blended.
-          </h2>
-          <p className="text-base sm:text-lg text-gray-700">
-            Portland Fresh is a sauce kitchen making pestos, salsa, chimichurri, and spreads for Portland tables.
-          </p>
-        </FadeIn>
-        <div className="grid gap-6 md:grid-cols-3">
-          {sliderHighlights.map((highlight, idx) => (
-            <FadeIn
-              key={highlight.title}
-              direction="up"
-              delay={idx * 0.1}
-              className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-lg shadow-accent-cream/40 backdrop-blur-md"
-            >
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-accent-primary/10 text-accent-primary font-semibold">
-                {idx + 1}
-              </div>
-              <h3 className="font-heading text-xl text-gray-900 mb-2">{highlight.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">{highlight.body}</p>
-            </FadeIn>
-          ))}
-        </div>
-      </Section>
-
-      {/* Our Story */}
-      <Section className="bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <FadeIn direction="up" className="space-y-6">
-            <p className="text-sm uppercase tracking-[0.3em] text-gray-400">Our Story</p>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900">
-              Crafting sauces for Portland since 2018
-            </h2>
-            <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-              The journey of Portland Fresh started long before our official launch in 2018. Owner Stew Joseph grew up in a
-              family of chefs and sharpened his palate at an early age with his father. After a stint in the craft beer world,
-              he followed a new dream—channeling that love of flavor, fresh ingredients, and community into a sauce kitchen for
-              Portland, Oregon.
-            </p>
-            <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-              We believe food should do more than taste good—it should be real. No preservatives, no fillers, just flavor. That's why
-              every batch uses organic produce sourced as locally as possible, olive oil instead of seed oils, and real citrus plus
-              vinegar in place of sugar or shelf-stable shortcuts.
-            </p>
-            <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-              Our sauces are made in Buckman, delivered across the city, and stocked at New Seasons and Portland farmers markets. Fresh every
-              week, crafted for everyone.
-            </p>
-          </FadeIn>
-
-          <div className="grid md:grid-cols-5 gap-4 mt-12">
-            {[
-              'Made from local ingredients',
-              'Prepared in Portland, Oregon',
-              'Fresh every week',
-              'Find us at New Seasons & markets',
-              'Dips and sauces made fresh right here',
-            ].map((badge) => (
-              <FadeIn key={badge} direction="up" className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-6 shadow-sm">
-                <p className="text-sm font-semibold text-gray-800">{badge}</p>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* Kitchen Gallery */}
-      <Section className="bg-white">
-        <div className="max-w-6xl mx-auto">
-          <FadeIn direction="up" className="text-center mb-10">
-            <p className="text-sm uppercase tracking-[0.3em] text-gray-400">Inside the kitchen</p>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900">Fresh Batch Every Week</h2>
-            <p className="text-base sm:text-lg text-gray-600">
-              Every jar is blended, chilled, and packed by hand in our Buckman kitchen. Here's a look at the process.
-            </p>
-          </FadeIn>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { src: '/portland-fresh-new-7.jpg', alt: 'Fresh produce being prepped at Portland Fresh' },
-              { src: '/portland-fresh-new-8.jpg', alt: 'Sauce being blended in the Portland Fresh kitchen' },
-              { src: '/portland-fresh-new-9.jpg', alt: 'Finished sauces being portioned by hand' },
-            ].map((image, idx) => (
-              <FadeIn key={image.src} direction="up" delay={idx * 0.1}>
-                <div className="relative h-72 rounded-3xl overflow-hidden shadow-xl">
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    priority={idx === 0}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </Section>
-
       {/* Value Props */}
       <Section className="bg-gradient-to-br from-accent-cream via-white to-accent-yellow/20">
         <StaggerContainer staggerDelay={0.15} className="grid md:grid-cols-3 gap-8">
@@ -210,13 +92,10 @@ export default async function Home() {
             return (
               <div
                 key={idx}
-                className={`group relative overflow-hidden rounded-2xl min-h-[300px] sm:min-h-[400px] flex items-end transition-all duration-500 hover:scale-105 hover:shadow-2xl border-2 sm:border-4 ${borderColors[idx % 3]} cursor-pointer`}
-                style={{
-                  transform: 'perspective(1000px)',
-                }}
+                className={`group relative overflow-hidden rounded-2xl min-h-[300px] sm:min-h-[400px] flex items-end border-2 sm:border-4 ${borderColors[idx % 3]} hover:shadow-lg transition-shadow duration-300`}
               >
                 {/* Background Image */}
-                <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110">
+                <div className="absolute inset-0">
                   <Image
                     src={prop.image}
                     alt={prop.title}
@@ -227,21 +106,16 @@ export default async function Home() {
                 </div>
 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent group-hover:from-black/95 transition-all duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
                 {/* Content */}
-                <div className="relative z-10 p-6 sm:p-8 text-white transform transition-transform duration-500 group-hover:translate-y-0">
+                <div className="relative z-10 p-6 sm:p-8 text-white">
                   <h3 className="font-heading text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 leading-tight">
                     {prop.title}
                   </h3>
                   <p className="text-white/90 text-base sm:text-lg leading-relaxed">
                     {prop.body}
                   </p>
-                </div>
-
-                {/* Decorative corner element */}
-                <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-accent-yellow/20 backdrop-blur-sm flex items-center justify-center transition-all duration-500 group-hover:scale-125 group-hover:rotate-12">
-                  <div className="w-6 h-6 rounded-full bg-accent-yellow" />
                 </div>
               </div>
             );
@@ -275,7 +149,7 @@ export default async function Home() {
               </p>
               <Link
                 href="/blends"
-                className="px-6 py-3 bg-accent-primary text-white rounded-full font-semibold hover:opacity-90 transition-opacity inline-block"
+                className="px-6 py-3 bg-accent-primary text-white rounded-lg font-semibold hover:bg-accent-primary/90 transition-colors inline-block"
               >
                 Shop All Sauces
               </Link>
@@ -283,36 +157,6 @@ export default async function Home() {
           </div>
         </Section>
       )}
-
-      {/* Stats Section */}
-      <Section className="bg-accent-primary text-white relative overflow-hidden">
-        {/* Organic pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-64 h-64 border-2 border-accent-yellow rounded-full" />
-          <div className="absolute bottom-10 right-10 w-80 h-80 border-2 border-accent-green rounded-full" />
-        </div>
-
-        <div className="relative z-10">
-          <FadeIn direction="up" className="text-center mb-12">
-            <h2 className="font-heading text-4xl font-bold text-white leading-tight-90">
-              By the Numbers
-            </h2>
-          </FadeIn>
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            {[
-              { label: 'Portland Kitchens', value: '2,500+' },
-              { label: 'Weekly Batches', value: '50+' },
-              { label: 'Years Crafting', value: '6' },
-              { label: 'Jars Filled', value: '100K+' },
-            ].map((stat, idx) => (
-              <FadeIn key={stat.label} direction="up" delay={idx * 0.1}>
-                <div className="text-4xl font-heading font-bold mb-2">{stat.value}</div>
-                <div className="text-white/80">{stat.label}</div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </Section>
 
       {/* Process */}
       <Section className="bg-accent-green/20 relative overflow-hidden !py-12 sm:!py-16">
@@ -389,17 +233,12 @@ export default async function Home() {
                             src={step.image}
                             alt={step.title}
                             fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            className="object-cover"
                             sizes="(max-width: 768px) 100vw, 50vw"
                             loading="eager"
                             quality={85}
                           />
-                          {/* Gradient overlay on hover */}
-                          <div className={`absolute inset-0 bg-gradient-to-br ${gradients[idx % 3]} opacity-0 group-hover:opacity-30 transition-opacity duration-500`} />
                         </div>
-
-                        {/* Floating decorative element */}
-                        <div className={`absolute ${isEven ? '-right-4 -bottom-4' : '-left-4 -bottom-4'} w-20 h-20 bg-gradient-to-br ${gradients[idx % 3]} rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500`} />
                       </FadeIn>
                     </ParallaxElement>
                   </div>
@@ -464,7 +303,7 @@ export default async function Home() {
 
               return (
                 <ParallaxElement key={idx} speed={speeds[idx]}>
-                  <div className={`absolute ${positions[idx]} ${zIndexClasses[idx]} rounded-3xl shadow-2xl border-4 border-white overflow-hidden transform hover:scale-105 transition-transform duration-300`}>
+                  <div className={`absolute ${positions[idx]} ${zIndexClasses[idx]} rounded-3xl shadow-2xl border-4 border-white overflow-hidden`}>
                     <Image
                       src={image.src}
                       alt={image.alt}
@@ -482,7 +321,7 @@ export default async function Home() {
       </Section>
 
       {/* Referral Program Section */}
-      <Section className="py-20 bg-gradient-to-br from-accent-primary/5 to-accent-secondary/5">
+      <Section className="py-20 bg-gray-50">
         <FadeIn>
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6">
@@ -493,18 +332,24 @@ export default async function Home() {
             </p>
 
             <div className="grid md:grid-cols-3 gap-6 mb-10">
-              <div className="bg-white p-6 rounded-xl shadow-md">
-                <div className="text-3xl mb-3">🔗</div>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <Link2 className="w-6 h-6 text-accent-primary" />
+                </div>
                 <h3 className="font-semibold text-lg mb-2">Share Your Link</h3>
                 <p className="text-sm text-gray-600">Get your unique referral link and share it with friends</p>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-md">
-                <div className="text-3xl mb-3">🎁</div>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <Gift className="w-6 h-6 text-accent-primary" />
+                </div>
                 <h3 className="font-semibold text-lg mb-2">They Get 10% Off</h3>
                 <p className="text-sm text-gray-600">Friends receive a welcome discount on their first order</p>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-md">
-                <div className="text-3xl mb-3">💰</div>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <Coins className="w-6 h-6 text-accent-primary" />
+                </div>
                 <h3 className="font-semibold text-lg mb-2">You Get 15% Credit</h3>
                 <p className="text-sm text-gray-600">Earn rewards after their first purchase</p>
               </div>
@@ -512,7 +357,7 @@ export default async function Home() {
 
             <Link
               href="/referral"
-              className="inline-block px-8 py-4 bg-accent-primary text-white font-semibold rounded-full hover:bg-accent-dark transition-all shadow-lg hover:shadow-xl"
+              className="inline-block px-8 py-4 bg-accent-primary text-white font-semibold rounded-lg hover:bg-accent-primary/90 transition-colors"
             >
               Learn More About Referrals
             </Link>
