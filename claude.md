@@ -199,8 +199,8 @@ const config: Config = defineConfig({
 
 **Example**:
 ```
-1. Create "Orange Bomb" product
-2. Add variant: "1 Gallon", price_usd = 49.99
+1. Create "Basil Pesto" product
+2. Add variant: "8 oz Jar", price_usd = 12.99
 3. Check "Auto-sync to Stripe" ✓
 4. Click "Create Product"
 5. System shows: "✅ Synced to Stripe! Product: prod_xxx, Prices: 1"

@@ -88,7 +88,7 @@ export const NewsletterWelcomeEmail: React.FC<NewsletterWelcomeEmailProps> = () 
           <a href="{{unsubscribe_url}}">Unsubscribe</a> |
           <a href="https://pdxfreshfoods.com">Visit our website</a>
         </p>
-        <p>Portland Fresh · Farm-Pressed Nutrition</p>
+        <p>Portland Fresh · Small-Batch Sauces & Pestos</p>
       </div>
     </body>
   </html>

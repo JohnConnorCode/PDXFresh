@@ -5,14 +5,15 @@ interface LogoProps {
   logoUrl?: string; // Optional Sanity override
 }
 
-export function Logo({ className = "w-8 h-8", logoUrl }: LogoProps) {
+export function Logo({ className = "h-10 w-auto", logoUrl }: LogoProps) {
   return (
     <div className={`relative ${className} flex items-center`}>
       <Image
-        src={logoUrl || "/portland-fresh-logo.svg"}
+        src={logoUrl || "/LogoPNG-e1590165207190-600x316.png"}
         alt="Portland Fresh Logo"
-        fill
-        className="object-contain"
+        width={600}
+        height={316}
+        className="object-contain h-full w-auto"
         priority
       />
     </div>

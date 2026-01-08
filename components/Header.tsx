@@ -29,11 +29,12 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
   const headerLinks = navigation?.primaryLinks || [];
   const cartItemCount = useCartStore((state) => state.getItemCount());
 
-  const blends = [
-    { name: 'Smoky Tomato Salsa', slug: 'red-bomb', color: '#c2410c' },
-    { name: 'Heritage Basil Pesto', slug: 'green-bomb', color: '#15803d' },
-    { name: 'Citrus Herb Chimichurri', slug: 'yellow-bomb', color: '#ca8a04' },
-    { name: 'Charred Serrano Crema', slug: 'blue-bomb', color: '#2563eb' },
+  // Featured products for navigation dropdown
+  const featuredProducts = [
+    { name: 'Arugula Hazelnut Pesto', slug: 'arugula-hazelnut', color: '#1f5b4c' },
+    { name: 'Spicy Salsa', slug: 'spicy-salsa', color: '#f28d6d' },
+    { name: 'Chimichurri', slug: 'chimichurri', color: '#1f5b4c' },
+    { name: 'Zhug', slug: 'zhug', color: '#ca8a04' },
   ];
 
   // Close mobile menu on route change
@@ -164,17 +165,17 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                     All Sauces
                   </Link>
                   <div className="border-t border-gray-100 my-1"></div>
-                  {blends.map((blend) => (
+                  {featuredProducts.map((product) => (
                     <Link
-                      key={blend.slug}
-                      href={`/blends/${blend.slug}`}
+                      key={product.slug}
+                      href={`/blends/${product.slug}`}
                       className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-accent-primary transition-colors"
                     >
                       <span
                         className="w-2 h-2 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: blend.color }}
+                        style={{ backgroundColor: product.color }}
                       />
-                      {blend.name}
+                      {product.name}
                     </Link>
                   ))}
                 </div>
@@ -397,22 +398,22 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                 Shop Sauces
               </Link>
                 <div className="grid grid-cols-2 gap-2 mt-2 px-2">
-                  {blends.map((blend) => (
+                  {featuredProducts.map((product) => (
                     <Link
-                      key={blend.slug}
-                      href={`/blends/${blend.slug}`}
+                      key={product.slug}
+                      href={`/blends/${product.slug}`}
                       className={clsx(
                         'flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 border',
-                        pathname === `/blends/${blend.slug}`
+                        pathname === `/blends/${product.slug}`
                           ? 'border-gray-300 bg-gray-50'
                           : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                       )}
                     >
                       <span
                         className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: blend.color }}
+                        style={{ backgroundColor: product.color }}
                       />
-                      <span className="text-gray-700">{blend.name}</span>
+                      <span className="text-gray-700">{product.name}</span>
                     </Link>
                   ))}
                 </div>

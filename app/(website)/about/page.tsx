@@ -11,12 +11,12 @@ export const metadata: Metadata = {
   description: 'Portland Fresh is Portland\'s sauce house—handmade pestos, salsa, zhug, and chimichurri crafted weekly from organic produce.',
 };
 
-// Sauce style categories
+// Sauce style categories - using brand colors
 const sauceStyles = [
-  { name: 'PESTO', color: '#22c55e', description: 'Fresh herbs + nuts + cheese' },
-  { name: 'SALSA', color: '#ef4444', description: 'Fire-roasted tomatoes + chilies' },
-  { name: 'CHIMICHURRI', color: '#eab308', description: 'Bright herbs + citrus + garlic' },
-  { name: 'ZHUG', color: '#3b82f6', description: 'Yemenite hot sauce + fresh cilantro' },
+  { name: 'PESTO', color: '#8ac7b8', description: 'Fresh herbs + nuts + cheese' },
+  { name: 'SALSA', color: '#f28d6d', description: 'Fire-roasted tomatoes + chilies' },
+  { name: 'CHIMICHURRI', color: '#f6a723', description: 'Bright herbs + citrus + garlic' },
+  { name: 'ZHUG', color: '#205b4c', description: 'Yemenite hot sauce + fresh cilantro' },
 ];
 
 export default async function AboutPage() {
@@ -46,12 +46,12 @@ export default async function AboutPage() {
           <FadeIn direction="up" delay={0.3}>
             <p className="text-lg sm:text-xl text-white/70 leading-relaxed max-w-2xl mx-auto mb-4">
               Stew Joseph grew up in a family of chefs, sharpened his palate alongside his dad, and after a detour in craft beer returned
-              to the table with Portland Fresh. Our sauces marry excellent flavor, healthy ingredients, and a deep connection to the city we serve.
+              to the table with Portland Fresh. Our sauces marry excellent flavor, real ingredients, and a deep connection to the city we serve.
             </p>
           </FadeIn>
           <FadeIn direction="up" delay={0.35}>
             <p className="text-lg sm:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
-              Food should nourish bodies, minds, and communities—and still taste incredible. That's why we source organic produce as locally as possible,
+              Real flavor. Real ingredients. Real community. That's why we source organic produce as locally as possible,
               rely on olive oil, lemon, lime, and raw apple cider vinegar, and build distribution that keeps our jars accessible to every neighborhood.
             </p>
           </FadeIn>
@@ -68,7 +68,7 @@ export default async function AboutPage() {
               The transition from craft beer to sauce-making was natural: both require patience, process, and obsession with community.
             </p>
             <p className="text-lg text-gray-700 leading-relaxed">
-              Today, Portland Fresh is built around a core set of values—flavor, health, and equitable access. Smart sourcing,
+              Today, Portland Fresh is built around a core set of values—flavor, quality, and equitable access. Smart sourcing,
               high-efficiency production, and a strong local support network mean our dips and sauces are stocked at New Seasons, neighborhood markets,
               and farmers markets across Portland.
             </p>
@@ -77,9 +77,9 @@ export default async function AboutPage() {
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                title: 'Food with purpose',
+                title: 'Great taste. Real ingredients.',
                 description:
-                  'We believe food should serve your body, your mind, and your neighborhood. Flavor and nourishment are equal priorities.',
+                  'We believe what goes in the jar matters. Local produce, olive oil, fresh citrus—no fillers, no shortcuts.',
               },
               {
                 title: 'Only the good stuff',
@@ -126,7 +126,7 @@ export default async function AboutPage() {
                   The Vision
                 </p>
                 <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                  Choose Your Flavor
+                  The Right Sauce Changes Everything
                 </h2>
                 <p className="text-white/70 text-lg leading-relaxed mb-6">
                   We're building kitchen experiences centered around flavor-first sauces. Instead of defaulting to shelf-stable containers, you choose how you want dinner to taste and Portland Fresh delivers the sauce designed for that moment.
@@ -324,10 +324,10 @@ export default async function AboutPage() {
               We'd love to hear from you.
             </p>
             <a
-              href="mailto:hello@portlandfresh.com"
+              href="mailto:hello@pdxfreshfoods.com"
               className="text-accent-primary hover:underline font-medium text-lg"
             >
-              hello@portlandfresh.com
+              hello@pdxfreshfoods.com
             </a>
           </FadeIn>
         </div>

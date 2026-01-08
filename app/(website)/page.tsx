@@ -3,40 +3,23 @@ import Link from 'next/link';
 import { Section } from '@/components/Section';
 import { BlendsGrid } from '@/components/BlendsGrid';
 import { FadeIn, StaggerContainer, ParallaxElement } from '@/components/animations';
-import { MoodGrid } from '@/components/MoodGrid';
 import { NewsletterForm } from '@/components/NewsletterForm';
-import { HeroSlider } from '@/components/HeroSlider';
-import { getFeaturedProducts } from '@/lib/supabase/queries/products';
+import { VideoHero } from '@/components/VideoHero';
+import { getAllProducts } from '@/lib/supabase/queries/products';
 import { logger } from '@/lib/logger';
 
 export const revalidate = 60;
 
-const heroSlides = [
-  {
-    heading: 'Dips & Sauces Made Fresh in Portland',
-    subheading: 'Weekly batches of pesto, salsa, chimichurri, and zhug using organic produce from Oregon farms.',
-    ctaText: 'Shop Sauces',
-    ctaLink: '/blends',
-    desktopImage: '/portland-fresh-new-1.jpg',
-    mobileImage: '/portland-fresh-new-2.jpg',
-  },
-  {
-    heading: 'Made From Local Ingredients',
-    subheading: 'Only olive oil, citrus, and raw apple cider vinegar—never fillers, sugar, or preservatives.',
-    ctaText: 'Our Process',
-    ctaLink: '/how-we-make-it',
-    desktopImage: '/portland-fresh-new-3.jpg',
-    mobileImage: '/portland-fresh-new-4.jpg',
-  },
-  {
-    heading: 'Find Us at New Seasons & Local Markets',
-    subheading: 'Portland Fresh is rooted in Buckman and pours back into every neighborhood we serve.',
-    ctaText: 'Where to Buy',
-    ctaLink: '/contact',
-    desktopImage: '/portland-fresh-new-5.jpg',
-    mobileImage: '/portland-fresh-new-6.jpg',
-  },
-];
+// Hero content
+const heroContent = {
+  vimeoId: '335489274',
+  heading: 'Dips & Sauces Made Fresh in Portland',
+  subheading: 'Weekly batches of pesto, salsa, chimichurri, and zhug using organic produce from Oregon farms.',
+  ctaText: 'Shop Sauces',
+  ctaLink: '/blends',
+  fallbackImage: '/portland-fresh-new-1.jpg',
+  mobileImage: '/portland-fresh-new-2.jpg',
+};
 
 const sliderHighlights = [
   {
@@ -89,29 +72,30 @@ const processSteps = [
   },
 ];
 
-async function getFeaturedBlends() {
+async function getProducts() {
   try {
-    return await getFeaturedProducts();
+    return await getAllProducts();
   } catch (error) {
-    logger.error('Error fetching featured blends:', error);
+    logger.error('Error fetching products:', error);
     return [];
   }
 }
 
 export default async function Home() {
-  const featuredBlends = await getFeaturedBlends();
+  const allProducts = await getProducts();
 
   return (
     <>
-      {/* Hero Slider */}
-      <div className="relative w-full min-h-[85vh]">
-        <HeroSlider slides={heroSlides} />
-        <div className="absolute bottom-6 right-6 hidden md:flex flex-col gap-1 rounded-2xl border border-white/60 bg-white/80 px-5 py-3 text-right text-sm text-gray-700 shadow-xl backdrop-blur-lg">
-          <span className="uppercase text-xs tracking-[0.3em] text-accent-primary">Portland Fresh</span>
-          <span className="font-heading text-lg text-gray-900">Seasonal drops weekly</span>
-          <span className="text-xs text-gray-500">Claim containers before they sell out</span>
-        </div>
-      </div>
+      {/* Video Hero */}
+      <VideoHero
+        vimeoId={heroContent.vimeoId}
+        heading={heroContent.heading}
+        subheading={heroContent.subheading}
+        ctaText={heroContent.ctaText}
+        ctaLink={heroContent.ctaLink}
+        fallbackImage={heroContent.fallbackImage}
+        mobileImage={heroContent.mobileImage}
+      />
 
       {/* Intro Section */}
       <Section className="-mt-12 sm:-mt-16 relative z-10 rounded-t-[2rem] sm:rounded-t-[3rem] bg-gradient-to-b from-white via-accent-cream/70 to-white shadow-xl shadow-accent-cream/50">
@@ -157,9 +141,9 @@ export default async function Home() {
               Portland, Oregon.
             </p>
             <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-              We believe food should do more than taste good. It should serve our bodies, our minds, and our neighborhoods. That's why
-              every batch uses organic produce sourced as locally as possible, olive oil instead of seed oils, and real citrus plus raw
-              apple cider vinegar in place of sugar or preservatives.
+              We believe food should do more than taste good—it should be real. No preservatives, no fillers, just flavor. That's why
+              every batch uses organic produce sourced as locally as possible, olive oil instead of seed oils, and real citrus plus
+              vinegar in place of sugar or shelf-stable shortcuts.
             </p>
             <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
               Our sauces are made in Buckman, delivered across the city, and stocked at New Seasons and Portland farmers markets. Fresh every
@@ -188,7 +172,7 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto">
           <FadeIn direction="up" className="text-center mb-10">
             <p className="text-sm uppercase tracking-[0.3em] text-gray-400">Inside the kitchen</p>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900">Sauce in progress every week</h2>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-gray-900">Fresh Batch Every Week</h2>
             <p className="text-base sm:text-lg text-gray-600">
               Every jar is blended, chilled, and packed by hand in our Buckman kitchen. Here's a look at the process.
             </p>
@@ -216,9 +200,6 @@ export default async function Home() {
           </div>
         </div>
       </Section>
-
-      {/* Mood Grid */}
-      <MoodGrid />
 
       {/* Value Props */}
       <Section className="bg-gradient-to-br from-accent-cream via-white to-accent-yellow/20">
@@ -268,8 +249,8 @@ export default async function Home() {
         </StaggerContainer>
       </Section>
 
-      {/* Featured Sauces */}
-      {featuredBlends && featuredBlends.length > 0 && (
+      {/* Our Sauces - All Products */}
+      {allProducts && allProducts.length > 0 && (
         <Section className="bg-gradient-to-b from-white via-accent-green/10 to-white relative overflow-hidden">
           {/* Decorative organic shapes */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-accent-yellow/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
@@ -278,25 +259,25 @@ export default async function Home() {
           <div className="relative z-10">
             <FadeIn direction="up" className="text-center mb-12">
               <h2 className="font-heading text-4xl font-bold mb-4 leading-tight-90">
-                Featured Sauces
+                Our Sauces
               </h2>
-              <p className="text-lg text-muted italic">
-                Crafted once a week. First come, first stirred.
+              <p className="text-lg text-muted">
+                Small-batch pestos, salsas, chimichurri, and more. Made fresh weekly.
               </p>
             </FadeIn>
-            <BlendsGrid blends={featuredBlends} showFilters={false} maxColumns={2} maxItems={4} />
+            <BlendsGrid blends={allProducts} showFilters={false} maxColumns={3} maxItems={12} />
             <div className="text-center mt-12">
               <p className="text-muted mb-4">
-                Available in 8oz and 16oz containers
+                Available in 7oz, 8oz, and 12oz jars
               </p>
               <p className="text-sm text-muted mb-6">
-                Local pickup & delivery in Portland
+                Local pickup & delivery across Portland
               </p>
               <Link
                 href="/blends"
                 className="px-6 py-3 bg-accent-primary text-white rounded-full font-semibold hover:opacity-90 transition-opacity inline-block"
               >
-                Order the Latest Batch
+                Shop All Sauces
               </Link>
             </div>
           </div>
@@ -319,7 +300,7 @@ export default async function Home() {
           </FadeIn>
           <div className="grid md:grid-cols-4 gap-8 text-center">
             {[
-              { label: 'Happy Customers', value: '2,500+' },
+              { label: 'Portland Kitchens', value: '2,500+' },
               { label: 'Weekly Batches', value: '50+' },
               { label: 'Years Crafting', value: '6' },
               { label: 'Jars Filled', value: '100K+' },
@@ -505,7 +486,7 @@ export default async function Home() {
         <FadeIn>
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6">
-              Share the Love, Earn Rewards
+              Spread the Word. Taste Rewards.
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Refer friends to Portland Fresh and earn exclusive rewards. Get 15% off for every friend who makes their first purchase.

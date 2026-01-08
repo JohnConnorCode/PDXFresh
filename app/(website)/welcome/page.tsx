@@ -52,7 +52,7 @@ export default async function WelcomePage() {
               className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border-2 border-gray-200 hover:border-accent-primary hover:shadow-xl transition-all group"
             >
               <div className="w-14 h-14 bg-gradient-to-br from-accent-yellow/20 to-accent-yellow/40 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <span className="text-3xl">🥤</span>
+                <span className="text-3xl">🫙</span>
               </div>
               <h3 className="font-heading text-xl font-bold mb-2 group-hover:text-accent-primary transition-colors">
                 Explore Sauces

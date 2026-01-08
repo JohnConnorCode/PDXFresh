@@ -72,7 +72,7 @@ Access at: `/admin/products`
 - **Publishing**: Draft mode or published
 
 #### Variant Management
-- Add multiple price points (gallon, half-gallon, shot, etc.)
+- Add multiple price points (7 oz jar, 12 oz jar, etc.)
 - Set default variant
 - Link Stripe Price IDs
 - Drag-and-drop reordering (▲▼ buttons)

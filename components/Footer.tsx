@@ -15,7 +15,7 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
   const social = siteSettings?.social || {
     instagram: 'https://instagram.com/portlandfresh',
   };
-  const contactEmail = siteSettings?.contactEmail || 'hello@portlandfresh.com';
+  const contactEmail = siteSettings?.contactEmail || 'hello@pdxfreshfoods.com';
   const address = siteSettings?.address || 'Portland, Oregon';
   const tagline = siteSettings?.tagline || 'Small-batch sauces, pestos, and salsa born from Portland markets.';
   const title = siteSettings?.title || 'Portland Fresh';

@@ -390,7 +390,7 @@ export default async function AdminDashboard() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 group-hover:text-accent-primary transition-colors">Add Product</h3>
-                  <p className="text-sm text-gray-500 mt-0.5">Create a new blend with variants and pricing</p>
+                  <p className="text-sm text-gray-500 mt-0.5">Create a new sauce with variants and pricing</p>
                 </div>
               </div>
             </Link>
@@ -407,7 +407,7 @@ export default async function AdminDashboard() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">Add Ingredient</h3>
-                  <p className="text-sm text-gray-500 mt-0.5">Define a new ingredient with health benefits</p>
+                  <p className="text-sm text-gray-500 mt-0.5">Define a new ingredient with flavor profile</p>
                 </div>
               </div>
             </Link>

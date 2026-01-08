@@ -120,8 +120,8 @@ export const OrderConfirmationEmail: React.FC<OrderConfirmationEmailProps> = ({
       </head>
       <body>
         <div className="header">
-          <div className="logo">🥤 Portland Fresh</div>
-          <p>Farm-Pressed Nutrition for Portland</p>
+          <div className="logo">🫙 Portland Fresh</div>
+          <p>Small-Batch Sauces & Pestos</p>
         </div>
 
         <div className="content">
@@ -276,8 +276,8 @@ export const SubscriptionConfirmationEmail: React.FC<SubscriptionConfirmationEma
       </head>
       <body>
         <div className="header">
-          <div className="logo">🥤 Portland Fresh</div>
-          <p>Farm-Pressed Nutrition for Portland</p>
+          <div className="logo">🫙 Portland Fresh</div>
+          <p>Small-Batch Sauces & Pestos</p>
         </div>
 
         <div className="content">

@@ -204,7 +204,7 @@ export const OrderConfirmationEmail: React.FC<OrderConfirmationEmailProps> = ({
 
         <div className="footer">
           <p>Questions? Contact us at support@pdxfreshfoods.com</p>
-          <p>Portland Fresh · Farm-Pressed Nutrition</p>
+          <p>Portland Fresh · Small-Batch Sauces & Pestos</p>
         </div>
       </div>
     </body>

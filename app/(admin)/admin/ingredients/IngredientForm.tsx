@@ -170,13 +170,13 @@ export function IngredientForm({ ingredient, mode }: IngredientFormProps) {
           {/* Function */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Health Benefits / Function
+              Flavor Profile / Function
             </label>
             <div className="border rounded-md">
               <EditorContent editor={functionEditor} />
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Describe the health benefits and functional properties
+              Describe the flavor profile and culinary uses
             </p>
           </div>
 
