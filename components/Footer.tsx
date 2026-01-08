@@ -13,7 +13,7 @@ interface FooterProps {
 export function Footer({ siteSettings, navigation }: FooterProps) {
   const legalLinks = navigation?.legalLinks || [];
   const social = siteSettings?.social || {
-    instagram: 'https://instagram.com/portlandfresh',
+    instagram: 'https://www.instagram.com/portland.fresh/',
   };
   const contactEmail = siteSettings?.contactEmail || 'hello@pdxfreshfoods.com';
   const address = siteSettings?.address || 'Portland, Oregon';
@@ -146,7 +146,7 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
                   href="/referral"
                   className="group text-sm text-muted hover:text-black transition-colors relative inline-block"
                 >
-                  Ambassadors
+                  Referrals
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent-primary group-hover:w-full transition-all duration-300" />
                 </Link>
               </li>

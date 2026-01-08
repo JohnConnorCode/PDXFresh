@@ -7,21 +7,21 @@ export const revalidate = 60;
 
 export async function generateMetadata() {
   return {
-    title: 'Join the Movement | Portland Fresh Ambassadors',
-    description: 'Be part of something bigger. Join the Portland Fresh Ambassador movement and help spread fresh flavors while earning rewards.',
+    title: 'Referral Program | Portland Fresh',
+    description: 'Share Portland Fresh with friends and earn rewards. You get 15% credit, they get 10% off their first order.',
   };
 }
 
-export default async function AmbassadorPage() {
+export default async function ReferralPage() {
   return (
     <>
-      {/* Hero Section - Dark, Bold, Movement-focused */}
+      {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center bg-black overflow-hidden">
         {/* Hero imagery */}
         <div className="absolute inset-0">
           <Image
             src="/portland-fresh-new-13.jpg"
-            alt="Portland Fresh ambassador sampling sauces"
+            alt="Portland Fresh sauces on a table"
             fill
             priority
             quality={90}
@@ -47,25 +47,25 @@ export default async function AmbassadorPage() {
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" style={{ animationDelay: '0.3s' }} />
                 <div className="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-pulse" style={{ animationDelay: '0.6s' }} />
               </div>
-              <span className="text-sm font-medium text-white/70 tracking-wide">THE AMBASSADOR MOVEMENT</span>
+              <span className="text-sm font-medium text-white/70 tracking-wide">REFERRAL PROGRAM</span>
             </div>
           </FadeIn>
 
           <FadeIn direction="up" delay={0.2}>
             <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[0.95] text-white">
-              You Don&apos;t Just
+              Share the
               <br />
               <span className="bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">
-                Share Sauce.
+                Flavor.
               </span>
               <br />
-              <span className="text-white/60">You Feed Portland.</span>
+              <span className="text-white/60">Earn Rewards.</span>
             </h1>
           </FadeIn>
 
           <FadeIn direction="up" delay={0.3}>
             <p className="text-xl sm:text-2xl text-white/50 leading-relaxed max-w-2xl mx-auto mb-10">
-              Join a crew of chefs, grocers, and home cooks who earn rewards by introducing Portland to vibrant pestos, salsa, zhug, and chimichurri made weekly.
+              Know someone who&apos;d love fresh pesto, salsa, or chimichurri? Share your link and you both win.
             </p>
           </FadeIn>
 
@@ -75,7 +75,7 @@ export default async function AmbassadorPage() {
                 href="/login?redirectTo=/account"
                 className="group px-8 py-4 bg-white text-black font-bold text-lg rounded-full hover:bg-gray-100 transition-all shadow-2xl hover:shadow-white/20 hover:scale-105 flex items-center gap-2"
               >
-                Become an Ambassador
+                Get Your Referral Link
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -106,7 +106,7 @@ export default async function AmbassadorPage() {
           <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-16 text-white">
             <div className="text-center">
               <p className="text-3xl sm:text-4xl font-bold">500+</p>
-              <p className="text-sm font-medium opacity-90">Active Ambassadors</p>
+              <p className="text-sm font-medium opacity-90">Active Referrers</p>
             </div>
             <div className="text-center">
               <p className="text-3xl sm:text-4xl font-bold">$25K+</p>
@@ -120,23 +120,21 @@ export default async function AmbassadorPage() {
         </div>
       </section>
 
-      {/* The Mission */}
+      {/* The Pitch */}
       <Section className="py-24 bg-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-accent-yellow/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent-green/10 rounded-full blur-3xl" />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <FadeIn direction="up">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent-primary mb-4">The Mission</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent-primary mb-4">Why Share?</p>
             <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold mb-8 leading-tight text-gray-900">
-              We&apos;re building a world where
+              Good sauce is meant
               <br />
-              <span className="text-accent-primary">fresh is the default.</span>
+              <span className="text-accent-primary">to be shared.</span>
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
-              Every time you share Portland Fresh, you&apos;re not just recommending a product.
-              You&apos;re inviting someone into a movement that prioritizes real ingredients,
-              real benefits, and real change.
+              When you tell a friend about Portland Fresh, you&apos;re not just recommending a product—you&apos;re introducing them to sauces made fresh every week from local ingredients. And we&apos;ll thank you for it.
             </p>
           </FadeIn>
         </div>
@@ -152,9 +150,9 @@ export default async function AmbassadorPage() {
             <div className="text-center mb-16">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/40 mb-4">How It Works</p>
               <h2 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
-                Three Steps to Impact
+                Three Simple Steps
               </h2>
-              <p className="text-xl text-white/50">Simple, transparent, rewarding.</p>
+              <p className="text-xl text-white/50">No hoops. No gimmicks. Just rewards.</p>
             </div>
           </FadeIn>
 
@@ -167,7 +165,7 @@ export default async function AmbassadorPage() {
               <div className="pt-4">
                 <h3 className="font-heading text-2xl font-bold mb-4">Get Your Link</h3>
                 <p className="text-white/60 leading-relaxed">
-                  Sign up and instantly receive your unique ambassador link. Track everything from your dashboard.
+                  Sign up or log in to get your unique referral link. Find it in your account dashboard.
                 </p>
               </div>
             </div>
@@ -178,9 +176,9 @@ export default async function AmbassadorPage() {
                 2
               </div>
               <div className="pt-4">
-                <h3 className="font-heading text-2xl font-bold mb-4">Share the Movement</h3>
+                <h3 className="font-heading text-2xl font-bold mb-4">Share With Friends</h3>
                 <p className="text-white/60 leading-relaxed">
-                  Tell your friends, family, and community about Portland Fresh. Every share brings fresh flavors to another kitchen.
+                  Send your link to friends, family, or anyone who loves good food. Every click gets tracked.
                 </p>
               </div>
             </div>
@@ -191,9 +189,9 @@ export default async function AmbassadorPage() {
                 3
               </div>
               <div className="pt-4">
-                <h3 className="font-heading text-2xl font-bold mb-4">Earn Together</h3>
+                <h3 className="font-heading text-2xl font-bold mb-4">You Both Earn</h3>
                 <p className="text-white/60 leading-relaxed">
-                  When they purchase, you both get rewarded. You earn 15% credit, they get 10% off their first order.
+                  When they buy, you get 15% credit toward your next order. They get 10% off their first.
                 </p>
               </div>
             </div>
@@ -206,11 +204,11 @@ export default async function AmbassadorPage() {
         <div className="max-w-5xl mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-16">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent-primary mb-4">Ambassador Rewards</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent-primary mb-4">The Rewards</p>
               <h2 className="font-heading text-4xl sm:text-5xl font-bold mb-4 text-gray-900">
-                Give More. Get More.
+                You Share. You Both Save.
               </h2>
-              <p className="text-xl text-gray-600">No limits. No gimmicks. Just real rewards for real impact.</p>
+              <p className="text-xl text-gray-600">No limits on referrals. The more you share, the more you earn.</p>
             </div>
           </FadeIn>
 
@@ -266,13 +264,13 @@ export default async function AmbassadorPage() {
                   <svg className="w-6 h-6 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Access to our premium sauces, pestos, and salsa</span>
+                  <span className="text-gray-700">Access to all our sauces, pestos, and salsa</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <svg className="w-6 h-6 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700">Welcome to the Portland Fresh community</span>
+                  <span className="text-gray-700">Fresh flavors delivered to their door</span>
                 </li>
               </ul>
             </div>
@@ -294,13 +292,13 @@ export default async function AmbassadorPage() {
           <div className="space-y-4">
             <details className="group bg-gray-50 rounded-xl overflow-hidden">
               <summary className="p-6 cursor-pointer flex justify-between items-center font-semibold text-lg hover:bg-gray-100 transition-colors">
-                How do I get my ambassador link?
+                How do I get my referral link?
                 <svg className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </summary>
               <div className="px-6 pb-6 text-gray-600">
-                Simply create an account or sign in. Your unique ambassador link is automatically generated and visible in your account dashboard.
+                Simply create an account or sign in. Your unique referral link is automatically generated and visible in your account dashboard.
               </div>
             </details>
 
@@ -312,7 +310,7 @@ export default async function AmbassadorPage() {
                 </svg>
               </summary>
               <div className="px-6 pb-6 text-gray-600">
-                Rewards are credited to your account within 24 hours after your referred friend completes their first purchase. You&apos;ll see it reflected in your dashboard.
+                Rewards are credited to your account within 24 hours after your referred friend completes their first purchase. You&apos;ll see it in your dashboard.
               </div>
             </details>
 
@@ -324,7 +322,7 @@ export default async function AmbassadorPage() {
                 </svg>
               </summary>
               <div className="px-6 pb-6 text-gray-600">
-                Absolutely not. Refer as many people as you want. The more you share, the more you earn. There&apos;s no cap on rewards.
+                Nope! Refer as many people as you want. The more you share, the more you earn. There&apos;s no cap.
               </div>
             </details>
 
@@ -336,7 +334,7 @@ export default async function AmbassadorPage() {
                 </svg>
               </summary>
               <div className="px-6 pb-6 text-gray-600">
-                When they sign up using your link, their discount is automatically tracked and applied at checkout. No codes needed.
+                When they sign up using your link, their discount is automatically applied at checkout. No codes needed.
               </div>
             </details>
           </div>
@@ -354,16 +352,16 @@ export default async function AmbassadorPage() {
         <div className="relative z-10 max-w-4xl mx-auto px-5 sm:px-6 text-center">
           <FadeIn direction="up">
             <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-white leading-tight">
-              Ready to Join
+              Ready to Start
               <br />
               <span className="bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">
-                the Movement?
+                Sharing?
               </span>
             </h2>
           </FadeIn>
           <FadeIn direction="up" delay={0.2}>
             <p className="text-xl text-white/60 mb-10 max-w-2xl mx-auto">
-              Start sharing fresh flavors today. Get your unique ambassador link and earn rewards with every referral.
+              Get your unique link today and start earning rewards with every friend who tries Portland Fresh.
             </p>
           </FadeIn>
           <FadeIn direction="up" delay={0.3}>
@@ -371,7 +369,7 @@ export default async function AmbassadorPage() {
               href="/login?redirectTo=/account"
               className="group inline-flex items-center gap-3 px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:bg-gray-100 transition-all shadow-2xl hover:shadow-white/20 hover:scale-105"
             >
-              Get Your Ambassador Link
+              Get Your Referral Link
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>

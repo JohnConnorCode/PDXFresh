@@ -228,7 +228,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
               />
             </Link>
 
-            {/* Ambassadors Link */}
+            {/* Referrals Link */}
             <Link
               href="/referral"
               className={clsx(
@@ -236,7 +236,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                 pathname === '/referral' ? 'text-accent-primary' : 'text-gray-700 hover:text-black'
               )}
             >
-              Ambassadors
+              Referrals
               <span
                 className={clsx(
                   'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
@@ -459,7 +459,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                 About
               </Link>
 
-              {/* Ambassadors Link */}
+              {/* Referrals Link */}
               <Link
                 href="/referral"
                 className={clsx(
@@ -469,7 +469,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                     : 'text-gray-700 hover:bg-gray-50'
                 )}
               >
-                Ambassadors
+                Referrals
               </Link>
 
               {/* Mobile Cart Link */}
