@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+
+# Build output (Vercel will build fresh)
+.next
+.vercel/output
+
+# Development
+*.log
+.env*.local
+.DS_Store
+
+# Testing
+coverage
+.nyc_output
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Git
+.git
+
+# Large files not needed for build
+*.md
+!README.md
+scripts/
+supabase/migrations/
