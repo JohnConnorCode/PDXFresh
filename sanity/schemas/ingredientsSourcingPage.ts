@@ -129,7 +129,7 @@ export default defineType({
       name: 'farmFormNote',
       title: 'Farm Form Note',
       type: 'string',
-      initialValue: 'We partner with farms in and around Indiana first, then expand as we grow.',
+      initialValue: 'We partner with farms in and around Oregon first, prioritizing the Willamette Valley and Sauvie Island.',
     }),
 
     // Transparency Section

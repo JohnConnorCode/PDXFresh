@@ -12,13 +12,16 @@ interface FooterProps {
 
 export function Footer({ siteSettings, navigation }: FooterProps) {
   const legalLinks = navigation?.legalLinks || [];
-  const social = siteSettings?.social || {
+
+  // Hardcode all Portland Fresh branding - ignore CMS values to prevent old content
+  const social = {
     instagram: 'https://www.instagram.com/portland.fresh/',
+    tiktok: siteSettings?.social?.tiktok,
+    youtube: siteSettings?.social?.youtube,
   };
-  const contactEmail = siteSettings?.contactEmail || 'hello@pdxfreshfoods.com';
-  const address = siteSettings?.address || 'Portland, Oregon';
-  const tagline = siteSettings?.tagline || 'Small-batch sauces, pestos, and salsa born from Portland markets.';
-  // Always use "Portland Fresh" as the brand name - never from CMS to prevent incorrect branding
+  const contactEmail = 'hello@pdxfreshfoods.com';
+  const address = 'Portland, Oregon';
+  const tagline = 'Small-batch sauces, pestos, and salsa made fresh weekly in Portland.';
   const title = 'Portland Fresh';
 
   return (
