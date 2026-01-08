@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -17,6 +18,7 @@ const labelColorMap = {
 };
 
 export function BlendCard({ blend }: BlendCardProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
   const slug = typeof blend.slug === 'string' ? blend.slug : (blend.slug?.current || blend.id || '');
   const imageUrl = blend.image_url || blend.image?.asset?.url;
   const category = (blend.category || blend.category_name || blend.categoryLabel) as string | undefined;
@@ -37,30 +39,45 @@ export function BlendCard({ blend }: BlendCardProps) {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
       >
-        <div className="relative overflow-hidden rounded-lg bg-gray-100 mb-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div className="relative overflow-hidden rounded-lg bg-gray-100 mb-4 shadow-sm hover:shadow-md transition-shadow duration-300 h-64">
           {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={blend.image_alt || blend.name}
-              width={800}
-              height={600}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="w-full h-64 object-cover"
-            />
+            <>
+              {/* Placeholder shown while loading */}
+              <div
+                className={clsx(
+                  "absolute inset-0 bg-gray-100 flex items-center justify-center transition-opacity duration-500",
+                  imageLoaded ? "opacity-0" : "opacity-100"
+                )}
+              >
+                <span className="font-heading text-3xl font-bold text-gray-300">{blend.name?.charAt(0)}</span>
+              </div>
+              <Image
+                src={imageUrl}
+                alt={blend.image_alt || blend.name}
+                width={800}
+                height={600}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className={clsx(
+                  "w-full h-64 object-cover transition-opacity duration-500",
+                  imageLoaded ? "opacity-100" : "opacity-0"
+                )}
+                onLoad={() => setImageLoaded(true)}
+              />
+            </>
           ) : (
             <div className="w-full h-64 flex items-center justify-center bg-gray-100">
               <span className="font-heading text-4xl font-bold text-gray-400">{blend.name}</span>
             </div>
           )}
           {readableCategory && (
-            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 text-white text-[11px] font-semibold uppercase tracking-wide">
+            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 text-white text-[11px] font-semibold uppercase tracking-wide z-10">
               {readableCategory}
             </div>
           )}
           {(blend.label_color || blend.labelColor) && (
             <div
               className={clsx(
-                'absolute top-3 right-3 w-8 h-8 rounded-full',
+                'absolute top-3 right-3 w-8 h-8 rounded-full z-10',
                 labelColorMap[(blend.label_color || blend.labelColor) as keyof typeof labelColorMap]
               )}
             />

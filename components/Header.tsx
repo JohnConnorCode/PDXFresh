@@ -29,10 +29,14 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
   const headerLinks = navigation?.primaryLinks || [];
   const cartItemCount = useCartStore((state) => state.getItemCount());
 
-  // Featured products for navigation dropdown
-  const featuredProducts = [
+  // All products for navigation dropdown
+  const allProducts = [
     { name: 'Arugula Hazelnut Pesto', slug: 'arugula-hazelnut', color: '#1f5b4c' },
-    { name: 'Spicy Salsa', slug: 'spicy-salsa', color: '#f28d6d' },
+    { name: 'Kale Cashew Pesto', slug: 'kale-cashew', color: '#1f5b4c' },
+    { name: 'Spinach Pecan Pesto', slug: 'spinach-pecan', color: '#1f5b4c' },
+    { name: 'Spicy Salsa', slug: 'spicy-salsa', color: '#dc2626' },
+    { name: 'Mild Salsa', slug: 'mild-salsa', color: '#f59e0b' },
+    { name: 'Spicy Chimichurri', slug: 'spicy-chimichurri', color: '#1f5b4c' },
     { name: 'Chimichurri', slug: 'chimichurri', color: '#1f5b4c' },
     { name: 'Zhug', slug: 'zhug', color: '#ca8a04' },
   ];
@@ -156,7 +160,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
 
               {/* Dropdown Menu */}
               {blendsMenuOpen && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 max-h-[70vh] overflow-y-auto">
                   <Link
                     href="/blends"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-accent-primary transition-colors font-medium"
@@ -164,7 +168,7 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                     All Sauces
                   </Link>
                   <div className="border-t border-gray-100 my-1"></div>
-                  {featuredProducts.map((product) => (
+                  {allProducts.map((product) => (
                     <Link
                       key={product.slug}
                       href={`/blends/${product.slug}`}
@@ -397,22 +401,22 @@ export function Header({ siteSettings, navigation }: HeaderProps) {
                 Shop Sauces
               </Link>
                 <div className="grid grid-cols-2 gap-2 mt-2 px-2">
-                  {featuredProducts.map((product) => (
+                  {allProducts.map((product) => (
                     <Link
                       key={product.slug}
                       href={`/blends/${product.slug}`}
                       className={clsx(
-                        'flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 border',
+                        'flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors border',
                         pathname === `/blends/${product.slug}`
                           ? 'border-gray-300 bg-gray-50'
                           : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                       )}
                     >
                       <span
-                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                        className="w-2 h-2 rounded-full flex-shrink-0"
                         style={{ backgroundColor: product.color }}
                       />
-                      <span className="text-gray-700">{product.name}</span>
+                      <span className="text-gray-700 text-xs">{product.name}</span>
                     </Link>
                   ))}
                 </div>

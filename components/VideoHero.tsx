@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -23,47 +23,62 @@ export function VideoHero({
   fallbackImage,
   mobileImage,
 }: VideoHeroProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    // Mark as loaded after a short delay for smooth transition
-    const timer = setTimeout(() => setIsLoaded(true), 500);
+    // Listen for video ready from Vimeo
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== 'https://player.vimeo.com') return;
+      try {
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        if (data.event === 'ready' || data.method === 'play') {
+          // Give video a moment to start playing before fading in
+          setTimeout(() => setVideoLoaded(true), 300);
+        }
+      } catch {
+        // Ignore parse errors
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // Fallback: if video doesn't report ready after 3 seconds, assume it's playing
+    const fallbackTimer = setTimeout(() => {
+      setVideoLoaded(true);
+    }, 3000);
 
     return () => {
-      clearTimeout(timer);
+      window.removeEventListener('message', handleMessage);
+      clearTimeout(fallbackTimer);
     };
   }, []);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
-      {/* Video Background - Desktop Only */}
-      <div className="absolute inset-0 hidden md:block">
-        <div
-          className={`absolute inset-0 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-          style={{ padding: '56.25% 0 0 0', position: 'relative' }}
-        >
-          <iframe
-            src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1&quality=1080p`}
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              width: '177.78vh', // 16:9 aspect ratio
-              height: '100vh',
-              minWidth: '100%',
-              minHeight: '56.25vw', // 16:9 aspect ratio
-              transform: 'translate(-50%, -50%)',
-            }}
-            frameBorder="0"
-            allow="autoplay; fullscreen"
-            allowFullScreen
-            title="Portland Fresh Background Video"
-          />
-        </div>
-        {/* Fallback image while video loads */}
-        <div className={`absolute inset-0 transition-opacity duration-1000 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}>
+    <div className="relative h-screen w-full overflow-hidden bg-gray-900">
+      {/* Fallback Image - Always rendered first, fades out when video loads */}
+      <div
+        className={`absolute inset-0 z-[1] transition-opacity duration-700 ${
+          videoLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+      >
+        {/* Desktop fallback */}
+        <div className="hidden md:block absolute inset-0">
           <Image
             src={fallbackImage}
+            alt={heading}
+            fill
+            className={`object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            priority
+            quality={90}
+            onLoad={() => setImageLoaded(true)}
+          />
+        </div>
+        {/* Mobile fallback */}
+        <div className="md:hidden absolute inset-0">
+          <Image
+            src={mobileImage || fallbackImage}
             alt={heading}
             fill
             className="object-cover"
@@ -73,15 +88,25 @@ export function VideoHero({
         </div>
       </div>
 
-      {/* Mobile Image Background */}
-      <div className="absolute inset-0 md:hidden">
-        <Image
-          src={mobileImage || fallbackImage}
-          alt={heading}
-          fill
-          className="object-cover"
-          priority
-          quality={90}
+      {/* Video Background - Desktop Only, renders behind fallback */}
+      <div className="absolute inset-0 z-[0] hidden md:block">
+        <iframe
+          ref={iframeRef}
+          src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1&quality=1080p`}
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: '177.78vh',
+            height: '100vh',
+            minWidth: '100%',
+            minHeight: '56.25vw',
+            transform: 'translate(-50%, -50%)',
+          }}
+          frameBorder="0"
+          allow="autoplay; fullscreen"
+          allowFullScreen
+          title="Portland Fresh Background Video"
         />
       </div>
 
@@ -104,7 +129,7 @@ export function VideoHero({
             <div className="animate-fade-in-up animation-delay-400">
               <Link
                 href={ctaLink}
-                className="inline-block px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 bg-accent-primary text-white text-sm sm:text-base md:text-lg font-semibold rounded-full hover:bg-accent-primary/90 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-accent-primary/50"
+                className="inline-block px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 bg-accent-primary text-white text-sm sm:text-base md:text-lg font-semibold rounded-lg hover:bg-accent-primary/90 transition-colors shadow-lg"
               >
                 {ctaText}
               </Link>
