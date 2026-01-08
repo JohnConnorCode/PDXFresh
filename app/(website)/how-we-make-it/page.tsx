@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import { Section } from '@/components/Section';
 import { FadeIn } from '@/components/animations/FadeIn';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const revalidate = 60;
 
@@ -64,25 +64,31 @@ export default function HowWeMakeItPage() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           {/* Desktop Image */}
-          <Image
-            src="/portland-fresh-new-11.jpg"
-            alt="How We Make It"
-            fill
-            className="object-cover hidden md:block scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-          />
+          <div className="hidden md:block absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-11.jpg"
+              alt="How We Make It"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              objectPosition="top center"
+              priority
+              quality={90}
+              sizes="100vw"
+            />
+          </div>
           {/* Mobile Image */}
-          <Image
-            src="/portland-fresh-new-12.jpg"
-            alt="How We Make It"
-            fill
-            className="object-cover md:hidden scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-          />
+          <div className="md:hidden absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-12.jpg"
+              alt="How We Make It"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              objectPosition="top center"
+              priority
+              quality={90}
+              sizes="100vw"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-accent-primary/50 to-accent-green/40" />
         </div>
 
@@ -122,7 +128,7 @@ export default function HowWeMakeItPage() {
                 <div className="group relative bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden border-2 border-gray-100 hover:border-accent-primary/30 transition-all duration-500 hover:shadow-xl">
                   {/* Step Image */}
                   <div className="relative h-64 overflow-hidden">
-                    <Image
+                    <SmoothImage
                       src={step.image}
                       alt={step.title}
                       fill

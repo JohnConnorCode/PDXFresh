@@ -3,7 +3,7 @@ import { getAllProductsWithMinPrice } from '@/lib/supabase/queries/products';
 import { Section } from '@/components/Section';
 import { FadeIn, StaggerContainer } from '@/components/animations';
 import Link from 'next/link';
-import Image from 'next/image';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -32,24 +32,28 @@ export default async function PricingPage() {
       {/* Hero */}
       <Section className="bg-gradient-to-br from-accent-cream via-accent-yellow/20 to-accent-green/20 py-24 relative overflow-hidden">
         <div className="absolute inset-0">
-          <Image
-            src="/portland-fresh-new-13.jpg"
-            alt="Portland Fresh sauces in production"
-            fill
-            className="object-cover hidden md:block scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-          />
-          <Image
-            src="/portland-fresh-new-6.jpg"
-            alt="Portland Fresh sauces in production"
-            fill
-            className="object-cover md:hidden scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-          />
+          <div className="hidden md:block absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-13.jpg"
+              alt="Portland Fresh sauces in production"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              priority
+              quality={90}
+              sizes="100vw"
+            />
+          </div>
+          <div className="md:hidden absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-6.jpg"
+              alt="Portland Fresh sauces in production"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              priority
+              quality={90}
+              sizes="100vw"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-br from-accent-cream/95 via-accent-yellow/80 to-accent-green/75" />
         </div>
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent-yellow/30 rounded-full blur-3xl -translate-y-1/3 translate-x-1/3" />
@@ -104,11 +108,12 @@ export default async function PricingPage() {
                   >
                     {product.image_url && (
                       <div className="relative h-64 overflow-hidden">
-                        <Image
+                        <SmoothImage
                           src={product.image_url}
                           alt={product.image_alt || product.name}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          sizes="(max-width: 768px) 100vw, 33vw"
                         />
                         <div className={`absolute inset-0 bg-gradient-to-t ${gradient} opacity-20`} />
                       </div>

@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import { Section } from '@/components/Section';
 import { FadeIn, StaggerContainer } from '@/components/animations';
 import { NewsletterSection } from '@/components/NewsletterSection';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const metadata: Metadata = {
   title: 'Journal | Portland Fresh',
@@ -73,13 +73,14 @@ export default function JournalPage() {
       <Section className="py-24 relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <Image
+          <SmoothImage
             src="/portland-fresh-new-5.jpg"
             alt="Journal"
             fill
             className="object-cover scale-110 animate-ken-burns"
             priority
             quality={90}
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/85 via-accent-green/75 to-accent-yellow/65" />
         </div>
@@ -116,11 +117,12 @@ export default function JournalPage() {
           <div className="group block max-w-6xl mx-auto">
             <div className="grid md:grid-cols-2 gap-8 bg-gradient-to-br from-accent-cream/30 to-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 border-2 border-accent-yellow/30 hover:border-accent-primary/50">
               <div className="relative h-80 overflow-hidden rounded-2xl">
-                <Image
+                <SmoothImage
                   src={featuredPost.coverImage}
                   alt={featuredPost.title}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute top-4 left-4 px-4 py-2 bg-accent-primary text-white text-sm font-semibold rounded-full shadow-lg">
                   Featured
@@ -161,11 +163,12 @@ export default function JournalPage() {
             >
               <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-accent-yellow">
                 <div className="relative h-56 overflow-hidden">
-                  <Image
+                  <SmoothImage
                     src={post.coverImage}
                     alt={post.title}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 </div>
                 <div className="p-6">

@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import { getAllProducts } from '@/lib/supabase/queries/products';
 import { Section } from '@/components/Section';
 import { BlendsGrid } from '@/components/BlendsGrid';
 import { FadeIn } from '@/components/animations';
 import { logger } from '@/lib/logger';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 60;
@@ -33,25 +33,29 @@ export default async function BlendsPage() {
         {/* Background Image with Ken Burns zoom-out effect */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           {/* Desktop Image */}
-          <Image
-            src="/portland-fresh-new-3.jpg"
-            alt="Portland Fresh sauce pantry"
-            fill
-            className="object-cover hidden md:block scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-          />
+          <div className="hidden md:block absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-3.jpg"
+              alt="Portland Fresh sauce pantry"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              priority
+              quality={90}
+              sizes="100vw"
+            />
+          </div>
           {/* Mobile Image */}
-          <Image
-            src="/portland-fresh-new-4.jpg"
-            alt="Portland Fresh sauce pantry"
-            fill
-            className="object-cover md:hidden scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-          />
+          <div className="md:hidden absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-4.jpg"
+              alt="Portland Fresh sauce pantry"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              priority
+              quality={90}
+              sizes="100vw"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/80 via-accent-green/70 to-accent-yellow/60" />
         </div>
 

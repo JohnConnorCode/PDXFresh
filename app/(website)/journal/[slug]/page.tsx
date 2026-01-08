@@ -1,6 +1,5 @@
 import { logger } from "@/lib/logger";
 import { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { client } from '@/lib/sanity.client';
 import { postQuery, postsQuery } from '@/lib/sanity.queries';
@@ -9,6 +8,7 @@ import { RichText } from '@/components/RichText';
 import { urlFor } from '@/lib/image';
 import { FadeIn, StaggerContainer } from '@/components/animations';
 import { NewsletterSection } from '@/components/NewsletterSection';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const revalidate = 60;
 
@@ -102,12 +102,13 @@ export default async function PostPage({ params }: PostPageProps) {
       {/* Hero Section */}
       {post.coverImage && (
         <div className="relative w-full h-96 sm:h-[500px] overflow-hidden">
-          <Image
+          <SmoothImage
             src={urlFor(post.coverImage).url()}
             alt={post.title}
             fill
             className="object-cover scale-105 animate-ken-burns"
             priority
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         </div>
@@ -194,11 +195,12 @@ export default async function PostPage({ params }: PostPageProps) {
                 <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-accent-yellow">
                   {otherPost.coverImage && (
                     <div className="relative h-48 overflow-hidden">
-                      <Image
+                      <SmoothImage
                         src={urlFor(otherPost.coverImage).url()}
                         alt={otherPost.title}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, 33vw"
                       />
                     </div>
                   )}

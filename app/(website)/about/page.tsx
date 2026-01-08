@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Section } from '@/components/Section';
 import { FadeIn, StaggerContainer } from '@/components/animations';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const revalidate = 60;
 
@@ -108,7 +108,7 @@ export default async function AboutPage() {
             {/* Image */}
             <FadeIn direction="right" delay={0.2}>
               <div className="relative aspect-[3/4] max-w-md mx-auto md:mx-0 rounded-3xl overflow-hidden shadow-2xl">
-                <Image
+                <SmoothImage
                   src="/portland-fresh-new-10.jpg"
                   alt="Stew Joseph preparing sauces in the Portland Fresh kitchen"
                   fill
@@ -218,11 +218,12 @@ export default async function AboutPage() {
           </FadeIn>
           <div className="max-w-2xl mx-auto text-center">
             <div className="relative w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden shadow-xl border-4 border-accent-yellow bg-gradient-to-br from-accent-yellow/30 to-accent-green/30 flex items-center justify-center">
-              <Image
+              <SmoothImage
                 src="/portland-fresh-new-11.jpg"
                 alt="Stew Joseph, founder of Portland Fresh"
                 fill
                 className="object-cover"
+                objectPosition="top center"
               />
             </div>
             <h3 className="font-heading text-2xl font-bold mb-2">Stew Joseph</h3>

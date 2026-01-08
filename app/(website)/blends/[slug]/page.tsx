@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { logger } from '@/lib/logger';
-import Image from 'next/image';
 import Link from 'next/link';
 import { getProductBySlug, getAllProductsForStaticGen, getAllProducts } from '@/lib/supabase/queries/products';
 import { Section } from '@/components/Section';
@@ -8,6 +7,7 @@ import { RichText } from '@/components/RichText';
 import { FadeIn, StaggerContainer, FloatingElement } from '@/components/animations';
 import { VariantSelector } from '@/components/blends/VariantSelector';
 import { BlendCard } from '@/components/BlendCard';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 60;
@@ -107,7 +107,7 @@ export default async function BlendPage({ params }: BlendPageProps) {
               <div className="sticky top-24">
                 <FloatingElement yOffset={15} duration={6}>
                   <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
-                    <Image
+                    <SmoothImage
                       src={blend.image_url}
                       alt={blend.image_alt || blend.name}
                       fill

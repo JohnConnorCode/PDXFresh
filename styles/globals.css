@@ -140,6 +140,7 @@ img[data-nimg]:not([src]) {
 }
 
 .animate-fade-in-up {
+  opacity: 0;
   animation: fade-in-up 0.8s ease-out forwards;
 }
 

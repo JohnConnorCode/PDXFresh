@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import { Section } from '@/components/Section';
 import { FadeIn, StaggerContainer } from '@/components/animations';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const metadata: Metadata = {
   title: 'Wholesale & Partners | Portland Fresh',
@@ -94,13 +94,14 @@ export default function WholesalePage() {
       <Section className="py-24 relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <Image
+          <SmoothImage
             src="/portland-fresh-new-2.jpg"
             alt="Wholesale"
             fill
             className="object-cover scale-110 animate-ken-burns"
             priority
             quality={90}
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-accent-cream/90 via-accent-yellow/70 to-accent-green/60" />
         </div>

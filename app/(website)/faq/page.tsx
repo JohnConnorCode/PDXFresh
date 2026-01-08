@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import { Section } from '@/components/Section';
 import { FAQAccordion } from '@/components/FAQAccordion';
 import { FadeIn } from '@/components/animations';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const metadata: Metadata = {
   title: 'FAQ | Portland Fresh',
@@ -83,13 +83,14 @@ export default function FAQPage() {
       <Section className="py-24 relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <Image
+          <SmoothImage
             src="/portland-fresh-new-5.jpg"
             alt="FAQ"
             fill
             className="object-cover scale-110 animate-ken-burns"
             priority
             quality={90}
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/80 via-accent-green/70 to-accent-yellow/60" />
         </div>

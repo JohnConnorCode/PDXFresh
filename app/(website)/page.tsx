@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Section } from '@/components/Section';
 import { BlendsGrid } from '@/components/BlendsGrid';
@@ -8,6 +7,7 @@ import { VideoHero } from '@/components/VideoHero';
 import { getAllProducts } from '@/lib/supabase/queries/products';
 import { logger } from '@/lib/logger';
 import { Link2, Gift, Coins } from 'lucide-react';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const revalidate = 60;
 
@@ -96,7 +96,7 @@ export default async function Home() {
               >
                 {/* Background Image */}
                 <div className="absolute inset-0">
-                  <Image
+                  <SmoothImage
                     src={prop.image}
                     alt={prop.title}
                     fill
@@ -229,13 +229,12 @@ export default async function Home() {
                       >
                         {/* Main Image Container */}
                         <div className="relative h-[200px] sm:h-[240px] md:h-[280px] rounded-2xl overflow-hidden shadow-xl border-4 border-white">
-                          <Image
+                          <SmoothImage
                             src={step.image}
                             alt={step.title}
                             fill
                             className="object-cover"
                             sizes="(max-width: 768px) 100vw, 50vw"
-                            loading="eager"
                             quality={85}
                           />
                         </div>
@@ -304,7 +303,7 @@ export default async function Home() {
               return (
                 <ParallaxElement key={idx} speed={speeds[idx]}>
                   <div className={`absolute ${positions[idx]} ${zIndexClasses[idx]} rounded-3xl shadow-2xl border-4 border-white overflow-hidden`}>
-                    <Image
+                    <SmoothImage
                       src={image.src}
                       alt={image.alt}
                       fill

@@ -1,7 +1,7 @@
 import { Section } from '@/components/Section';
 import Link from 'next/link';
-import Image from 'next/image';
 import { FadeIn, StaggerContainer } from '@/components/animations';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const revalidate = 60;
 
@@ -19,7 +19,7 @@ export default async function ReferralPage() {
       <section className="relative min-h-[90vh] flex items-center bg-black overflow-hidden">
         {/* Hero imagery */}
         <div className="absolute inset-0">
-          <Image
+          <SmoothImage
             src="/portland-fresh-new-13.jpg"
             alt="Portland Fresh sauces on a table"
             fill

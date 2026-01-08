@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Section } from '@/components/Section';
 import { FadeIn, StaggerContainer } from '@/components/animations';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const metadata: Metadata = {
   title: 'Ingredients & Sourcing | Portland Fresh',
@@ -66,13 +66,14 @@ export default function IngredientsPage() {
       <Section className="py-24 relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <Image
+          <SmoothImage
             src="/portland-fresh-new-6.jpg"
             alt="Ingredients & Sourcing"
             fill
             className="object-cover scale-110 animate-ken-burns"
             priority
             quality={90}
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/80 via-accent-green/70 to-accent-yellow/60" />
         </div>
@@ -146,11 +147,12 @@ export default function IngredientsPage() {
                 className={`group relative overflow-hidden rounded-2xl min-h-[300px] flex items-end transition-all duration-500 hover:scale-105 hover:shadow-2xl border-4 ${borderColors[idx % borderColors.length]} cursor-pointer`}
               >
                 <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110">
-                  <Image
+                  <SmoothImage
                     src={standard.image}
                     alt={standard.title}
                     fill
                     className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />

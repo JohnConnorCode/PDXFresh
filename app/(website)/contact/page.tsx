@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import { Section } from '@/components/Section';
 import { FadeIn, StaggerContainer } from '@/components/animations';
 import { ContactForm } from '@/components/ContactForm';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const metadata: Metadata = {
   title: 'Contact Us | Portland Fresh',
@@ -17,25 +17,29 @@ export default function ContactPage() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           {/* Desktop Image */}
-          <Image
-            src="/portland-fresh-new-7.jpg"
-            alt="Contact Us"
-            fill
-            className="object-cover hidden md:block scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-          />
+          <div className="hidden md:block absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-7.jpg"
+              alt="Contact Us"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              priority
+              quality={90}
+              sizes="100vw"
+            />
+          </div>
           {/* Mobile Image */}
-          <Image
-            src="/portland-fresh-new-8.jpg"
-            alt="Contact Us"
-            fill
-            className="object-cover md:hidden scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-          />
+          <div className="md:hidden absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-8.jpg"
+              alt="Contact Us"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              priority
+              quality={90}
+              sizes="100vw"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-accent-primary/50 to-accent-green/40" />
         </div>
 

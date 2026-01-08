@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Section } from '@/components/Section';
 import { FadeIn } from '@/components/animations';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Portland Fresh',
@@ -17,27 +17,31 @@ export default function PrivacyPage() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           {/* Desktop Image */}
-          <Image
-            src="/portland-fresh-new-9.jpg"
-            alt="Fresh Portland Fresh sauces arranged for packaging"
-            fill
-            className="object-cover hidden md:block scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-            style={{ objectPosition: 'center 35%' }}
-          />
+          <div className="hidden md:block absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-9.jpg"
+              alt="Fresh Portland Fresh sauces arranged for packaging"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              priority
+              quality={90}
+              sizes="100vw"
+              objectPosition="center 35%"
+            />
+          </div>
           {/* Mobile Image */}
-          <Image
-            src="/portland-fresh-new-10.jpg"
-            alt="Closeup of hand-stirred salsa in the Portland Fresh kitchen"
-            fill
-            className="object-cover md:hidden scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-            style={{ objectPosition: 'center 45%' }}
-          />
+          <div className="md:hidden absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-10.jpg"
+              alt="Closeup of hand-stirred salsa in the Portland Fresh kitchen"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              priority
+              quality={90}
+              sizes="100vw"
+              objectPosition="center 45%"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-br from-accent-cream/90 via-accent-yellow/70 to-accent-green/70" />
         </div>
 

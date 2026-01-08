@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { getReferralByCode } from '@/lib/referral-utils';
 import { getUserById } from '@/lib/user-utils';
 import { trackServerEvent } from '@/lib/analytics';
 import { FadeIn } from '@/components/animations';
+import { SmoothImage } from '@/components/SmoothImage';
 
 interface ReferralPageProps {
   params: {
@@ -63,7 +63,7 @@ export default async function ReferralLandingPage({ params }: ReferralPageProps)
       <section className="relative min-h-[70vh] flex items-center bg-black overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0">
-          <Image
+          <SmoothImage
             src="/portland-fresh-new-5.jpg"
             alt="Portland Fresh sauces being plated"
             fill

@@ -15,6 +15,7 @@ interface SmoothImageProps {
   quality?: number;
   className?: string;
   placeholderClassName?: string;
+  objectPosition?: string;
 }
 
 export function SmoothImage({
@@ -28,6 +29,7 @@ export function SmoothImage({
   quality,
   className = '',
   placeholderClassName = '',
+  objectPosition,
 }: SmoothImageProps) {
   const [loaded, setLoaded] = useState(false);
 
@@ -51,6 +53,7 @@ export function SmoothImage({
         sizes={sizes}
         priority={priority}
         quality={quality}
+        style={objectPosition ? { objectPosition } : undefined}
         className={clsx(
           'transition-opacity duration-500',
           loaded ? 'opacity-100' : 'opacity-0',

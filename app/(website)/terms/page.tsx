@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import { Section } from '@/components/Section';
 import { FadeIn } from '@/components/animations';
+import { SmoothImage } from '@/components/SmoothImage';
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions | Portland Fresh',
@@ -16,27 +16,31 @@ export default function TermsPage() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           {/* Desktop Image */}
-          <Image
-            src="/portland-fresh-new-11.jpg"
-            alt="Portland Fresh chef stirring a batch of chimichurri"
-            fill
-            className="object-cover hidden md:block scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-            style={{ objectPosition: 'center 40%' }}
-          />
+          <div className="hidden md:block absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-11.jpg"
+              alt="Portland Fresh chef stirring a batch of chimichurri"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              priority
+              quality={90}
+              sizes="100vw"
+              objectPosition="center 40%"
+            />
+          </div>
           {/* Mobile Image */}
-          <Image
-            src="/portland-fresh-new-12.jpg"
-            alt="Sauce tasting spoons laid out on the Portland Fresh line"
-            fill
-            className="object-cover md:hidden scale-110 animate-ken-burns"
-            priority
-            quality={90}
-            sizes="100vw"
-            style={{ objectPosition: 'center 45%' }}
-          />
+          <div className="md:hidden absolute inset-0">
+            <SmoothImage
+              src="/portland-fresh-new-12.jpg"
+              alt="Sauce tasting spoons laid out on the Portland Fresh line"
+              fill
+              className="object-cover scale-110 animate-ken-burns"
+              priority
+              quality={90}
+              sizes="100vw"
+              objectPosition="center 45%"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-br from-accent-cream/90 via-accent-yellow/70 to-accent-green/70" />
         </div>
 
