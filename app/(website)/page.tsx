@@ -44,17 +44,17 @@ const processSteps = [
   {
     title: 'Source Fresh',
     body: 'Every week starts with a trip to local farms and markets. We pick produce at peak ripeness for maximum flavor.',
-    image: '/portland-fresh-new-7.jpg',
+    image: '/portland-fresh-new-3.jpg',
   },
   {
     title: 'Blend Small Batches',
     body: 'Our recipes are crafted by hand in small quantities. Quality over quantity, every single time.',
-    image: '/portland-fresh-new-8.jpg',
+    image: '/portland-fresh-new-4.jpg',
   },
   {
     title: 'Deliver Fresh',
     body: 'From kitchen to your table within 48 hours. Pickup at our kitchen or neighborhood delivery across Portland.',
-    image: '/portland-fresh-new-9.jpg',
+    image: '/portland-fresh-new-5.jpg',
   },
 ];
 
@@ -266,13 +266,13 @@ export default async function Home() {
           <FadeIn direction="right" className="space-y-6">
             <div>
               <h2 className="font-heading text-4xl md:text-5xl font-bold mb-4 leading-tight">
-                Get the Dispatch
+                Fresh Updates Weekly
               </h2>
               <p className="text-lg text-gray-700 leading-relaxed">
-                Thursday menus, pickup windows, and collabs in your inbox before they hit Instagram. We share the farm stories, not spam.
+                Get the scoop on this week's menu, pickup times, and seasonal specials before they sell out. Plus farm stories and recipes from our kitchen.
               </p>
               <p className="text-lg text-gray-700 leading-relaxed mt-2">
-                Stay a step ahead on seasonal drops and members-only tastings.
+                First dibs on limited batches and members-only tastings.
               </p>
             </div>
 
@@ -280,7 +280,7 @@ export default async function Home() {
             <div className="space-y-3">
               <NewsletterForm />
               <p className="text-sm text-gray-600">
-                No spam. Just seasonal intel and first dibs.
+                Weekly updates, no spam. Unsubscribe anytime.
               </p>
             </div>
           </FadeIn>
@@ -288,9 +288,9 @@ export default async function Home() {
           {/* Right Side - Product Imagery */}
           <div className="relative h-[500px] hidden md:block">
             {[
-              { src: '/portland-fresh-new-10.jpg', alt: 'Sauvie Basil Pesto tasting flight' },
-              { src: '/portland-fresh-new-11.jpg', alt: 'Fire-roasted salsa prep at Portland Fresh' },
-              { src: '/portland-fresh-new-12.jpg', alt: 'Neighborhood drop-off of sauces and pestos' },
+              { src: '/portland-fresh-new-1.jpg', alt: 'Fresh sauces from Portland Fresh' },
+              { src: '/portland-fresh-new-6.jpg', alt: 'Small-batch sauce preparation' },
+              { src: '/portland-fresh-new-13.jpg', alt: 'Portland Fresh products ready for delivery' },
             ].map((image, idx) => {
               const speeds = [0.7, 0.9, 1.1];
               const positions = [

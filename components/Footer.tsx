@@ -18,7 +18,8 @@ export function Footer({ siteSettings, navigation }: FooterProps) {
   const contactEmail = siteSettings?.contactEmail || 'hello@pdxfreshfoods.com';
   const address = siteSettings?.address || 'Portland, Oregon';
   const tagline = siteSettings?.tagline || 'Small-batch sauces, pestos, and salsa born from Portland markets.';
-  const title = siteSettings?.title || 'Portland Fresh';
+  // Always use "Portland Fresh" as the brand name - never from CMS to prevent incorrect branding
+  const title = 'Portland Fresh';
 
   return (
     <footer className="bg-gray-50 border-t border-gray-200">

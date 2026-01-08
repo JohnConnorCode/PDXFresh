@@ -24,7 +24,6 @@ export function VideoHero({
   mobileImage,
 }: VideoHeroProps) {
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -35,7 +34,7 @@ export function VideoHero({
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         if (data.event === 'ready' || data.method === 'play') {
           // Give video a moment to start playing before fading in
-          setTimeout(() => setVideoLoaded(true), 300);
+          setTimeout(() => setVideoLoaded(true), 500);
         }
       } catch {
         // Ignore parse errors
@@ -44,10 +43,10 @@ export function VideoHero({
 
     window.addEventListener('message', handleMessage);
 
-    // Fallback: if video doesn't report ready after 3 seconds, assume it's playing
+    // Fallback: if video doesn't report ready after 4 seconds, assume it's playing
     const fallbackTimer = setTimeout(() => {
       setVideoLoaded(true);
-    }, 3000);
+    }, 4000);
 
     return () => {
       window.removeEventListener('message', handleMessage);
@@ -56,23 +55,26 @@ export function VideoHero({
   }, []);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-gray-900">
-      {/* Fallback Image - Always rendered first, fades out when video loads */}
+    <div className="relative h-screen w-full overflow-hidden">
+      {/* Gradient placeholder - always visible as base layer, never black */}
+      <div className="absolute inset-0 z-[0] bg-gradient-to-br from-accent-green/40 via-accent-primary/30 to-accent-yellow/40" />
+
+      {/* Fallback Image - Always rendered, shows immediately, fades out when video loads */}
       <div
-        className={`absolute inset-0 z-[1] transition-opacity duration-700 ${
+        className={`absolute inset-0 z-[1] transition-opacity duration-1000 ease-out ${
           videoLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
-        {/* Desktop fallback */}
+        {/* Desktop fallback - no fade-in delay, image shows immediately */}
         <div className="hidden md:block absolute inset-0">
           <Image
             src={fallbackImage}
             alt={heading}
             fill
-            className={`object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className="object-cover"
             priority
             quality={90}
-            onLoad={() => setImageLoaded(true)}
+            sizes="100vw"
           />
         </div>
         {/* Mobile fallback */}
@@ -84,6 +86,7 @@ export function VideoHero({
             className="object-cover"
             priority
             quality={90}
+            sizes="100vw"
           />
         </div>
       </div>

@@ -8,6 +8,7 @@ import clsx from 'clsx';
 
 interface BlendCardProps {
   blend: any;
+  index?: number; // For sequential animation
 }
 
 const labelColorMap = {
@@ -17,7 +18,7 @@ const labelColorMap = {
   blue: 'bg-blue-500',
 };
 
-export function BlendCard({ blend }: BlendCardProps) {
+export function BlendCard({ blend, index = 0 }: BlendCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const slug = typeof blend.slug === 'string' ? blend.slug : (blend.slug?.current || blend.id || '');
   const imageUrl = blend.image_url || blend.image?.asset?.url;
@@ -30,23 +31,30 @@ export function BlendCard({ blend }: BlendCardProps) {
     return null;
   }
 
+  // Sequential animation delay based on index
+  const animationDelay = index * 0.1;
+
   return (
     <Link href={`/blends/${slug}`}>
       <motion.div
         className="group cursor-pointer"
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{
+          duration: 0.6,
+          delay: animationDelay,
+          ease: [0.25, 0.4, 0.25, 1]
+        }}
       >
-        <div className="relative overflow-hidden rounded-lg bg-gray-100 mb-4 shadow-sm hover:shadow-md transition-shadow duration-300 h-64">
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 mb-4 shadow-sm hover:shadow-lg transition-all duration-300 h-72 p-4">
           {imageUrl ? (
             <>
               {/* Placeholder shown while loading */}
               <div
                 className={clsx(
-                  "absolute inset-0 bg-gray-100 flex items-center justify-center transition-opacity duration-500",
-                  imageLoaded ? "opacity-0" : "opacity-100"
+                  "absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center transition-opacity duration-500",
+                  imageLoaded ? "opacity-0 pointer-events-none" : "opacity-100"
                 )}
               >
                 <span className="font-heading text-3xl font-bold text-gray-300">{blend.name?.charAt(0)}</span>
@@ -54,30 +62,29 @@ export function BlendCard({ blend }: BlendCardProps) {
               <Image
                 src={imageUrl}
                 alt={blend.image_alt || blend.name}
-                width={800}
-                height={600}
+                fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className={clsx(
-                  "w-full h-64 object-cover transition-opacity duration-500",
+                  "object-contain p-2 transition-all duration-500 group-hover:scale-105",
                   imageLoaded ? "opacity-100" : "opacity-0"
                 )}
                 onLoad={() => setImageLoaded(true)}
               />
             </>
           ) : (
-            <div className="w-full h-64 flex items-center justify-center bg-gray-100">
+            <div className="w-full h-full flex items-center justify-center">
               <span className="font-heading text-4xl font-bold text-gray-400">{blend.name}</span>
             </div>
           )}
           {readableCategory && (
-            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 text-white text-[11px] font-semibold uppercase tracking-wide z-10">
+            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 text-white text-[11px] font-semibold uppercase tracking-wide z-10 backdrop-blur-sm">
               {readableCategory}
             </div>
           )}
           {(blend.label_color || blend.labelColor) && (
             <div
               className={clsx(
-                'absolute top-3 right-3 w-8 h-8 rounded-full z-10',
+                'absolute top-3 right-3 w-8 h-8 rounded-full z-10 shadow-md',
                 labelColorMap[(blend.label_color || blend.labelColor) as keyof typeof labelColorMap]
               )}
             />

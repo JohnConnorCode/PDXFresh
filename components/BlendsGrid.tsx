@@ -88,8 +88,8 @@ export function BlendsGrid({ blends, showFilters = true, maxColumns = 3, maxItem
             ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto'
             : 'md:grid-cols-2 lg:grid-cols-3'
         }`}>
-          {filteredBlends.map((blend: any) => (
-            <BlendCard key={blend.id} blend={blend} />
+          {filteredBlends.map((blend: any, index: number) => (
+            <BlendCard key={blend.id} blend={blend} index={index} />
           ))}
         </div>
       ) : (
