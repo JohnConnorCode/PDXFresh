@@ -11,7 +11,7 @@ This guide contains all the copy for the Portland Fresh website, organized by Sa
 ```
 Title: Portland Fresh
 Tagline: Real juice. Real people.
-Contact Email: hello@longlife.com
+Contact Email: hello@pdxfreshfoods.com
 Address: Indiana, USA
 
 Social Links:

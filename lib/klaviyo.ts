@@ -155,7 +155,7 @@ export async function trackPurchaseEvent(event: KlaviyoPurchaseEvent): Promise<b
     // Build the order properties
     const orderProperties: Record<string, any> = {
       OrderId: event.orderId,
-      Categories: event.items.map(() => 'Juice').filter((v, _i, a) => a.indexOf(v) === _i),
+      Categories: event.items.map(() => 'Sauces').filter((v, _i, a) => a.indexOf(v) === _i),
       ItemNames: event.items.map(i => i.name),
       Brands: ['Portland Fresh'],
       Items: event.items.map(item => ({

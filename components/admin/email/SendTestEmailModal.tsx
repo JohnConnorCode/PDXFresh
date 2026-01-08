@@ -19,8 +19,8 @@ const getSampleData = (templateName: string): Record<string, any> => {
         customerName: 'John Doe',
         customerEmail: 'john@example.com',
         items: [
-          { name: 'Orange Bomb', quantity: 2, price: 4999 },
-          { name: 'Green Bomb', quantity: 1, price: 4999 },
+          { name: 'Basil Pesto', quantity: 2, price: 1299 },
+          { name: 'Smoky Salsa', quantity: 1, price: 999 },
         ],
         subtotal: 9998,
         total: 9998,

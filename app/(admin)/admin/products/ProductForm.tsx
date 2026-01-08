@@ -252,7 +252,7 @@ export function ProductForm({ product, ingredients, variants, allIngredients }: 
             <input
               {...register('name')}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              placeholder="e.g., Yellow Bomb"
+              placeholder="e.g., Basil Pesto"
             />
             {errors.name && (
               <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>

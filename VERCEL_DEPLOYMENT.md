@@ -73,7 +73,7 @@ Click **"Deploy"** to proceed (it will fail without env vars, that's okay).
 
 1. Go to **Project Settings → Domains**
 2. Click **"Add"**
-3. Enter your domain (e.g., `longlife.com`)
+3. Enter your domain (e.g., `pdxfreshfoods.com`)
 4. Click **"Add"**
 
 Vercel will provide DNS instructions.
@@ -90,14 +90,14 @@ Vercel will provide DNS instructions.
 
 ### Step 3: Set Up WWW Redirect
 
-1. Add `www.longlife.com` as a domain
+1. Add `www.pdxfreshfoods.com` as a domain
 2. Vercel auto-redirects `www` → apex
 3. Or configure redirect in **Settings → Domains**
 
 ### Step 4: Update Site URL
 
 1. Go to **Environment Variables**
-2. Update `NEXT_PUBLIC_SITE_URL` to `https://longlife.com`
+2. Update `NEXT_PUBLIC_SITE_URL` to `https://pdxfreshfoods.com`
 3. Redeploy for changes to take effect
 
 ### Step 5: SSL Certificate
@@ -105,7 +105,7 @@ Vercel will provide DNS instructions.
 Vercel automatically provisions SSL certificates. No action needed.
 
 Verify:
-- Visit `https://longlife.com`
+- Visit `https://pdxfreshfoods.com`
 - Should show lock icon (secure)
 - Certificate auto-renews
 
@@ -117,7 +117,7 @@ Verify:
 
 Your revalidation endpoint is:
 ```
-https://longlife.com/api/revalidate
+https://pdxfreshfoods.com/api/revalidate
 ```
 
 ### Step 2: Configure in Sanity
@@ -129,7 +129,7 @@ https://longlife.com/api/revalidate
 
 **Webhook Configuration**:
 - **Name**: `Production Revalidation`
-- **URL**: `https://longlife.com/api/revalidate`
+- **URL**: `https://pdxfreshfoods.com/api/revalidate`
 - **Dataset**: `production`
 - **Trigger on**: `Create`, `Update`, `Delete`
 - **HTTP method**: `POST`
@@ -269,7 +269,7 @@ For global data or feature flags:
 ### Environment Variables per Environment
 
 Use Vercel's environment scoping:
-- **Production**: `longlife.com`
+- **Production**: `pdxfreshfoods.com`
 - **Preview**: Staging dataset or preview tokens
 - **Development**: Local `.env.local`
 
@@ -357,8 +357,8 @@ export async function middleware(request: Request) {
 - [Better Uptime](https://betteruptime.com)
 
 Monitor:
-- `https://longlife.com` (homepage)
-- `https://longlife.com/api/health` (if you create health check)
+- `https://pdxfreshfoods.com` (homepage)
+- `https://pdxfreshfoods.com/api/health` (if you create health check)
 
 ### Error Tracking
 
@@ -504,4 +504,4 @@ jobs:
 
 **Deployed By**: _________________________
 **Date**: _________________________
-**Production URL**: https://longlife.com
+**Production URL**: https://pdxfreshfoods.com

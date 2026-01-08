@@ -297,7 +297,7 @@
 - [ ] Webhook secret matches Sanity config
 
 ### Domain Setup
-- [ ] Primary domain connected (e.g., `longlife.com`)
+- [ ] Primary domain connected (e.g., `pdxfreshfoods.com`)
 - [ ] WWW redirect configured (`www` → apex)
 - [ ] SSL certificate active (automatic with Vercel)
 - [ ] DNS propagated (check with `dig` or `nslookup`)

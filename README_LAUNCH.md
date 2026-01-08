@@ -64,7 +64,7 @@ Create `.env.local` for local development and configure these in Vercel for prod
 
 ```bash
 # Site Configuration
-NEXT_PUBLIC_SITE_URL=https://longlife.com
+NEXT_PUBLIC_SITE_URL=https://pdxfreshfoods.com
 
 # Sanity CMS
 NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
@@ -95,7 +95,7 @@ NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your_analytics_id
 
 ### Sanity Studio Access
 
-Access the CMS at `/studio` (e.g., `https://longlife.com/studio`)
+Access the CMS at `/studio` (e.g., `https://pdxfreshfoods.com/studio`)
 
 ### Content Model Overview
 
@@ -173,8 +173,8 @@ Access the CMS at `/studio` (e.g., `https://longlife.com/studio`)
 Add all variables from `.env.example`
 
 **Project Settings → Domains**:
-- Primary: `longlife.com`
-- Redirect: `www.longlife.com` → `longlife.com`
+- Primary: `pdxfreshfoods.com`
+- Redirect: `www.pdxfreshfoods.com` → `pdxfreshfoods.com`
 
 #### Cache Configuration
 
@@ -200,7 +200,7 @@ By default, content changes take up to 60 seconds to appear (ISR). Webhooks enab
    - Go to `sanity.io` → Project → API → Webhooks
    - Click "Create Webhook"
    - Name: `Production Revalidation`
-   - URL: `https://longlife.com/api/revalidate`
+   - URL: `https://pdxfreshfoods.com/api/revalidate`
    - Dataset: `production`
    - Trigger on: Create, Update, Delete
    - Secret: Use the same value as `SANITY_REVALIDATE_SECRET`
@@ -222,7 +222,7 @@ By default, content changes take up to 60 seconds to appear (ISR). Webhooks enab
 **Webhook succeeds but content doesn't update**:
 - Check Vercel deployment logs
 - Verify `revalidateTag()` is called for the content type
-- Try manual revalidation: `https://longlife.com/api/revalidate?secret=YOUR_SECRET`
+- Try manual revalidation: `https://pdxfreshfoods.com/api/revalidate?secret=YOUR_SECRET`
 
 ---
 

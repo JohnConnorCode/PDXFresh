@@ -21,11 +21,11 @@ interface VariantsManagerProps {
 }
 
 const SIZE_OPTIONS = [
-  { value: 'gallon', label: 'Gallon' },
-  { value: 'half_gallon', label: 'Half Gallon' },
-  { value: 'shot', label: 'Shot' },
-  { value: 'container', label: 'Container' },
-  { value: 'case', label: 'Case' },
+  { value: '8oz', label: '8 oz Jar' },
+  { value: '16oz', label: '16 oz Jar' },
+  { value: '7oz', label: '7 oz Jar' },
+  { value: '12oz', label: '12 oz Jar' },
+  { value: 'case', label: 'Case (12 jars)' },
 ];
 
 export function VariantsManager({ productId: _productId, variants, onVariantsChange }: VariantsManagerProps) {
@@ -34,8 +34,8 @@ export function VariantsManager({ productId: _productId, variants, onVariantsCha
 
   const addVariant = () => {
     const newVariant: ProductVariant = {
-      size_key: 'gallon',
-      label: 'Gallon',
+      size_key: '8oz',
+      label: '8 oz Jar',
       stripe_price_id: '',
       is_default: localVariants.length === 0,
       display_order: localVariants.length + 1,
@@ -106,7 +106,7 @@ export function VariantsManager({ productId: _productId, variants, onVariantsCha
         <div>
           <h3 className="text-lg font-semibold">Product Variants</h3>
           <p className="text-sm text-gray-500 mt-1">
-            Each variant represents a purchasable size/option (e.g., Gallon, Half Gallon)
+            Each variant represents a purchasable size/option (e.g., 8 oz Jar, 16 oz Jar)
           </p>
         </div>
         <button
@@ -208,7 +208,7 @@ export function VariantsManager({ productId: _productId, variants, onVariantsCha
                       value={variant.label}
                       onChange={(e) => updateVariant(index, 'label', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                      placeholder="e.g., 1-Gallon Jug"
+                      placeholder="e.g., 8 oz Jar"
                     />
                   </div>
 

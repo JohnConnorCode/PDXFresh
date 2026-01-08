@@ -8,7 +8,7 @@ This guide will teach you how to update your website content in 60 seconds or le
 
 ## 🎯 Accessing the CMS
 
-1. Go to: **https://longlife.com/studio**
+1. Go to: **https://pdxfreshfoods.com/studio**
 2. Log in with your Sanity credentials
 3. You'll see the content dashboard
 
@@ -326,4 +326,4 @@ When editing **Description** or **Body** fields, you have formatting options:
 ---
 
 **Last Updated**: Nov 2024
-**Questions?** Contact: [your-email@longlife.com]
+**Questions?** Contact: [your-email@pdxfreshfoods.com]
