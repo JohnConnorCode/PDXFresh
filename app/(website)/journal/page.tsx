@@ -1,42 +1,86 @@
-import { logger } from "@/lib/logger";
 import { Metadata } from 'next';
-import Link from 'next/link';
 import Image from 'next/image';
-import { client } from '@/lib/sanity.client';
-import { postsQuery } from '@/lib/sanity.queries';
 import { Section } from '@/components/Section';
 import { FadeIn, StaggerContainer } from '@/components/animations';
-import { urlFor } from '@/lib/image';
 import { NewsletterSection } from '@/components/NewsletterSection';
-
-export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Journal | Portland Fresh',
-  description: 'Stories, recipes, and kitchen notes about sauces, pesto, salsa, and Portland sourcing.',
+  description: 'Stories, recipes, and kitchen notes about sauces, pestos, salsa, and Portland sourcing.',
 };
 
-async function getPosts() {
-  try {
-    return await client.fetch(postsQuery);
-  } catch (error) {
-    logger.error('Error fetching posts:', error);
-    return [];
-  }
-}
+// Hardcoded blog posts
+const posts = [
+  {
+    _id: '1',
+    title: '5 Ways to Use Chimichurri Beyond Steak',
+    slug: { current: 'chimichurri-beyond-steak' },
+    excerpt: 'Chimichurri is a steak\'s best friend, but it\'s so much more versatile than that. From breakfast eggs to roasted vegetables, here are our favorite unexpected pairings.',
+    author: 'Portland Fresh',
+    publishedAt: '2025-01-05',
+    category: 'recipes',
+    coverImage: '/portland-fresh-new-7.jpg',
+  },
+  {
+    _id: '2',
+    title: 'Why We Don\'t Use Seed Oils',
+    slug: { current: 'no-seed-oils' },
+    excerpt: 'Every Portland Fresh sauce is made with extra virgin olive oil. Here\'s why we made that choice and what it means for flavor and health.',
+    author: 'Portland Fresh',
+    publishedAt: '2024-12-20',
+    category: 'kitchen-tips',
+    coverImage: '/portland-fresh-new-8.jpg',
+  },
+  {
+    _id: '3',
+    title: 'Meet Our Basil Farmers on Sauvie Island',
+    slug: { current: 'sauvie-island-basil' },
+    excerpt: 'We visited the farm where most of our summer basil comes from. Here\'s what we learned about growing herbs in the Pacific Northwest.',
+    author: 'Portland Fresh',
+    publishedAt: '2024-12-10',
+    category: 'behind-the-scenes',
+    coverImage: '/portland-fresh-new-9.jpg',
+  },
+  {
+    _id: '4',
+    title: 'The Perfect Pesto Pasta in 10 Minutes',
+    slug: { current: 'perfect-pesto-pasta' },
+    excerpt: 'Great pesto pasta isn\'t complicated. Here\'s our foolproof method for silky, flavorful pasta every time—plus the one mistake everyone makes.',
+    author: 'Portland Fresh',
+    publishedAt: '2024-11-28',
+    category: 'recipes',
+    coverImage: '/portland-fresh-new-11.jpg',
+  },
+  {
+    _id: '5',
+    title: 'What "Fresh" Actually Means to Us',
+    slug: { current: 'what-fresh-means' },
+    excerpt: 'Fresh is a word thrown around a lot in food marketing. Here\'s what it means at Portland Fresh: 48 hours from blend to delivery, no exceptions.',
+    author: 'Portland Fresh',
+    publishedAt: '2024-11-15',
+    category: 'behind-the-scenes',
+    coverImage: '/portland-fresh-new-12.jpg',
+  },
+];
 
-export default async function JournalPage() {
-  const posts = await getPosts();
-  const featuredPost = posts[0];
-  const regularPosts = posts.slice(1);
+const featuredPost = posts[0];
+const regularPosts = posts.slice(1);
 
+export default function JournalPage() {
   return (
     <>
       {/* Hero Section */}
       <Section className="py-24 relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=1600&h=900&fit=crop')] bg-cover bg-center scale-110 animate-ken-burns" />
+          <Image
+            src="/portland-fresh-new-5.jpg"
+            alt="Journal"
+            fill
+            className="object-cover scale-110 animate-ken-burns"
+            priority
+            quality={90}
+          />
           <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/85 via-accent-green/75 to-accent-yellow/65" />
         </div>
 
@@ -67,124 +111,84 @@ export default async function JournalPage() {
       </Section>
 
       {/* Featured Post */}
-      {featuredPost && (
-        <Section className="bg-white -mt-16 relative z-20">
-          <FadeIn direction="up">
-            <Link
-              href={`/journal/${featuredPost.slug.current}`}
-              className="group block max-w-6xl mx-auto"
+      <Section className="bg-white -mt-16 relative z-20">
+        <FadeIn direction="up">
+          <div className="group block max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8 bg-gradient-to-br from-accent-cream/30 to-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 border-2 border-accent-yellow/30 hover:border-accent-primary/50">
+              <div className="relative h-80 overflow-hidden rounded-2xl">
+                <Image
+                  src={featuredPost.coverImage}
+                  alt={featuredPost.title}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute top-4 left-4 px-4 py-2 bg-accent-primary text-white text-sm font-semibold rounded-full shadow-lg">
+                  Featured
+                </div>
+              </div>
+              <div className="flex flex-col justify-center">
+                <div className="flex items-center gap-3 mb-4 text-sm text-gray-600">
+                  <span>{featuredPost.author}</span>
+                  <span>•</span>
+                  <span>{new Date(featuredPost.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
+                <h2 className="font-heading text-4xl font-bold mb-4 group-hover:text-accent-primary transition-colors">
+                  {featuredPost.title}
+                </h2>
+                <p className="text-lg text-gray-700 mb-6 leading-relaxed line-clamp-4">
+                  {featuredPost.excerpt}
+                </p>
+                <div className="flex items-center gap-2 text-accent-primary font-semibold">
+                  <span>Coming Soon</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </Section>
+
+      {/* Regular Posts */}
+      <Section className="bg-gradient-to-b from-white to-accent-cream/30">
+        <div className="text-center mb-12">
+          <h2 className="font-heading text-4xl font-bold mb-4">Latest Stories</h2>
+          <div className="w-24 h-1 bg-accent-primary mx-auto" />
+        </div>
+        <StaggerContainer staggerDelay={0.1} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {regularPosts.map((post) => (
+            <div
+              key={post._id}
+              className="group block"
             >
-              <div className="grid md:grid-cols-2 gap-8 bg-gradient-to-br from-accent-cream/30 to-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 border-2 border-accent-yellow/30 hover:border-accent-primary/50">
-                {featuredPost.coverImage && (
-                  <div className="relative h-80 overflow-hidden rounded-2xl">
-                    <Image
-                      src={urlFor(featuredPost.coverImage).url()}
-                      alt={featuredPost.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 left-4 px-4 py-2 bg-accent-primary text-white text-sm font-semibold rounded-full shadow-lg">
-                      Featured
-                    </div>
-                  </div>
-                )}
-                <div className="flex flex-col justify-center">
-                  <div className="flex items-center gap-3 mb-4 text-sm text-gray-600">
-                    <span>{featuredPost.author || 'Portland Fresh'}</span>
+              <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-accent-yellow">
+                <div className="relative h-56 overflow-hidden">
+                  <Image
+                    src={post.coverImage}
+                    alt={post.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 mb-3 text-xs text-gray-500">
+                    <span>{post.author}</span>
                     <span>•</span>
-                    {featuredPost.publishedAt && (
-                      <span>{new Date(featuredPost.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                    )}
+                    <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
                   </div>
-                  <h2 className="font-heading text-4xl font-bold mb-4 group-hover:text-accent-primary transition-colors">
-                    {featuredPost.title}
-                  </h2>
-                  {featuredPost.excerpt && (
-                    <p className="text-lg text-gray-700 mb-6 leading-relaxed line-clamp-4">
-                      {featuredPost.excerpt}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-2 text-accent-primary font-semibold group-hover:gap-4 transition-all">
-                    <span>Read More</span>
-                    <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
+                  <h3 className="font-heading text-xl font-bold mb-3 group-hover:text-accent-primary transition-colors line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex items-center gap-2 text-accent-primary font-semibold text-sm">
+                    <span>Coming Soon</span>
                   </div>
                 </div>
               </div>
-            </Link>
-          </FadeIn>
-        </Section>
-      )}
-
-      {/* Regular Posts */}
-      {regularPosts.length > 0 ? (
-        <Section className="bg-gradient-to-b from-white to-accent-cream/30">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-4xl font-bold mb-4">Latest Stories</h2>
-            <div className="w-24 h-1 bg-accent-primary mx-auto" />
-          </div>
-          <StaggerContainer staggerDelay={0.1} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {regularPosts.map((post: any) => (
-              <Link
-                key={post._id}
-                href={`/journal/${post.slug.current}`}
-                className="group block"
-              >
-                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-accent-yellow">
-                  {post.coverImage && (
-                    <div className="relative h-56 overflow-hidden">
-                      <Image
-                        src={urlFor(post.coverImage).url()}
-                        alt={post.title}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </div>
-                  )}
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-3 text-xs text-gray-500">
-                      <span>{post.author || 'Portland Fresh'}</span>
-                      {post.publishedAt && (
-                        <>
-                          <span>•</span>
-                          <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
-                        </>
-                      )}
-                    </div>
-                    <h3 className="font-heading text-xl font-bold mb-3 group-hover:text-accent-primary transition-colors line-clamp-2">
-                      {post.title}
-                    </h3>
-                    {post.excerpt && (
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
-                        {post.excerpt}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-2 text-accent-primary font-semibold text-sm">
-                      <span>Read Article</span>
-                      <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </StaggerContainer>
-        </Section>
-      ) : posts.length === 0 ? (
-        <Section className="bg-white">
-          <div className="text-center py-20">
-            <div className="w-24 h-24 bg-accent-cream rounded-full mx-auto mb-6 flex items-center justify-center">
-              <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
             </div>
-            <h3 className="font-heading text-2xl font-bold mb-2">No stories yet</h3>
-            <p className="text-gray-600">Check back soon for recipes and kitchen notes.</p>
-          </div>
-        </Section>
-      ) : null}
+          ))}
+        </StaggerContainer>
+      </Section>
 
       {/* Newsletter Signup Section */}
       <Section className="bg-gradient-to-br from-accent-yellow/40 via-accent-green/20 to-accent-primary/30 relative overflow-hidden">

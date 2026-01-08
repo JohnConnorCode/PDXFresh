@@ -1,50 +1,81 @@
-import { logger } from "@/lib/logger";
 import { Metadata } from 'next';
-import { client } from '@/lib/sanity.client';
-import { faqQuery, faqPageQuery } from '@/lib/sanity.queries';
+import Image from 'next/image';
 import { Section } from '@/components/Section';
 import { FAQAccordion } from '@/components/FAQAccordion';
 import { FadeIn } from '@/components/animations';
 
-export const revalidate = 60;
+export const metadata: Metadata = {
+  title: 'FAQ | Portland Fresh',
+  description: 'Frequently asked questions about Portland Fresh sauces, ordering, delivery, and subscriptions.',
+};
 
-async function getFAQs() {
-  try {
-    return await client.fetch(faqQuery);
-  } catch (error) {
-    logger.error('Error fetching FAQs:', error);
-    return [];
-  }
-}
+// Hardcoded FAQs for Portland Fresh
+const faqs = [
+  {
+    _id: '1',
+    question: 'How long do your sauces stay fresh?',
+    answer: 'Our sauces are made fresh weekly and stay delicious for 2-3 weeks refrigerated. Once opened, we recommend finishing within 7 days for peak flavor. All jars are date-labeled so you always know when it was made.',
+    isFeatured: true,
+  },
+  {
+    _id: '2',
+    question: 'Where can I buy Portland Fresh sauces?',
+    answer: 'You can find us at New Seasons Market locations across Portland, at the Portland Farmers Market (PSU on Saturdays), and through our weekly delivery service. We also offer Thursday pickup at our Buckman kitchen.',
+    isFeatured: true,
+  },
+  {
+    _id: '3',
+    question: 'Do you offer delivery?',
+    answer: 'Yes! We deliver across Portland every Thursday and Friday. Inner SE, NE, and downtown get bike delivery. Outer neighborhoods are served by our electric van. Delivery is free on orders over $35.',
+    isFeatured: true,
+  },
+  {
+    _id: '4',
+    question: 'Are your sauces vegan or gluten-free?',
+    answer: 'Most of our sauces are naturally gluten-free. Our pestos contain cheese (parmesan or pecorino), but we offer dairy-free versions of our chimichurri, zhug, and salsas. All products are clearly labeled with ingredients and allergens.',
+    isFeatured: false,
+  },
+  {
+    _id: '5',
+    question: 'What sizes do you offer?',
+    answer: 'We offer 7oz jars (perfect for 2 meals), 8oz containers, and 12oz jars for families or sauce lovers. Wholesale customers can order food-service trays and bulk containers.',
+    isFeatured: false,
+  },
+  {
+    _id: '6',
+    question: 'How do I use the sauces?',
+    answer: 'Our sauces are incredibly versatile! Toss pesto with pasta, spread chimichurri on grilled meats or veggies, use salsa for tacos or as a dip, and zhug adds heat to almost anything. Each jar includes serving suggestions.',
+    isFeatured: false,
+  },
+  {
+    _id: '7',
+    question: 'Do you have a subscription service?',
+    answer: 'We\'re launching subscriptions soon! Sign up for our newsletter to be first in line. Subscribers will get 15% off, priority access to limited releases, and free delivery.',
+    isFeatured: false,
+  },
+  {
+    _id: '8',
+    question: 'Where do you source your ingredients?',
+    answer: 'We source as locally as possible. Basil comes from Sauvie Island, peppers from the Willamette Valley, and we shop the Portland Farmers Market weekly. We use organic produce, olive oil (never seed oils), and fresh citrus.',
+    isFeatured: false,
+  },
+  {
+    _id: '9',
+    question: 'Can I return my containers for reuse?',
+    answer: 'Absolutely! We encourage jar returns. Bring clean jars to our Thursday pickup or any farmers market booth. We sanitize and reuse them, keeping packaging out of the landfill.',
+    isFeatured: false,
+  },
+  {
+    _id: '10',
+    question: 'Do you cater events?',
+    answer: 'Yes! We provide sauce bars, grazing boards, and bulk orders for events. Whether it\'s a wedding, corporate lunch, or pop-up dinner, we can customize a sauce spread. Contact us at hello@pdxfreshfoods.com for event inquiries.',
+    isFeatured: false,
+  },
+];
 
-async function getFAQPage() {
-  try {
-    return await client.fetch(faqPageQuery);
-  } catch (error) {
-    logger.error('Error fetching FAQ page:', error);
-    return null;
-  }
-}
-
-export async function generateMetadata(): Promise<Metadata> {
-  const faqPage = await getFAQPage();
-
-  return {
-    title: faqPage?.seo?.metaTitle || 'FAQ | Portland Fresh',
-    description: faqPage?.seo?.metaDescription || 'Frequently asked questions about Portland Fresh sauces, subscriptions, and ordering.',
-  };
-}
-
-export default async function FAQPage() {
-  const faqs = await getFAQs();
-  const faqPage = await getFAQPage();
-
-  // Split FAQs into featured and regular
-  const featuredFAQs = faqs.filter((faq: any) => faq.isFeatured);
-  const regularFAQs = faqs.filter((faq: any) => !faq.isFeatured);
-
-  // Hero image from Sanity with fallback
-  const heroImageUrl = faqPage?.heroImage?.url || 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=1600&h=900&fit=crop';
+export default function FAQPage() {
+  const featuredFAQs = faqs.filter((faq) => faq.isFeatured);
+  const regularFAQs = faqs.filter((faq) => !faq.isFeatured);
 
   return (
     <>
@@ -52,9 +83,13 @@ export default async function FAQPage() {
       <Section className="py-24 relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <div
-            className="absolute inset-0 bg-cover bg-center scale-110 animate-ken-burns"
-            style={{ backgroundImage: `url('${heroImageUrl}')` }}
+          <Image
+            src="/portland-fresh-new-5.jpg"
+            alt="FAQ"
+            fill
+            className="object-cover scale-110 animate-ken-burns"
+            priority
+            quality={90}
           />
           <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/80 via-accent-green/70 to-accent-yellow/60" />
         </div>
@@ -74,12 +109,12 @@ export default async function FAQPage() {
           </FadeIn>
           <FadeIn direction="up" delay={0.2}>
             <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
-              {faqPage?.heading || 'Frequently Asked Questions'}
+              Frequently Asked Questions
             </h1>
           </FadeIn>
           <FadeIn direction="up" delay={0.3}>
             <p className="text-xl sm:text-2xl text-white/95 leading-relaxed max-w-3xl mx-auto drop-shadow-md">
-              {faqPage?.subheading || 'Find answers to common questions about our products and service.'}
+              Everything you need to know about our sauces, ordering, and delivery.
             </p>
           </FadeIn>
         </div>
@@ -87,53 +122,31 @@ export default async function FAQPage() {
 
       {/* FAQs Section */}
       <Section className="bg-white">
-        {faqs.length > 0 ? (
-          <div className="max-w-4xl mx-auto">
-            {/* Featured FAQs */}
-            {featuredFAQs.length > 0 && (
-              <div className="mb-16">
-                <FadeIn direction="up">
-                  <h2 className="font-heading text-3xl font-bold mb-8 text-center">
-                    Popular Questions
-                  </h2>
-                </FadeIn>
-                <FAQAccordion faqs={featuredFAQs} />
-              </div>
-            )}
-
-            {/* All FAQs */}
-            {regularFAQs.length > 0 && (
-              <div>
-                {featuredFAQs.length > 0 && (
-                  <FadeIn direction="up">
-                    <div className="flex items-center gap-4 mb-8">
-                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-                      <h2 className="font-heading text-2xl font-bold text-gray-900">
-                        More Questions
-                      </h2>
-                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-                    </div>
-                  </FadeIn>
-                )}
-                <FAQAccordion faqs={regularFAQs} />
-              </div>
-            )}
+        <div className="max-w-4xl mx-auto">
+          {/* Featured FAQs */}
+          <div className="mb-16">
+            <FadeIn direction="up">
+              <h2 className="font-heading text-3xl font-bold mb-8 text-center">
+                Popular Questions
+              </h2>
+            </FadeIn>
+            <FAQAccordion faqs={featuredFAQs} />
           </div>
-        ) : (
-          <FadeIn direction="up" className="text-center py-16">
-            <div className="max-w-md mx-auto">
-              <div className="w-20 h-20 bg-gradient-to-br from-accent-yellow/20 to-accent-green/20 rounded-full mx-auto mb-6 flex items-center justify-center">
-                <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+
+          {/* All FAQs */}
+          <div>
+            <FadeIn direction="up">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+                <h2 className="font-heading text-2xl font-bold text-gray-900">
+                  More Questions
+                </h2>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
               </div>
-              <p className="text-xl text-gray-600 mb-2">No FAQs available yet</p>
-              <p className="text-sm text-gray-500">
-                Check back soon for answers to common questions!
-              </p>
-            </div>
-          </FadeIn>
-        )}
+            </FadeIn>
+            <FAQAccordion faqs={regularFAQs} />
+          </div>
+        </div>
       </Section>
 
       {/* Contact CTA */}
@@ -144,7 +157,7 @@ export default async function FAQPage() {
               Still have questions?
             </h2>
             <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-              We're here to help! Reach out to our team and we'll get back to you within 24 hours.
+              We're here to help! Reach out and we'll get back to you within 24 hours.
             </p>
             <a
               href="mailto:hello@pdxfreshfoods.com"
