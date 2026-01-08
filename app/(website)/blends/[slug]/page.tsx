@@ -104,14 +104,15 @@ export default async function BlendPage({ params }: BlendPageProps) {
         <div className="relative z-10 grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
           {blend.image_url && (
             <FadeIn direction="left">
-              <div className="sticky top-24">
+              <div className="sticky top-24 flex justify-center">
                 <FloatingElement yOffset={15} duration={6}>
-                  <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+                  {/* Circular product image - 10% smaller */}
+                  <div className="relative w-[320px] h-[320px] sm:w-[400px] sm:h-[400px] lg:w-[480px] lg:h-[480px] rounded-full overflow-hidden shadow-2xl border-4 border-white">
                     <SmoothImage
                       src={blend.image_url}
                       alt={blend.image_alt || blend.name}
                       fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      sizes="(max-width: 1024px) 400px, 480px"
                       className="object-cover"
                       priority
                     />

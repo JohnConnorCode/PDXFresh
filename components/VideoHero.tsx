@@ -24,21 +24,9 @@ export function VideoHero({
   mobileImage,
 }: VideoHeroProps) {
   const [videoReady, setVideoReady] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Check if we're on desktop (only run video logic on desktop)
   useEffect(() => {
-    const checkDesktop = () => setIsDesktop(window.innerWidth >= 768);
-    checkDesktop();
-    window.addEventListener('resize', checkDesktop);
-    return () => window.removeEventListener('resize', checkDesktop);
-  }, []);
-
-  useEffect(() => {
-    // Only listen for video events on desktop
-    if (!isDesktop) return;
-
     const handleMessage = (event: MessageEvent) => {
       if (event.origin !== 'https://player.vimeo.com') return;
       try {
@@ -54,7 +42,7 @@ export function VideoHero({
 
     window.addEventListener('message', handleMessage);
 
-    // Shorter fallback: 2 seconds instead of 4
+    // Fallback: 2 seconds
     const fallbackTimer = setTimeout(() => {
       setVideoReady(true);
     }, 2000);
@@ -63,11 +51,11 @@ export function VideoHero({
       window.removeEventListener('message', handleMessage);
       clearTimeout(fallbackTimer);
     };
-  }, [isDesktop]);
+  }, []);
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
-      {/* Base Layer: Fallback Image - ALWAYS visible, never fades */}
+      {/* Base Layer: Fallback Image - ALWAYS visible as base, video fades in over it */}
       <div className="absolute inset-0 z-[0]">
         {/* Desktop image */}
         <div className="hidden md:block absolute inset-0">
@@ -81,7 +69,7 @@ export function VideoHero({
             sizes="100vw"
           />
         </div>
-        {/* Mobile image - completely static, no transitions */}
+        {/* Mobile image */}
         <div className="md:hidden absolute inset-0">
           <Image
             src={mobileImage || fallbackImage}
@@ -95,33 +83,31 @@ export function VideoHero({
         </div>
       </div>
 
-      {/* Video Layer - Desktop Only, fades IN over image when ready */}
-      {isDesktop && (
-        <div
-          className={`absolute inset-0 z-[1] transition-opacity duration-1000 ease-out ${
-            videoReady ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          <iframe
-            ref={iframeRef}
-            src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1&quality=1080p`}
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              width: '177.78vh',
-              height: '100vh',
-              minWidth: '100%',
-              minHeight: '56.25vw',
-              transform: 'translate(-50%, -50%)',
-            }}
-            frameBorder="0"
-            allow="autoplay; fullscreen"
-            allowFullScreen
-            title="Portland Fresh Background Video"
-          />
-        </div>
-      )}
+      {/* Video Layer - Works on both mobile and desktop, fades IN over image when ready */}
+      <div
+        className={`absolute inset-0 z-[1] transition-opacity duration-1000 ease-out ${
+          videoReady ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <iframe
+          ref={iframeRef}
+          src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1&playsinline=1`}
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: '177.78vh',
+            height: '100vh',
+            minWidth: '100%',
+            minHeight: '56.25vw',
+            transform: 'translate(-50%, -50%)',
+          }}
+          frameBorder="0"
+          allow="autoplay; fullscreen"
+          allowFullScreen
+          title="Portland Fresh Background Video"
+        />
+      </div>
 
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/40 z-10" />

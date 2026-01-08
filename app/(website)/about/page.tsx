@@ -29,24 +29,32 @@ export default async function AboutPage() {
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-tl from-yellow-500/10 via-transparent to-transparent rounded-full blur-3xl" />
 
         <div className="relative z-10 max-w-4xl mx-auto px-5 sm:px-6 text-center">
-          <p className="text-xs sm:text-sm font-medium uppercase tracking-[0.3em] text-white/40 mb-4">
-            About Portland Fresh
-          </p>
-          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] tracking-tight">
-            Sauces rooted in
-            <br />
-            <span className="bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">
-              Portland kitchens
-            </span>
-          </h1>
-          <p className="text-lg sm:text-xl text-white/70 leading-relaxed max-w-2xl mx-auto mb-4">
-            Stew Joseph grew up in a family of chefs, sharpened his palate alongside his dad, and after a detour in craft beer returned
-            to the table with Portland Fresh. Our sauces marry excellent flavor, real ingredients, and a deep connection to the city we serve.
-          </p>
-          <p className="text-lg sm:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
-            Real flavor. Real ingredients. Real community. That's why we source organic produce as locally as possible,
-            rely on olive oil, lemon, lime, and raw apple cider vinegar, and build distribution that keeps our jars accessible to every neighborhood.
-          </p>
+          <FadeIn direction="up" delay={0.1}>
+            <p className="text-xs sm:text-sm font-medium uppercase tracking-[0.3em] text-white/40 mb-4">
+              About Portland Fresh
+            </p>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.2}>
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] tracking-tight">
+              Sauces rooted in
+              <br />
+              <span className="bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">
+                Portland kitchens
+              </span>
+            </h1>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.3}>
+            <p className="text-lg sm:text-xl text-white/70 leading-relaxed max-w-2xl mx-auto mb-4">
+              Stew Joseph grew up in a family of chefs, sharpened his palate alongside his dad, and after a detour in craft beer returned
+              to the table with Portland Fresh. Our sauces marry excellent flavor, real ingredients, and a deep connection to the city we serve.
+            </p>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.35}>
+            <p className="text-lg sm:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
+              Real flavor. Real ingredients. Real community. That's why we source organic produce as locally as possible,
+              rely on olive oil, lemon, lime, and raw apple cider vinegar, and build distribution that keeps our jars accessible to every neighborhood.
+            </p>
+          </FadeIn>
         </div>
       </section>
 

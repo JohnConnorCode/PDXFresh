@@ -100,18 +100,24 @@ export default function FAQPage() {
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent-green/20 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 z-[1]" />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md">
-            <svg className="w-5 h-5 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="text-sm font-semibold text-accent-primary">Got Questions?</span>
-          </div>
-          <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
-            Frequently Asked Questions
-          </h1>
-          <p className="text-xl sm:text-2xl text-white/95 leading-relaxed max-w-3xl mx-auto drop-shadow-md">
-            Everything you need to know about our sauces, ordering, and delivery.
-          </p>
+          <FadeIn direction="up" delay={0.1}>
+            <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md">
+              <svg className="w-5 h-5 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm font-semibold text-accent-primary">Got Questions?</span>
+            </div>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.2}>
+            <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
+              Frequently Asked Questions
+            </h1>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.3}>
+            <p className="text-xl sm:text-2xl text-white/95 leading-relaxed max-w-3xl mx-auto drop-shadow-md">
+              Everything you need to know about our sauces, ordering, and delivery.
+            </p>
+          </FadeIn>
         </div>
       </Section>
 

@@ -97,12 +97,16 @@ export default function HowWeMakeItPage() {
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent-green/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 z-[1]" />
 
         <div className="relative z-10 max-w-3xl mx-auto text-center">
-          <h1 className="font-heading text-5xl sm:text-6xl font-bold mb-6 text-white leading-tight">
-            How We Make It
-          </h1>
-          <p className="text-xl text-white/90 leading-relaxed">
-            From farm to jar in 48 hours. Fire-roasted, blended fresh, and packed in reusable containers—no shortcuts.
-          </p>
+          <FadeIn direction="up" delay={0.2}>
+            <h1 className="font-heading text-5xl sm:text-6xl font-bold mb-6 text-white leading-tight">
+              How We Make It
+            </h1>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.4}>
+            <p className="text-xl text-white/90 leading-relaxed">
+              From farm to jar in 48 hours. Fire-roasted, blended fresh, and packed in reusable containers—no shortcuts.
+            </p>
+          </FadeIn>
         </div>
       </Section>
 
