@@ -106,7 +106,7 @@ export function EmailPreferences({ userEmail }: EmailPreferencesProps) {
               <h3 className="font-semibold text-lg">Newsletter Subscription</h3>
             </div>
             <p className="text-sm text-gray-600">
-              Receive updates about new products, exclusive promotions, and wellness tips
+              Receive updates about new products, exclusive promotions, and recipe ideas
             </p>
             <p className="text-xs text-gray-500 mt-2">
               Email: <strong>{userEmail}</strong>

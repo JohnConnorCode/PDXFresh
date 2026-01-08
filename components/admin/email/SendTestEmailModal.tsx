@@ -30,7 +30,7 @@ const getSampleData = (templateName: string): Record<string, any> => {
       return {
         customerName: 'Jane Smith',
         customerEmail: 'jane@example.com',
-        planName: 'Weekly Wellness Plan',
+        planName: 'Weekly Sauce Plan',
         planPrice: 7999,
         billingInterval: 'week',
         nextBillingDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),

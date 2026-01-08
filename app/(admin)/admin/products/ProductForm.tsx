@@ -302,7 +302,7 @@ export function ProductForm({ product, ingredients, variants, allIngredients }: 
             <input
               {...register('function_list')}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              placeholder="Energy, Focus, Detox (comma-separated)"
+              placeholder="Pesto, Salsa, Chimichurri (comma-separated)"
             />
             <p className="text-sm text-gray-500 mt-1">
               Enter keywords separated by commas - shown as badges on product page

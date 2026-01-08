@@ -8,7 +8,7 @@ export const revalidate = 60;
 export async function generateMetadata() {
   return {
     title: 'Join the Movement | Portland Fresh Ambassadors',
-    description: 'Be part of something bigger. Join the Portland Fresh Ambassador movement and help spread wellness while earning rewards.',
+    description: 'Be part of something bigger. Join the Portland Fresh Ambassador movement and help spread fresh flavors while earning rewards.',
   };
 }
 
@@ -131,7 +131,7 @@ export default async function AmbassadorPage() {
             <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold mb-8 leading-tight text-gray-900">
               We&apos;re building a world where
               <br />
-              <span className="text-accent-primary">wellness is the default.</span>
+              <span className="text-accent-primary">fresh is the default.</span>
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
               Every time you share Portland Fresh, you&apos;re not just recommending a product.
@@ -180,7 +180,7 @@ export default async function AmbassadorPage() {
               <div className="pt-4">
                 <h3 className="font-heading text-2xl font-bold mb-4">Share the Movement</h3>
                 <p className="text-white/60 leading-relaxed">
-                  Tell your friends, family, and community about Portland Fresh. Every share plants a seed for better health.
+                  Tell your friends, family, and community about Portland Fresh. Every share brings fresh flavors to another kitchen.
                 </p>
               </div>
             </div>
@@ -363,7 +363,7 @@ export default async function AmbassadorPage() {
           </FadeIn>
           <FadeIn direction="up" delay={0.2}>
             <p className="text-xl text-white/60 mb-10 max-w-2xl mx-auto">
-              Start sharing wellness today. Get your unique ambassador link and earn rewards with every referral.
+              Start sharing fresh flavors today. Get your unique ambassador link and earn rewards with every referral.
             </p>
           </FadeIn>
           <FadeIn direction="up" delay={0.3}>

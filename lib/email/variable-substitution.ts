@@ -175,7 +175,7 @@ const STANDARD_FOOTER = `
 <div class="footer">
   <div style="background-color: #ecfdf5; padding: 16px 20px; margin: 0 -20px 20px -20px; border-top: 2px solid #22c55e;">
     <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #166534;">Love Portland Fresh? Become an Ambassador!</p>
-    <p style="margin: 0 0 12px 0; font-size: 13px; color: #15803d;">Earn rewards when you share the wellness with friends.</p>
+    <p style="margin: 0 0 12px 0; font-size: 13px; color: #15803d;">Earn rewards when you share the flavor with friends.</p>
     <a href="https://pdxfreshfoods.com/ambassador" style="display: inline-block; background-color: #22c55e; color: #ffffff; padding: 8px 20px; text-decoration: none; border-radius: 20px; font-size: 13px; font-weight: 600;">Join the Movement</a>
   </div>
   <p style="margin: 0 0 8px 0;">Questions? Contact us at <a href="mailto:support@pdxfreshfoods.com" style="color: #22c55e;">support@pdxfreshfoods.com</a></p>

@@ -181,7 +181,7 @@ export default async function JournalPage() {
               </svg>
             </div>
             <h3 className="font-heading text-2xl font-bold mb-2">No stories yet</h3>
-            <p className="text-gray-600">Check back soon for wellness insights and recipes.</p>
+            <p className="text-gray-600">Check back soon for recipes and kitchen notes.</p>
           </div>
         </Section>
       ) : null}

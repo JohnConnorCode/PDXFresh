@@ -45,7 +45,7 @@ export function ReferralShareCard({ referralCode, stats }: ReferralShareCardProp
               Share & Earn Rewards
             </h3>
             <p className="text-white/90 text-base drop-shadow">
-              Spread the wellness, earn exclusive benefits
+              Spread the flavor, earn exclusive benefits
             </p>
           </div>
           <div className="text-center bg-white/95 backdrop-blur-sm rounded-xl px-4 py-3 shadow-lg">

@@ -272,10 +272,10 @@ export default async function WholesalePage() {
                   required
                 >
                   <option value="">Select Program Type</option>
-                  <option value="retail">Retail Bottles & Shots</option>
-                  <option value="bulk">Refillable Bulk Jugs</option>
-                  <option value="wellness">Team Wellness Fridge</option>
-                  <option value="events">Event Bars & Pop-Ups</option>
+                  <option value="retail">Retail Jars & Containers</option>
+                  <option value="bulk">Food Service Trays</option>
+                  <option value="office">Office Fridge Stock</option>
+                  <option value="events">Catering & Events</option>
                 </select>
                 <textarea
                   placeholder="Tell us about your business and how you'd serve Portland Fresh..."

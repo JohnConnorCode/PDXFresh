@@ -113,7 +113,7 @@ export default async function WelcomePage() {
                     You're subscribed to our newsletter!
                   </h3>
                   <p className="text-sm text-green-700 mb-3">
-                    You'll receive updates about new products, exclusive promotions, and wellness tips. You can manage your email preferences in your account settings anytime.
+                    You'll receive updates about new products, exclusive promotions, and recipe ideas. You can manage your email preferences in your account settings anytime.
                   </p>
                   <Link
                     href="/account"
@@ -136,7 +136,7 @@ export default async function WelcomePage() {
                 </div>
                 <div>
                   <h3 className="font-heading text-lg font-bold mb-2 text-purple-900">
-                    Share the wellness with friends
+                    Share the flavor with friends
                   </h3>
                   <p className="text-sm text-purple-700 mb-3">
                     Invite friends to join Portland Fresh and you'll both get rewards! Check your account page for your unique referral link.

@@ -285,7 +285,7 @@ export const SubscriptionConfirmationEmail: React.FC<SubscriptionConfirmationEma
           <p>Hi {customerName || customerEmail},</p>
           <p>
             Thank you for subscribing to Portland Fresh! You've just taken an important step
-            toward consistent wellness and vitality.
+            with every meal you serve.
           </p>
 
           <div className="plan-card">
