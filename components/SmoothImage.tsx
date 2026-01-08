@@ -1,8 +1,8 @@
-'use client';
-
-import { useState } from 'react';
 import Image from 'next/image';
-import clsx from 'clsx';
+
+// Generic subtle blur placeholder - warm neutral tone matching brand
+const DEFAULT_BLUR_DATA_URL =
+  'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDAwUBAAAAAAAAAAAAAQIDAAQRBRIhBhMxQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEEA/AKWm6Rp11ptvNNZW0kjxKzs0YJYkAkn+1NKUrRFAUACs5k7n/9k=';
 
 interface SmoothImageProps {
   src: string;
@@ -14,8 +14,8 @@ interface SmoothImageProps {
   priority?: boolean;
   quality?: number;
   className?: string;
-  placeholderClassName?: string;
   objectPosition?: string;
+  blurDataURL?: string;
 }
 
 export function SmoothImage({
@@ -28,39 +28,23 @@ export function SmoothImage({
   priority,
   quality,
   className = '',
-  placeholderClassName = '',
   objectPosition,
+  blurDataURL,
 }: SmoothImageProps) {
-  const [loaded, setLoaded] = useState(false);
-
   return (
-    <>
-      {/* Placeholder */}
-      <div
-        className={clsx(
-          'absolute inset-0 bg-gray-100 transition-opacity duration-500',
-          loaded ? 'opacity-0' : 'opacity-100',
-          placeholderClassName
-        )}
-      />
-      {/* Actual image */}
-      <Image
-        src={src}
-        alt={alt}
-        fill={fill}
-        width={!fill ? width : undefined}
-        height={!fill ? height : undefined}
-        sizes={sizes}
-        priority={priority}
-        quality={quality}
-        style={objectPosition ? { objectPosition } : undefined}
-        className={clsx(
-          'transition-opacity duration-500',
-          loaded ? 'opacity-100' : 'opacity-0',
-          className
-        )}
-        onLoad={() => setLoaded(true)}
-      />
-    </>
+    <Image
+      src={src}
+      alt={alt}
+      fill={fill}
+      width={!fill ? width : undefined}
+      height={!fill ? height : undefined}
+      sizes={sizes}
+      priority={priority}
+      quality={quality}
+      style={objectPosition ? { objectPosition } : undefined}
+      className={className}
+      placeholder="blur"
+      blurDataURL={blurDataURL || DEFAULT_BLUR_DATA_URL}
+    />
   );
 }

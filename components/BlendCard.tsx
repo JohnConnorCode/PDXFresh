@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -19,7 +18,6 @@ const labelColorMap = {
 };
 
 export function BlendCard({ blend, index = 0 }: BlendCardProps) {
-  const [imageLoaded, setImageLoaded] = useState(false);
   const slug = typeof blend.slug === 'string' ? blend.slug : (blend.slug?.current || blend.id || '');
   const imageUrl = blend.image_url || blend.image?.asset?.url;
   const category = (blend.category || blend.category_name || blend.categoryLabel) as string | undefined;
@@ -47,44 +45,36 @@ export function BlendCard({ blend, index = 0 }: BlendCardProps) {
           ease: [0.25, 0.4, 0.25, 1]
         }}
       >
-        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 mb-4 shadow-sm hover:shadow-lg transition-all duration-300 h-72 p-4">
-          {imageUrl ? (
-            <>
-              {/* Placeholder shown while loading */}
-              <div
-                className={clsx(
-                  "absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center transition-opacity duration-500",
-                  imageLoaded ? "opacity-0 pointer-events-none" : "opacity-100"
-                )}
-              >
-                <span className="font-heading text-3xl font-bold text-gray-300">{blend.name?.charAt(0)}</span>
-              </div>
+        {/* Circular product image container */}
+        <div className="relative aspect-square w-full max-w-[280px] mx-auto mb-4">
+          <div className="absolute inset-0 rounded-full overflow-hidden shadow-lg bg-gradient-to-br from-gray-50 to-gray-100 transition-shadow duration-300 group-hover:shadow-xl">
+            {imageUrl ? (
               <Image
                 src={imageUrl}
                 alt={blend.image_alt || blend.name}
                 fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className={clsx(
-                  "object-contain p-2 transition-all duration-500 group-hover:scale-105",
-                  imageLoaded ? "opacity-100" : "opacity-0"
-                )}
-                onLoad={() => setImageLoaded(true)}
+                sizes="(max-width: 640px) 280px, (max-width: 1024px) 250px, 280px"
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDAwUBAAAAAAAAAAAAAQIDAAQRBRIhBhMxQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEEA/AKWm6Rp11ptvNNZW0kjxKzs0YJYkAkn+1NKUrRFAUACs5k7n/9k="
               />
-            </>
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="font-heading text-4xl font-bold text-gray-400">{blend.name}</span>
-            </div>
-          )}
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span className="font-heading text-4xl font-bold text-gray-400">{blend.name}</span>
+              </div>
+            )}
+          </div>
+          {/* Category badge - repositioned for circular image */}
           {readableCategory && (
-            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 text-white text-[11px] font-semibold uppercase tracking-wide z-10 backdrop-blur-sm">
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/80 text-white text-[11px] font-semibold uppercase tracking-wide z-10 backdrop-blur-sm whitespace-nowrap">
               {readableCategory}
             </div>
           )}
+          {/* Color label dot */}
           {(blend.label_color || blend.labelColor) && (
             <div
               className={clsx(
-                'absolute top-3 right-3 w-8 h-8 rounded-full z-10 shadow-md',
+                'absolute top-2 right-2 w-6 h-6 rounded-full z-10 shadow-md border-2 border-white',
                 labelColorMap[(blend.label_color || blend.labelColor) as keyof typeof labelColorMap]
               )}
             />

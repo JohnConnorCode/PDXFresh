@@ -11,6 +11,8 @@ interface FadeInProps {
   distance?: number;
   className?: string;
   once?: boolean;
+  /** Skip animation for above-fold/hero content that shouldn't flash in */
+  noAnimation?: boolean;
 }
 
 export function FadeIn({
@@ -21,9 +23,15 @@ export function FadeIn({
   distance = 30,
   className = '',
   once = true,
+  noAnimation = false,
 }: FadeInProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once, amount: 0.3 });
+
+  // For above-fold content, render without animation to prevent flash
+  if (noAnimation) {
+    return <div className={className}>{children}</div>;
+  }
 
   const directionOffset = {
     up: { y: distance },

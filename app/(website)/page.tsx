@@ -11,15 +11,15 @@ import { SmoothImage } from '@/components/SmoothImage';
 
 export const revalidate = 60;
 
-// Hero content
+// Hero content - using product/lifestyle shots, not raw ingredients
 const heroContent = {
   vimeoId: '335489274',
   heading: 'Dips & Sauces Made Fresh in Portland',
   subheading: 'Weekly batches of pesto, salsa, chimichurri, and zhug using organic produce from Oregon farms.',
   ctaText: 'Shop Sauces',
   ctaLink: '/blends',
-  fallbackImage: '/portland-fresh-new-1.jpg',
-  mobileImage: '/portland-fresh-new-2.jpg',
+  fallbackImage: '/portland-fresh-new-6.jpg',  // Kitchen/product shot
+  mobileImage: '/portland-fresh-new-10.jpg',   // Lifestyle/kitchen shot
 };
 
 const valueProps = [

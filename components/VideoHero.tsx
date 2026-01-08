@@ -23,18 +23,29 @@ export function VideoHero({
   fallbackImage,
   mobileImage,
 }: VideoHeroProps) {
-  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  // Check if we're on desktop (only run video logic on desktop)
   useEffect(() => {
-    // Listen for video ready from Vimeo
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 768);
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
+
+  useEffect(() => {
+    // Only listen for video events on desktop
+    if (!isDesktop) return;
+
     const handleMessage = (event: MessageEvent) => {
       if (event.origin !== 'https://player.vimeo.com') return;
       try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         if (data.event === 'ready' || data.method === 'play') {
-          // Give video a moment to start playing before fading in
-          setTimeout(() => setVideoLoaded(true), 500);
+          // Short delay to ensure video has started rendering
+          setTimeout(() => setVideoReady(true), 300);
         }
       } catch {
         // Ignore parse errors
@@ -43,29 +54,22 @@ export function VideoHero({
 
     window.addEventListener('message', handleMessage);
 
-    // Fallback: if video doesn't report ready after 4 seconds, assume it's playing
+    // Shorter fallback: 2 seconds instead of 4
     const fallbackTimer = setTimeout(() => {
-      setVideoLoaded(true);
-    }, 4000);
+      setVideoReady(true);
+    }, 2000);
 
     return () => {
       window.removeEventListener('message', handleMessage);
       clearTimeout(fallbackTimer);
     };
-  }, []);
+  }, [isDesktop]);
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
-      {/* Gradient placeholder - always visible as base layer, never black */}
-      <div className="absolute inset-0 z-[0] bg-gradient-to-br from-accent-green/40 via-accent-primary/30 to-accent-yellow/40" />
-
-      {/* Fallback Image - Always rendered, shows immediately, fades out when video loads */}
-      <div
-        className={`absolute inset-0 z-[1] transition-opacity duration-1000 ease-out ${
-          videoLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-      >
-        {/* Desktop fallback - no fade-in delay, image shows immediately */}
+      {/* Base Layer: Fallback Image - ALWAYS visible, never fades */}
+      <div className="absolute inset-0 z-[0]">
+        {/* Desktop image */}
         <div className="hidden md:block absolute inset-0">
           <Image
             src={fallbackImage}
@@ -77,7 +81,7 @@ export function VideoHero({
             sizes="100vw"
           />
         </div>
-        {/* Mobile fallback */}
+        {/* Mobile image - completely static, no transitions */}
         <div className="md:hidden absolute inset-0">
           <Image
             src={mobileImage || fallbackImage}
@@ -91,27 +95,33 @@ export function VideoHero({
         </div>
       </div>
 
-      {/* Video Background - Desktop Only, renders behind fallback */}
-      <div className="absolute inset-0 z-[0] hidden md:block">
-        <iframe
-          ref={iframeRef}
-          src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1&quality=1080p`}
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            width: '177.78vh',
-            height: '100vh',
-            minWidth: '100%',
-            minHeight: '56.25vw',
-            transform: 'translate(-50%, -50%)',
-          }}
-          frameBorder="0"
-          allow="autoplay; fullscreen"
-          allowFullScreen
-          title="Portland Fresh Background Video"
-        />
-      </div>
+      {/* Video Layer - Desktop Only, fades IN over image when ready */}
+      {isDesktop && (
+        <div
+          className={`absolute inset-0 z-[1] transition-opacity duration-1000 ease-out ${
+            videoReady ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <iframe
+            ref={iframeRef}
+            src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1&quality=1080p`}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: '177.78vh',
+              height: '100vh',
+              minWidth: '100%',
+              minHeight: '56.25vw',
+              transform: 'translate(-50%, -50%)',
+            }}
+            frameBorder="0"
+            allow="autoplay; fullscreen"
+            allowFullScreen
+            title="Portland Fresh Background Video"
+          />
+        </div>
+      )}
 
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/40 z-10" />
