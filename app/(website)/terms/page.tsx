@@ -229,10 +229,8 @@ export default function TermsPage() {
                   </a>
                 </p>
                 <p className="mb-0">
-                  <strong className="text-gray-900">Phone:</strong>{' '}
-                  <a href="tel:+1234567890" className="text-accent-primary hover:underline">
-                    (123) 456-7890
-                  </a>
+                  <strong className="text-gray-900">Address:</strong>{' '}
+                  <span className="text-gray-700">Portland, Oregon</span>
                 </p>
               </div>
 
