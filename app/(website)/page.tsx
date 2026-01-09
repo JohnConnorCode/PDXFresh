@@ -19,7 +19,7 @@ const heroContent = {
   ctaText: 'Shop Sauces',
   ctaLink: '/blends',
   fallbackImage: '/portland-fresh-new-6.jpg',  // Kitchen/product shot
-  mobileImage: '/portland-fresh-new-10.jpg',   // Lifestyle/kitchen shot
+  mobileImage: '/portland-fresh-new-11.jpg',   // Products/kitchen lifestyle shot
 };
 
 const valueProps = [
@@ -321,47 +321,51 @@ export default async function Home() {
 
       {/* Referral Program Section */}
       <Section className="py-20 bg-gray-50">
-        <FadeIn>
-          <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center">
+          <FadeIn direction="up">
             <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6">
               Spread the Word. Taste Rewards.
             </h2>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.1}>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Refer friends to Portland Fresh and earn exclusive rewards. Get 15% off for every friend who makes their first purchase.
             </p>
+          </FadeIn>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-10">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <Link2 className="w-6 h-6 text-accent-primary" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Share Your Link</h3>
-                <p className="text-sm text-gray-600">Get your unique referral link and share it with friends</p>
+          <StaggerContainer staggerDelay={0.15} className="grid md:grid-cols-3 gap-6 mb-10">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Link2 className="w-6 h-6 text-accent-primary" />
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <Gift className="w-6 h-6 text-accent-primary" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">They Get 10% Off</h3>
-                <p className="text-sm text-gray-600">Friends receive a welcome discount on their first order</p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <Coins className="w-6 h-6 text-accent-primary" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">You Get 15% Credit</h3>
-                <p className="text-sm text-gray-600">Earn rewards after their first purchase</p>
-              </div>
+              <h3 className="font-semibold text-lg mb-2">Share Your Link</h3>
+              <p className="text-sm text-gray-600">Get your unique referral link and share it with friends</p>
             </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Gift className="w-6 h-6 text-accent-primary" />
+              </div>
+              <h3 className="font-semibold text-lg mb-2">They Get 10% Off</h3>
+              <p className="text-sm text-gray-600">Friends receive a welcome discount on their first order</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Coins className="w-6 h-6 text-accent-primary" />
+              </div>
+              <h3 className="font-semibold text-lg mb-2">You Get 15% Credit</h3>
+              <p className="text-sm text-gray-600">Earn rewards after their first purchase</p>
+            </div>
+          </StaggerContainer>
 
+          <FadeIn direction="up" delay={0.4}>
             <Link
               href="/referral"
               className="inline-block px-8 py-4 bg-accent-primary text-white font-semibold rounded-lg hover:bg-accent-primary/90 transition-colors"
             >
               Learn More About Referrals
             </Link>
-          </div>
-        </FadeIn>
+          </FadeIn>
+        </div>
       </Section>
     </>
   );

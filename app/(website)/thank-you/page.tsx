@@ -235,7 +235,7 @@ const defaultUpsellOffers = [
     limitedTimeOffer: true,
     eligibleTiers: ['none', 'affiliate'],
     image: {
-      url: '/images/partner-tier.jpg',
+      url: '/portland-fresh-new-13.jpg',
       alt: 'Partner Tier Benefits',
     },
   },

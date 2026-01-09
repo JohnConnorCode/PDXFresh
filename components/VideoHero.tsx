@@ -24,16 +24,25 @@ export function VideoHero({
   mobileImage,
 }: VideoHeroProps) {
   const [videoReady, setVideoReady] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
+    let hasReceivedMessage = false;
+
     const handleMessage = (event: MessageEvent) => {
       if (event.origin !== 'https://player.vimeo.com') return;
       try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-        if (data.event === 'ready' || data.method === 'play') {
-          // Short delay to ensure video has started rendering
-          setTimeout(() => setVideoReady(true), 300);
+        // Only show video when we get actual playback confirmation
+        if (data.event === 'ready' || data.event === 'play' || data.event === 'playing' || data.method === 'play') {
+          hasReceivedMessage = true;
+          // Short delay to ensure video frame is actually rendering
+          setTimeout(() => setVideoReady(true), 500);
+        }
+        // Handle errors from Vimeo
+        if (data.event === 'error') {
+          setVideoFailed(true);
         }
       } catch {
         // Ignore parse errors
@@ -42,20 +51,27 @@ export function VideoHero({
 
     window.addEventListener('message', handleMessage);
 
-    // Fallback: 2 seconds
-    const fallbackTimer = setTimeout(() => {
-      setVideoReady(true);
-    }, 2000);
+    // Long timeout: if no message after 8 seconds, assume video won't load
+    // Keep showing the image (graceful degradation)
+    const failsafeTimer = setTimeout(() => {
+      if (!hasReceivedMessage) {
+        // Don't set videoReady - keep showing the image
+        setVideoFailed(true);
+      }
+    }, 8000);
 
     return () => {
       window.removeEventListener('message', handleMessage);
-      clearTimeout(fallbackTimer);
+      clearTimeout(failsafeTimer);
     };
   }, []);
 
+  // Only show video layer if video is ready AND hasn't failed
+  const showVideo = videoReady && !videoFailed;
+
   return (
     <div className="relative h-screen w-full overflow-hidden">
-      {/* Base Layer: Fallback Image - ALWAYS visible as base, video fades in over it */}
+      {/* Base Layer: Fallback Image - ALWAYS visible, video fades in over it when ready */}
       <div className="absolute inset-0 z-[0]">
         {/* Desktop image */}
         <div className="hidden md:block absolute inset-0">
@@ -83,31 +99,33 @@ export function VideoHero({
         </div>
       </div>
 
-      {/* Video Layer - Works on both mobile and desktop, fades IN over image when ready */}
-      <div
-        className={`absolute inset-0 z-[1] transition-opacity duration-1000 ease-out ${
-          videoReady ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        <iframe
-          ref={iframeRef}
-          src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1&playsinline=1`}
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            width: '177.78vh',
-            height: '100vh',
-            minWidth: '100%',
-            minHeight: '56.25vw',
-            transform: 'translate(-50%, -50%)',
-          }}
-          frameBorder="0"
-          allow="autoplay; fullscreen"
-          allowFullScreen
-          title="Portland Fresh Background Video"
-        />
-      </div>
+      {/* Video Layer - Only renders if not failed, fades IN when actually ready */}
+      {!videoFailed && (
+        <div
+          className={`absolute inset-0 z-[1] transition-opacity duration-1000 ease-out ${
+            showVideo ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <iframe
+            ref={iframeRef}
+            src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1&playsinline=1`}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: '177.78vh',
+              height: '100vh',
+              minWidth: '100%',
+              minHeight: '56.25vw',
+              transform: 'translate(-50%, -50%)',
+            }}
+            frameBorder="0"
+            allow="autoplay; fullscreen"
+            allowFullScreen
+            title="Portland Fresh Background Video"
+          />
+        </div>
+      )}
 
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/40 z-10" />
