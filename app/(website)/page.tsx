@@ -19,7 +19,7 @@ const heroContent = {
   ctaText: 'Shop Sauces',
   ctaLink: '/blends',
   fallbackImage: '/portland-fresh-new-6.jpg',  // Kitchen/product shot
-  mobileImage: '/portland-fresh-new-11.jpg',   // Products/kitchen lifestyle shot
+  mobileImage: '/portland-fresh-new-6.jpg',    // Same clean kitchen shot (no person)
 };
 
 const valueProps = [

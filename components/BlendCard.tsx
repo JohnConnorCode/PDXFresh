@@ -55,8 +55,6 @@ export function BlendCard({ blend, index = 0 }: BlendCardProps) {
                 fill
                 sizes="(max-width: 640px) 280px, (max-width: 1024px) 250px, 280px"
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
-                placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDAwUBAAAAAAAAAAAAAQIDAAQRBRIhBhMxQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEEA/AKWm6Rp11ptvNNZW0kjxKzs0YJYkAkn+1NKUrRFAUACs5k7n/9k="
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
